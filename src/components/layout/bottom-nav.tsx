@@ -3,16 +3,24 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { NAV_ITEMS } from "./sidebar";
+import { Users, FileText, Bookmark, CheckSquare, PhoneCall } from "lucide-react";
+
+const MOBILE_NAV_ITEMS = [
+  { icon: Users, label: "Leads", href: "/leads" },
+  { icon: FileText, label: "Applications", href: "/applications" },
+  { icon: Bookmark, label: "Saved Leads", href: "/saved-leads" },
+  { icon: CheckSquare, label: "To Do", href: "/planner" },
+  { icon: PhoneCall, label: "All Calls", href: "/calls" },
+];
 
 export function BottomNav() {
   const pathname = usePathname();
 
   return (
     <div className="md:hidden fixed bottom-0 left-0 right-0 h-20 bg-[var(--bolt-bg-depth-2)]/90 backdrop-blur-xl border-t border-[var(--bolt-border-color)] z-40 flex items-center px-2 pb-safe shadow-[0_-10px_40px_rgba(0,0,0,0.2)]">
-      <div className="w-full h-full flex items-center overflow-x-auto hide-scrollbar scroll-smooth snap-x snap-mandatory">
-        <div className="flex items-center gap-1 min-w-max px-2">
-          {NAV_ITEMS.map((item) => {
+      <div className="w-full h-full flex items-center justify-center overflow-x-auto hide-scrollbar scroll-smooth snap-x snap-mandatory">
+        <div className="flex items-center justify-between w-full max-w-md px-2">
+          {MOBILE_NAV_ITEMS.map((item) => {
             const isActive = pathname === item.href;
             return (
               <Link
