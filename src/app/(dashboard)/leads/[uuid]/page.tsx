@@ -90,7 +90,7 @@ export default function LeadDetailsPage({ params }: { params: { uuid: string } }
   if (!mounted) return null;
 
   return (
-    <div className="w-full h-[calc(100vh-56px)] flex flex-col surface-1 z-50">
+    <div className="w-full h-[calc(100vh-56px)] flex flex-col surface-1">
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-[var(--bolt-border-color)] bg-[var(--bolt-bg-depth-2)]">
         <button 

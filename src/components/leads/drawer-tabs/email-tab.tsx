@@ -4,12 +4,12 @@ import { useLeadProfile } from "@/hooks/use-lead-profile";
 import { Mail, Send, Settings } from "lucide-react";
 import { toast } from "sonner";
 import { useTemplateStore } from "@/stores/template-store";
-import { useUIStore } from "@/stores/ui-store";
+import { useRouter } from "next/navigation";
 
 export function EmailTab({ uuid }: { uuid: string }) {
   const { profile, rawProfile } = useLeadProfile(uuid);
   const { templates } = useTemplateStore();
-  const { setSettingsOpen } = useUIStore();
+  const router = useRouter();
   
   const emailTemplates = templates.filter(t => t.type === "email");
   const [selectedTemplate, setSelectedTemplate] = useState<string>("");
@@ -52,7 +52,7 @@ export function EmailTab({ uuid }: { uuid: string }) {
             <h3 className="font-semibold text-[var(--bolt-text-primary)]">Send Email</h3>
           </div>
           <button 
-            onClick={() => setSettingsOpen(true)}
+            onClick={() => router.push("/settings")}
             className="text-[11px] font-semibold text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] flex items-center gap-1 bg-black/10 px-2 py-1 rounded"
           >
             <Settings size={12} />

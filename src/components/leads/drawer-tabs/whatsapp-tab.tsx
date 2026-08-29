@@ -6,10 +6,12 @@ import { toast } from "sonner";
 import { useTemplateStore } from "@/stores/template-store";
 import { useUIStore } from "@/stores/ui-store";
 
+import { useRouter } from "next/navigation";
+
 export function WhatsAppTab({ uuid }: { uuid: string }) {
   const { profile, rawProfile } = useLeadProfile(uuid);
   const { templates } = useTemplateStore();
-  const { setSettingsOpen } = useUIStore();
+  const router = useRouter();
 
   const waTemplates = templates.filter(t => t.type === "whatsapp");
   const [selectedTemplate, setSelectedTemplate] = useState<string>("");
@@ -55,7 +57,7 @@ export function WhatsAppTab({ uuid }: { uuid: string }) {
             <h3 className="font-semibold text-[var(--bolt-text-primary)]">Send WhatsApp Message</h3>
           </div>
           <button 
-            onClick={() => setSettingsOpen(true)}
+            onClick={() => router.push("/settings")}
             className="text-[11px] font-semibold text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] flex items-center gap-1 bg-black/10 px-2 py-1 rounded"
           >
             <Settings size={12} />
