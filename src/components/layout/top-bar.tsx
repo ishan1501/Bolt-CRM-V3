@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Search, Loader2, CheckCircle2, Play, Pause, X } from "lucide-react";
+import { Bell, Search, Loader2, CheckCircle2, Play, Pause, X, Menu } from "lucide-react";
 import Link from "next/link";
 import { useState, useRef, useEffect, useMemo } from "react";
 
@@ -163,6 +163,12 @@ export function TopBar() {
         >
           <span className="text-black text-xs font-bold">{userInitials}</span>
         </Link>
+        <button
+          onClick={() => useUIStore.getState().setMobileDrawerOpen(true)}
+          className="w-9 h-9 md:hidden flex items-center justify-center rounded-lg hover:bg-white/5 transition-colors text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)]"
+        >
+          <Menu size={20} />
+        </button>
       </div>
     </header>
   );

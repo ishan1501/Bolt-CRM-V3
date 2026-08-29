@@ -32,6 +32,9 @@ interface UIState {
   sidebarExpanded: boolean;
   toggleSidebar: () => void;
   setSidebarExpanded: (expanded: boolean) => void;
+
+  mobileDrawerOpen: boolean;
+  setMobileDrawerOpen: (open: boolean) => void;
 }
 
 export const useUIStore = create<UIState>((set) => ({
@@ -42,6 +45,9 @@ export const useUIStore = create<UIState>((set) => ({
   drawerTab: "profile",
   searchQuery: "",
   sidebarExpanded: false,
+  mobileDrawerOpen: false,
+
+  setMobileDrawerOpen: (open) => set({ mobileDrawerOpen: open }),
 
   toggleSidebar: () => set((state) => ({ sidebarExpanded: !state.sidebarExpanded })),
   setSidebarExpanded: (expanded: boolean) => set({ sidebarExpanded: expanded }),

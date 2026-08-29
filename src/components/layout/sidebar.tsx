@@ -1,7 +1,7 @@
 "use client";
 
 import { useUIStore } from "@/stores/ui-store";
-import { LayoutDashboard, Users, FileText, Activity, Settings, Home, Bookmark, CheckSquare, PhoneCall } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Activity, Settings, Home, Bookmark, CheckSquare, PhoneCall, X } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
@@ -11,14 +11,14 @@ const NAV_ITEMS = [
   { icon: Users, label: "Leads", href: "/leads" },
   { icon: FileText, label: "Applications", href: "/applications" },
   { icon: Bookmark, label: "Saved Leads", href: "/saved-leads" },
-  { icon: LayoutDashboard, label: "Overview", href: "/" },
+  { icon: LayoutDashboard, label: "Overview", href: "/overview" },
   { icon: Home, label: "Home", href: "/home" },
   { icon: CheckSquare, label: "To Do", href: "/planner" },
   { icon: PhoneCall, label: "All Calls", href: "/calls" },
 ];
 
 export function Sidebar() {
-  const { sidebarExpanded, setSidebarExpanded, setSettingsOpen } = useUIStore();
+  const { sidebarExpanded, setSidebarExpanded, mobileDrawerOpen, setMobileDrawerOpen } = useUIStore();
   const sidebarCollapsed = !sidebarExpanded;
   const setSidebarCollapsed = (collapsed: boolean) => setSidebarExpanded(!collapsed);
   const pathname = usePathname();
@@ -34,14 +34,33 @@ export function Sidebar() {
     router.push("/login");
   };
 
+  const closeMobile = () => {
+    if (window.innerWidth < 768) {
+      setMobileDrawerOpen(false);
+    }
+  };
+
   return (
-    <div className="hidden md:block w-[80px] h-screen shrink-0 relative z-50">
+    <>
+      {/* Mobile Backdrop */}
+      {mobileDrawerOpen && (
+        <div 
+          className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm"
+          onClick={() => setMobileDrawerOpen(false)}
+        />
+      )}
+
+      {/* Desktop space placeholder */}
+      <div className="hidden md:block w-[80px] h-screen shrink-0 relative z-50" />
+
+      {/* Actual Sidebar */}
       <aside
         onMouseEnter={() => setSidebarExpanded(true)}
         onMouseLeave={() => setSidebarExpanded(false)}
         className={cn(
-          "absolute left-0 top-0 h-screen bg-[var(--bolt-bg-depth-2)]/95 backdrop-blur-xl border-r border-[var(--bolt-border-color)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] flex flex-col shadow-2xl",
-          sidebarCollapsed ? "w-[80px]" : "w-[260px]"
+          "fixed left-0 top-0 h-screen bg-[var(--bolt-bg-depth-2)]/95 backdrop-blur-xl border-r border-[var(--bolt-border-color)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] flex flex-col shadow-2xl z-50",
+          mobileDrawerOpen ? "translate-x-0 w-[260px]" : "-translate-x-full md:translate-x-0",
+          sidebarCollapsed ? "md:w-[80px]" : "md:w-[260px]"
         )}
       >
         {/* Brand */}
@@ -52,11 +71,18 @@ export function Sidebar() {
           <span 
             className={cn(
               "ml-3 font-bold text-lg tracking-tight whitespace-nowrap transition-opacity duration-300 text-[var(--bolt-text-primary)]",
-              sidebarCollapsed ? "opacity-0" : "opacity-100"
+              (sidebarCollapsed && !mobileDrawerOpen) ? "md:opacity-0" : "opacity-100"
             )}
           >
             Bolt CRM
           </span>
+          {/* Mobile close button */}
+          <button 
+            className="md:hidden ml-auto p-1 text-[var(--bolt-text-secondary)] hover:text-white"
+            onClick={() => setMobileDrawerOpen(false)}
+          >
+            <X size={20} />
+          </button>
         </div>
 
         {/* Nav */}
@@ -67,11 +93,7 @@ export function Sidebar() {
               <Link
                 key={item.href}
                 href={item.href}
-                onClick={() => {
-                  if (window.innerWidth < 768) {
-                    setSidebarExpanded(false);
-                  }
-                }}
+                onClick={closeMobile}
                 className={cn(
                   "flex items-center h-12 rounded-xl transition-all group/nav relative",
                   isActive
@@ -86,7 +108,7 @@ export function Sidebar() {
                   className={cn(
                     "font-medium whitespace-nowrap transition-opacity duration-300", 
                     isActive && "text-[var(--bolt-accent)]",
-                    sidebarCollapsed ? "opacity-0" : "opacity-100"
+                    (sidebarCollapsed && !mobileDrawerOpen) ? "md:opacity-0" : "opacity-100"
                   )}
                 >
                   {item.label}
@@ -103,11 +125,7 @@ export function Sidebar() {
         <div className="p-3 border-t border-[var(--bolt-border-color)] flex flex-col gap-2 shrink-0">
           <Link
             href="/settings"
-            onClick={() => {
-              if (window.innerWidth < 768) {
-                setSidebarExpanded(false);
-              }
-            }}
+            onClick={closeMobile}
             className={cn(
               "flex items-center h-12 rounded-xl transition-all group/nav relative",
               pathname === "/settings"
@@ -122,7 +140,7 @@ export function Sidebar() {
               className={cn(
                 "font-medium whitespace-nowrap transition-opacity duration-300",
                 pathname === "/settings" && "text-[var(--bolt-accent)]",
-                sidebarCollapsed ? "opacity-0" : "opacity-100"
+                (sidebarCollapsed && !mobileDrawerOpen) ? "md:opacity-0" : "opacity-100"
               )}
             >
               Settings
@@ -133,6 +151,6 @@ export function Sidebar() {
           </Link>
         </div>
       </aside>
-    </div>
+    </>
   );
 }

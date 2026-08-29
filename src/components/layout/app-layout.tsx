@@ -2,7 +2,6 @@
 
 import { Sidebar } from "./sidebar";
 import { TopBar } from "./top-bar";
-import { BottomNav } from "./bottom-nav";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -16,7 +15,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </main>
         </div>
       </div>
-      <BottomNav />
+      </div>
     </div>
   );
 }
