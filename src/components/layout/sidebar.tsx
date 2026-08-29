@@ -7,7 +7,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/lib/supabase";
 
-const NAV_ITEMS = [
+export const NAV_ITEMS = [
   { icon: Users, label: "Leads", href: "/leads" },
   { icon: FileText, label: "Applications", href: "/applications" },
   { icon: Bookmark, label: "Saved Leads", href: "/saved-leads" },

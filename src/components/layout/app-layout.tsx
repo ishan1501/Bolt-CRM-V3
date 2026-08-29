@@ -3,6 +3,8 @@
 import { Sidebar } from "./sidebar";
 import { TopBar } from "./top-bar";
 
+import { BottomNav } from "./bottom-nav";
+
 export function AppLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen flex bg-[var(--bolt-bg-depth-1)] text-[var(--bolt-text-primary)] overflow-hidden">
@@ -15,6 +17,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
           </main>
         </div>
       </div>
+      <BottomNav />
     </div>
   );
 }
