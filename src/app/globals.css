@@ -1,0 +1,120 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Masters Union LMS Dark Mode Tokens */
+    --bolt-bg-depth-1: #060606;       /* Main canvas, slightly softer than black */
+    --bolt-bg-depth-2: #111111;       /* Cards, Sidebar, Elevated surfaces */
+    --bolt-bg-depth-3: #181818;       /* Inputs, Search bars, highly elevated surfaces */
+    --bolt-bg-depth-4: #1f1f1f;
+
+    /* Text */
+    --bolt-text-primary: #f4f4f5;     /* Zinc-100, less harsh than pure white */
+    --bolt-text-secondary: #a1a1aa;   /* Zinc-400 */
+    --bolt-text-tertiary: #52525b;    /* Zinc-600 */
+
+    /* Border */
+    --bolt-border-color: rgba(255, 255, 255, 0.10); /* Visible enough to define surface separation */
+    --bolt-border-hover: rgba(255, 255, 255, 0.18);
+
+    /* Semantic status colors */
+    --bolt-untouched-bg: rgba(239, 68, 68, 0.10);   /* Red tint for untouched/cold leads */
+    --bolt-untouched-bg-hover: rgba(239, 68, 68, 0.18);
+
+    /* Brand Accent - Masters Union Gold */
+    --bolt-accent: #f9c851;
+    --bolt-accent-hover: #e6b84a;
+    --bolt-accent-glow: rgba(249, 200, 81, 0.25);
+
+    /* Standard variables for backward compatibility */
+    --background: var(--bolt-bg-depth-1);
+    --foreground: var(--bolt-text-primary);
+  }
+
+  body {
+    background-color: var(--bolt-bg-depth-1);
+    color: var(--bolt-text-primary);
+  }
+
+  *, ::before, ::after {
+    transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, box-shadow;
+    transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+    transition-duration: 300ms;
+  }
+}
+
+@layer utilities {
+  .surface-1 {
+    background-color: var(--bolt-bg-depth-1);
+  }
+  .surface-2 {
+    background-color: var(--bolt-bg-depth-2);
+  }
+  .surface-3 {
+    background-color: var(--bolt-bg-depth-3);
+  }
+  .surface-4 {
+    background-color: var(--bolt-bg-depth-4);
+  }
+
+  .surface-input {
+    background-color: var(--bolt-bg-depth-2);
+    border: 1px solid transparent;
+    outline: none;
+    color: var(--bolt-text-primary);
+  }
+  .surface-input:focus-within, .surface-input:focus {
+    border-color: var(--bolt-accent);
+    box-shadow: 0 0 0 1px var(--bolt-accent);
+  }
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: rgba(148, 163, 184, 0.3);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(148, 163, 184, 0.6);
+}
+
+@keyframes shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* Hide scrollbar visually but keep it functional */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* iOS safe area bottom padding (for notch phones) */
+.pb-safe {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* Slim scrollbar for sidebar & content areas */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background-color: rgba(148, 163, 184, 0.2);
+  border-radius: 9999px;
+}
