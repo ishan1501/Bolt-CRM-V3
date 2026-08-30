@@ -14,8 +14,8 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
           <Link href="/#pricing" className="hidden md:block text-white/70 hover:text-white transition-colors">Pricing</Link>
           <Link href="/contact" className="hidden md:block text-white/70 hover:text-white transition-colors">Contact</Link>
           <div className="w-px h-4 bg-white/20 hidden md:block" />
-          <Link href="/login" className="text-white hover:text-[#ff5b33] transition-colors">Log In</Link>
-          <Link href="/login" className="bg-[#ff5b33] hover:bg-[#ff5b33]/90 text-white px-5 py-2.5 rounded-full transition-colors shadow-[0_0_15px_rgba(255,91,51,0.3)]">Get Started</Link>
+          <Link href="/login" className="text-white hover:text-[#eab308] transition-colors">Log In</Link>
+          <Link href="/login" className="bg-[#eab308] hover:bg-[#eab308]/90 text-white px-5 py-2.5 rounded-full transition-colors shadow-[0_0_15px_rgba(234,179,8,0.3)]">Get Started</Link>
         </div>
       </header>
 
