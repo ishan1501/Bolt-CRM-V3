@@ -8,7 +8,7 @@ export default function ContactPage() {
         <div className="bg-white/5 border border-white/10 p-8 rounded-2xl">
           <h3 className="font-semibold text-lg mb-2">Email Support</h3>
           <p className="text-white/50 mb-4">We aim to respond to all inquiries within 24 hours.</p>
-          <a href="mailto:support@boltcrm.com" className="text-[#eab308] font-medium hover:underline">support@boltcrm.com</a>
+          <a href="mailto:jainishan18@gmail.com" className="text-[#eab308] font-medium hover:underline">jainishan18@gmail.com</a>
         </div>
         
         <div className="bg-white/5 border border-white/10 p-8 rounded-2xl">
