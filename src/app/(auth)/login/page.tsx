@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Loader2, Eye, EyeOff } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { crmApi } from "@/lib/api";
@@ -13,6 +13,12 @@ export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
+
+  useEffect(() => {
+    if (localStorage.getItem("bolt_auth_token")) {
+      router.push("/leads");
+    }
+  }, [router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -36,7 +42,7 @@ export default function LoginPage() {
       localStorage.setItem("bolt_user", JSON.stringify(user));
 
       toast.success("Welcome back!");
-      router.push("/");
+      router.push("/leads");
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Login failed. Please check your credentials.";
