@@ -446,6 +446,12 @@ export default function AdminDashboard() {
 
               {isLoadingApprovals ? (
                 <div className="text-center py-20 text-[var(--bolt-text-secondary)]">Loading...</div>
+              ) : approvalsData === undefined ? (
+                <GlassCard className="p-12 text-center text-rose-500 border-rose-500/20 flex flex-col items-center">
+                  <XCircle size={48} className="mb-4 opacity-50" />
+                  <h3 className="text-xl font-bold mb-2 text-rose-400">Connection Failed</h3>
+                  <p>Could not fetch data. This usually means the Vercel Environment Variables are missing (like <code>ADMIN_SECRET_TOKEN</code> or <code>SUPABASE_SERVICE_ROLE_KEY</code>).</p>
+                </GlassCard>
               ) : pendingApprovals.length === 0 ? (
                 <GlassCard className="p-12 text-center text-[var(--bolt-text-secondary)] flex flex-col items-center">
                   <CheckCircle className="w-12 h-12 mb-4 opacity-50" />

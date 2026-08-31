@@ -181,8 +181,8 @@ export function ApplicationsTable({ apps }: { apps: Lead[] }) {
                     {appStage}
                   </span>
                 </div>
-                <div className="flex items-center gap-2 mb-2">
-                  <div className="text-[13px] font-medium text-[var(--bolt-text-secondary)] truncate">
+                <div className="flex justify-between items-center gap-2 mb-2 min-w-0">
+                  <div className="text-[13px] font-medium text-[var(--bolt-text-secondary)] truncate flex-1">
                     {app.form_title || a.formTitle || "—"}
                   </div>
                   {paymentIsPaid && (
@@ -191,9 +191,9 @@ export function ApplicationsTable({ apps }: { apps: Lead[] }) {
                     </span>
                   )}
                 </div>
-                <div className="flex items-center justify-between text-xs text-[var(--bolt-text-tertiary)]">
-                  <span className="truncate max-w-[140px]">{app.registered_email || "—"}</span>
-                  <span>{app.registered_mobile || "—"}</span>
+                <div className="flex items-center justify-between text-xs text-[var(--bolt-text-tertiary)] gap-2 min-w-0">
+                  <span className="flex-1 truncate">{app.registered_email || "—"}</span>
+                  <span className="shrink-0">{app.registered_mobile || "—"}</span>
                 </div>
               </div>
               

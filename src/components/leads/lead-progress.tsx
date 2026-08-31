@@ -31,22 +31,22 @@ export function LeadProgress({ profile }: LeadProgressProps) {
   ];
 
   return (
-    <div className="flex items-center justify-between w-full px-4 md:px-6 py-5 overflow-x-auto xl:overflow-visible hide-scrollbar">
+    <div className="flex flex-col md:flex-row md:items-center justify-between w-full px-4 md:px-6 py-5 gap-0 md:gap-0">
       {steps.map((step, i) => (
-        <div key={i} className={cn("flex items-center", i < steps.length - 1 ? "flex-1" : "")}>
-          <div className="flex items-center gap-1.5 md:gap-2 whitespace-nowrap shrink-0">
+        <div key={i} className={cn("flex flex-col md:flex-row", i < steps.length - 1 ? "md:flex-1" : "")}>
+          <div className="flex items-center gap-3 md:gap-2 whitespace-nowrap shrink-0">
             {step.active ? (
-              <div className="w-4 h-4 md:w-5 md:h-5 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.3)]">
-                <Check size={12} className="w-2.5 h-2.5 md:w-3 md:h-3" strokeWidth={3} />
+              <div className="w-5 h-5 rounded-full bg-emerald-500/20 flex items-center justify-center text-emerald-500 shadow-[0_0_8px_rgba(16,185,129,0.3)]">
+                <Check size={12} className="w-3 h-3" strokeWidth={3} />
               </div>
             ) : (
-              <div className="w-4 h-4 md:w-5 md:h-5 rounded-full surface-3 flex items-center justify-center border border-[var(--bolt-border-color)]">
-                <div className="w-1 h-1 md:w-1.5 md:h-1.5 rounded-full bg-[var(--bolt-text-tertiary)]" />
+              <div className="w-5 h-5 rounded-full surface-3 flex items-center justify-center border border-[var(--bolt-border-color)]">
+                <div className="w-1.5 h-1.5 rounded-full bg-[var(--bolt-text-tertiary)]" />
               </div>
             )}
             <span
               className={cn(
-                "text-[11px] xl:text-xs font-medium",
+                "text-[13px] md:text-xs font-medium",
                 step.active ? "text-emerald-500" : "text-[var(--bolt-text-secondary)]"
               )}
             >
@@ -54,7 +54,12 @@ export function LeadProgress({ profile }: LeadProgressProps) {
             </span>
           </div>
           {i < steps.length - 1 && (
-            <div className="flex-1 h-[1px] mx-2 xl:mx-4 bg-[var(--bolt-border-color)] min-w-[12px]" />
+            <>
+              {/* Desktop horizontal line */}
+              <div className="hidden md:block flex-1 h-[1px] mx-2 xl:mx-4 bg-[var(--bolt-border-color)] min-w-[12px] self-center" />
+              {/* Mobile vertical line */}
+              <div className="md:hidden w-[1px] h-5 my-1 ml-[9px] bg-[var(--bolt-border-color)]" />
+            </>
           )}
         </div>
       ))}
