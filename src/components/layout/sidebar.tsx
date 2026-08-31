@@ -65,22 +65,27 @@ export function Sidebar() {
         )}
       >
         {/* Brand */}
-        <div className="h-16 flex items-center px-6 border-b border-[var(--bolt-border-color)] overflow-hidden shrink-0">
-          <div 
-            className={cn(
-              "flex items-center gap-2 transition-opacity duration-300",
-              (sidebarCollapsed && !mobileDrawerOpen) ? "md:opacity-0" : "opacity-100"
-            )}
-          >
-            <BrandLogo />
+        <div className="py-4 flex flex-col justify-center px-6 border-b border-[var(--bolt-border-color)] overflow-hidden shrink-0 min-h-[72px]">
+          <div className="flex items-center justify-between w-full">
+            <div 
+              className={cn(
+                "flex flex-col transition-opacity duration-300",
+                (sidebarCollapsed && !mobileDrawerOpen) ? "md:opacity-0" : "opacity-100"
+              )}
+            >
+              <BrandLogo />
+              <div className="text-[9px] text-[var(--bolt-text-secondary)] mt-1.5 font-medium tracking-wide">
+                Made with ❤️ by Ishan
+              </div>
+            </div>
+            {/* Mobile close button */}
+            <button 
+              className="md:hidden p-1 text-[var(--bolt-text-secondary)] hover:text-white"
+              onClick={() => setMobileDrawerOpen(false)}
+            >
+              <X size={20} />
+            </button>
           </div>
-          {/* Mobile close button */}
-          <button 
-            className="md:hidden ml-auto p-1 text-[var(--bolt-text-secondary)] hover:text-white"
-            onClick={() => setMobileDrawerOpen(false)}
-          >
-            <X size={20} />
-          </button>
         </div>
 
         {/* Nav */}

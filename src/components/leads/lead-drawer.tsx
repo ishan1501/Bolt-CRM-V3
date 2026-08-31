@@ -1,5 +1,7 @@
 "use client";
 
+import { motion, AnimatePresence } from "framer-motion";
+
 import { useUIStore } from "@/stores/ui-store";
 import { X, ChevronLeft, ChevronRight, Loader2, ChevronDown, PhoneCall, Bookmark } from "lucide-react";
 import { cn, getBadgeColor } from "@/lib/utils";
@@ -99,20 +101,23 @@ export function LeadDrawer({ leads = [] }: { leads?: Lead[] }) {
   if (!mounted) return null;
 
   return createPortal(
-    <>
+    <AnimatePresence>
       {drawerOpen && (
-        <div 
-          className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] transition-opacity animate-in fade-in"
-          onClick={closeDrawer}
-        />
-      )}
-
-      <div 
-        className={cn(
-          "fixed top-0 right-0 bottom-0 w-full md:w-[80%] lg:w-[75%] xl:w-[70%] surface-1 z-[101] flex transition-transform duration-300 ease-in-out shadow-2xl overflow-hidden",
-          drawerOpen ? "translate-x-0" : "translate-x-full"
-        )}
-      >
+        <>
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100]"
+            onClick={closeDrawer}
+          />
+          <motion.div 
+            initial={{ x: "100%" }}
+            animate={{ x: 0 }}
+            exit={{ x: "100%", transition: { ease: "easeInOut", duration: 0.3 } }}
+            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            className="fixed top-0 right-0 bottom-0 w-full md:w-[80%] lg:w-[75%] xl:w-[70%] surface-1 z-[101] flex shadow-2xl overflow-hidden"
+          >
         {/* Save Lead Button */}
         {activeLeadUuid && (
           <button
@@ -365,8 +370,10 @@ export function LeadDrawer({ leads = [] }: { leads?: Lead[] }) {
             No lead selected
           </div>
         )}
-      </div>
-    </>,
+          </motion.div>
+        </>
+      )}
+    </AnimatePresence>,
     document.body
   );
 }
