@@ -68,6 +68,7 @@ export default function LeadDetailsPage({ params }: { params: { uuid: string } }
     },
     onSuccess: (_, variables) => {
       toast.success("Stage updated successfully");
+      });
       queryClient.invalidateQueries({ queryKey: ["allLeads"] });
       queryClient.invalidateQueries({ queryKey: ["leadProfile", uuid] });
     },

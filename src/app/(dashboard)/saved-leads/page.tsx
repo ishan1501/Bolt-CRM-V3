@@ -104,10 +104,7 @@ export default function SavedLeadsPage() {
                   {lead.stageName || "Unknown"}
                 </span>
                 <button
-                  onClick={() => {
-                    window.history.pushState(null, '', `/leads/${lead.uuid}`);
-                    openDrawer(lead.uuid);
-                  }}
+                  onClick={() => router.push(`/leads/${lead.uuid}`)}
                   className="text-xs font-semibold text-[var(--bolt-accent)] hover:text-white transition-colors"
                 >
                   View Profile →
