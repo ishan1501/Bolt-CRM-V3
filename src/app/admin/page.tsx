@@ -3,14 +3,46 @@
 import { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { format, parseISO, startOfDay, endOfDay, startOfWeek, endOfWeek, startOfMonth, endOfMonth, isWithinInterval } from "date-fns";
-import { CheckCircle, XCircle, Users, PhoneCall, TrendingUp, BarChart2, Calendar, Clock } from "lucide-react";
+import { CheckCircle, XCircle, Users, PhoneCall, TrendingUp, BarChart2, Calendar, Clock, LogOut, Lock } from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { BrandLogo } from "@/components/ui/brand-logo";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AdminDashboard() {
   const queryClient = useQueryClient();
+  const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean | null>(null);
+  const [loginEmail, setLoginEmail] = useState("");
+  const [loginPassword, setLoginPassword] = useState("");
+  const [loginError, setLoginError] = useState("");
+  
   const [activeTab, setActiveTab] = useState<"approvals" | "analytics" | "users">("approvals");
   const [period, setPeriod] = useState<"daily" | "weekly" | "monthly">("daily");
+
+  useEffect(() => {
+    const isAuth = localStorage.getItem("bolt_admin_auth") === "true";
+    setIsAdminAuthenticated(isAuth);
+  }, []);
+
+  const handleAdminLogin = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (
+      (loginEmail === "ratan.sethi@bolt.app" && loginPassword === "Ratan@123") ||
+      (loginPassword === "152001") // Support passcode as well
+    ) {
+      localStorage.setItem("bolt_admin_auth", "true");
+      setIsAdminAuthenticated(true);
+      setLoginError("");
+    } else {
+      setLoginError("Invalid admin credentials");
+    }
+  };
+
+  const handleAdminLogout = () => {
+    localStorage.removeItem("bolt_admin_auth");
+    setIsAdminAuthenticated(false);
+    setLoginEmail("");
+    setLoginPassword("");
+  };
 
   // Fetch pending approvals
   const { data: approvalsData, isLoading: isLoadingApprovals } = useQuery({
@@ -186,15 +218,98 @@ export default function AdminDashboard() {
 
   const maxCallsHour = Math.max(...hourlyData.map(h => h.calls), 10); // set minimum scale to 10 so 1 call doesn't fill 100%
 
+  if (isAdminAuthenticated === null) {
+    return <div className="min-h-screen bg-black" />;
+  }
+
+  if (!isAdminAuthenticated) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center p-4">
+        <div className="absolute inset-0 overflow-hidden pointer-events-none">
+          <div className="absolute -top-[30%] -left-[10%] w-[70%] h-[70%] rounded-full bg-[#eab308]/5 blur-[150px]" />
+          <div className="absolute top-[20%] -right-[20%] w-[60%] h-[60%] rounded-full bg-blue-500/5 blur-[150px]" />
+        </div>
+        
+        <motion.div 
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="w-full max-w-md bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl relative z-10"
+        >
+          <div className="flex justify-center mb-8">
+            <BrandLogo className="scale-125" />
+          </div>
+          
+          <div className="text-center mb-8">
+            <h1 className="text-2xl font-bold text-white mb-2">Admin Portal</h1>
+            <p className="text-white/50 text-sm">Enter your credentials or passcode to continue</p>
+          </div>
+
+          <form onSubmit={handleAdminLogin} className="space-y-4">
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Email or Passcode</label>
+              <input
+                type="text"
+                value={loginEmail}
+                onChange={(e) => {
+                  setLoginEmail(e.target.value);
+                  // If they type just the passcode in the email field, auto-sync it to password to make it easy
+                  if (e.target.value === "152001") {
+                    setLoginPassword("152001");
+                  }
+                }}
+                placeholder="admin@bolt.app"
+                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#eab308]/50 focus:ring-1 focus:ring-[#eab308]/50 transition-all"
+              />
+            </div>
+            
+            <div className="space-y-2">
+              <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Password</label>
+              <input
+                type="password"
+                value={loginPassword}
+                onChange={(e) => setLoginPassword(e.target.value)}
+                placeholder="••••••••"
+                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#eab308]/50 focus:ring-1 focus:ring-[#eab308]/50 transition-all"
+              />
+            </div>
+
+            {loginError && (
+              <div className="text-red-400 text-sm font-medium bg-red-400/10 border border-red-400/20 rounded-lg p-3 text-center">
+                {loginError}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className="w-full bg-[#eab308] hover:bg-[#eab308]/90 text-black font-bold py-3.5 rounded-xl transition-all shadow-[0_0_20px_rgba(234,179,8,0.2)] hover:shadow-[0_0_30px_rgba(234,179,8,0.3)] mt-4 flex items-center justify-center gap-2"
+            >
+              <Lock size={18} />
+              Secure Login
+            </button>
+          </form>
+        </motion.div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-[#000000] text-white p-6 md:p-8 flex flex-col w-full">
       <div className="w-full flex-1 flex flex-col">
         <header className="flex flex-col md:flex-row items-center justify-between mb-8 pb-4 border-b border-[var(--bolt-border-color)] gap-4 shrink-0">
-          <div className="flex items-center gap-4">
-            <BrandLogo className="scale-125 origin-left" />
-            <h1 className="text-xl font-bold text-[var(--bolt-text-primary)] ml-4 border-l border-[var(--bolt-border-color)] pl-4">Admin Portal</h1>
+          <div className="flex items-center gap-4 w-full md:w-auto">
+            <BrandLogo className="scale-125 origin-left shrink-0" />
+            <h1 className="text-xl font-bold text-[var(--bolt-text-primary)] ml-4 border-l border-[var(--bolt-border-color)] pl-4 shrink-0">Admin Portal</h1>
+            
+            <button
+              onClick={handleAdminLogout}
+              className="ml-auto md:hidden p-2 text-white/50 hover:text-white bg-white/5 rounded-lg border border-white/10 transition-colors"
+              title="Log out of Admin"
+            >
+              <LogOut size={18} />
+            </button>
           </div>
-          <div className="flex gap-6 overflow-x-auto w-full md:w-auto px-1 hide-scrollbar">
+          
+          <div className="flex items-center gap-6 overflow-x-auto w-full md:w-auto px-1 hide-scrollbar">
             <button
               className={`pb-2 text-sm font-semibold transition-colors relative whitespace-nowrap ${
                 activeTab === "approvals" ? "text-[var(--bolt-accent)]" : "text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)]"
@@ -232,6 +347,13 @@ export default function AdminDashboard() {
               {activeTab === "users" && (
                 <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[var(--bolt-accent)] rounded-t-full" />
               )}
+            </button>
+            <button
+              onClick={handleAdminLogout}
+              className="ml-4 p-2 text-white/50 hover:text-white bg-white/5 rounded-lg border border-white/10 transition-colors hidden md:flex"
+              title="Log out of Admin"
+            >
+              <LogOut size={18} />
             </button>
           </div>
         </header>
