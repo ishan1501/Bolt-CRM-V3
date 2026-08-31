@@ -179,7 +179,10 @@ export function LeadsTable({ leads }: LeadsTableProps) {
               return (
                 <tr
                   key={lead.uuid}
-                  onClick={() => router.push(`/leads/${lead.uuid}`)}
+                  onClick={() => {
+                    window.history.pushState(null, '', `/leads/${lead.uuid}`);
+                    openDrawer(lead.uuid);
+                  }}
                   className={cn(
                     "group/row cursor-pointer transition-colors whitespace-nowrap",
                     isSelected ? "bg-[var(--bolt-accent-glow)]" : 

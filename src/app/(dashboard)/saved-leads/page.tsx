@@ -12,6 +12,7 @@ import { useRouter } from "next/navigation";
 export default function SavedLeadsPage() {
   const { savedLeads, removeLead, fetchLeads } = useSavedLeadsStore();
   const router = useRouter();
+  const { openDrawer } = useUIStore();
 
   useEffect(() => {
     fetchLeads();
@@ -103,7 +104,10 @@ export default function SavedLeadsPage() {
                   {lead.stageName || "Unknown"}
                 </span>
                 <button
-                  onClick={() => router.push(`/leads/${lead.uuid}`)}
+                  onClick={() => {
+                    window.history.pushState(null, '', `/leads/${lead.uuid}`);
+                    openDrawer(lead.uuid);
+                  }}
                   className="text-xs font-semibold text-[var(--bolt-accent)] hover:text-white transition-colors"
                 >
                   View Profile →

@@ -25,6 +25,7 @@ import { toast } from "sonner";
 import { createPortal } from "react-dom";
 import { Lead, LeadStage } from "@/types/crm";
 import { PromptModal } from "@/components/ui/prompt-modal";
+import { usePathname } from "next/navigation";
 
 const TABS = [
   { id: "profile", label: "Lead Details" },
@@ -51,6 +52,15 @@ export function LeadDrawer({ leads: propLeads = [] }: { leads?: Lead[] }) {
   const queryClient = useQueryClient();
   const [mounted, setMounted] = useState(false);
   const [promptModalConfig, setPromptModalConfig] = useState<any>(null);
+  const pathname = usePathname();
+
+  const handleClose = () => {
+    closeDrawer();
+    // If we're on the main table routes but the URL was spoofed for deep-linking, revert it
+    if (pathname === '/leads' || pathname === '/saved-leads') {
+      window.history.pushState(null, '', pathname);
+    }
+  };
 
   // Use currentLeadList from store if available, otherwise fallback to propLeads
   const leads = currentLeadList.length > 0 ? currentLeadList : propLeads;
@@ -103,6 +113,8 @@ export function LeadDrawer({ leads: propLeads = [] }: { leads?: Lead[] }) {
     if (currentIndex < totalLeads - 1 && currentIndex !== -1) openDrawer(leads[currentIndex + 1].uuid, drawerTab);
   };
 
+  const isStandalone = pathname.startsWith('/leads/') && pathname !== '/leads';
+
   if (!mounted) return null;
 
   return createPortal(
@@ -114,10 +126,10 @@ export function LeadDrawer({ leads: propLeads = [] }: { leads?: Lead[] }) {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100]"
-            onClick={closeDrawer}
+            onClick={handleClose}
           />
           <motion.div 
-            initial={{ x: "100%" }}
+            initial={isStandalone ? { x: 0 } : { x: "100%" }}
             animate={{ x: 0 }}
             exit={{ x: "100%", transition: { type: "tween", ease: "easeInOut", duration: 0.3 } }}
             transition={{ type: "tween", ease: "easeOut", duration: 0.3 }}
@@ -168,7 +180,7 @@ export function LeadDrawer({ leads: propLeads = [] }: { leads?: Lead[] }) {
 
         {/* Close Button */}
         <button 
-          onClick={closeDrawer}
+          onClick={handleClose}
           className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white/10 transition-colors z-50 text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] bg-[var(--bolt-bg-depth-3)]/50 backdrop-blur-sm border border-[var(--bolt-border-color)] shadow-sm md:border md:bg-[var(--bolt-bg-depth-2)] md:backdrop-blur-none"
         >
           <X size={20} />
