@@ -94,15 +94,31 @@ export default function HomePage() {
 
   // Extract real stats — gracefully handle varying API response shapes
   const ov = (overviewData as any)?.data || overviewData || {};
-  const totalLeads = ov.totalLeads || ov.total_leads || 0;
-  const verifiedLeads = ov.verifiedLeads || ov.verified_leads || 0;
-  const unverifiedLeads = ov.unverifiedLeads || ov.unverified_leads || Math.max(0, totalLeads - verifiedLeads);
-  const totalApps = ov.applicationsStarted || ov.total_applications || ov.totalApplications || 0;
-  const paidApps = ov.paidApplications || ov.paid_applications || 0;
-  const unpaidApps = ov.unpaidApplications || ov.unpaid_applications || Math.max(0, totalApps - paidApps);
-  const appInitiated = ov.applicationInitiated || ov.app_initiated || 0;
+
+  const getNum = (val: any, fallback = 0): number => {
+    if (typeof val === 'number') return val;
+    if (typeof val === 'string') return parseInt(val, 10) || fallback;
+    if (val && typeof val === 'object') {
+      return val.total ?? val.count ?? val.value ?? fallback;
+    }
+    return fallback;
+  };
+
+  const totalLeads = getNum(ov.totalLeads || ov.total_leads, 0);
+  
+  // If the backend returned an object like { total, verified, unverified } in totalLeads, try to extract from it
+  const possibleObj = (ov.totalLeads && typeof ov.totalLeads === 'object') ? ov.totalLeads : {};
+  
+  const verifiedLeads = getNum(ov.verifiedLeads || ov.verified_leads || possibleObj.verified, 0);
+  const unverifiedLeads = getNum(ov.unverifiedLeads || ov.unverified_leads || possibleObj.unverified, Math.max(0, totalLeads - verifiedLeads));
+  
+  const totalApps = getNum(ov.applicationsStarted || ov.total_applications || ov.totalApplications, 0);
+  const paidApps = getNum(ov.paidApplications || ov.paid_applications, 0);
+  const unpaidApps = getNum(ov.unpaidApplications || ov.unpaid_applications, Math.max(0, totalApps - paidApps));
+  
+  const appInitiated = getNum(ov.applicationInitiated || ov.app_initiated, 0);
   const appNotInitiated = Math.max(0, totalApps - appInitiated);
-  const paymentInitiated = ov.paymentInitiated || ov.payment_initiated || 0;
+  const paymentInitiated = getNum(ov.paymentInitiated || ov.payment_initiated, 0);
   const paymentNotInitiated = Math.max(0, unpaidApps - paymentInitiated);
 
   // Channels — handle varying shapes
