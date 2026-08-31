@@ -69,12 +69,12 @@ export function Sidebar() {
           <div className="flex items-center justify-between w-full">
             <div 
               className={cn(
-                "flex flex-col transition-opacity duration-300",
+                "flex flex-col items-center transition-opacity duration-300",
                 (sidebarCollapsed && !mobileDrawerOpen) ? "md:opacity-0" : "opacity-100"
               )}
             >
               <BrandLogo />
-              <div className="text-[9px] text-[var(--bolt-text-secondary)] mt-1.5 font-medium tracking-wide">
+              <div className="text-[9px] text-[var(--bolt-text-secondary)] mt-1.5 font-medium tracking-wide text-center">
                 Made with ❤️ by Ishan
               </div>
             </div>
