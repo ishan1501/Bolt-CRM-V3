@@ -2,18 +2,15 @@
 
 import { useState, useEffect } from "react";
 import { usePlannerStore, PlannerTask } from "@/stores/planner-store";
-import { useReminderStore } from "@/stores/reminder-store";
 import { GlassCard } from "@/components/ui/glass-card";
-import { CheckSquare, ChevronLeft, ChevronRight, Plus, Trash2, Calendar, PhoneCall } from "lucide-react";
+import { CheckSquare, ChevronLeft, ChevronRight, Plus, Trash2, Calendar } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export default function PlannerPage() {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [newTask, setNewTask] = useState("");
-  const [activeTab, setActiveTab] = useState<"tasks" | "overdue">("tasks");
   
   const { addTask, toggleTask, deleteTask, getTasksForDate, fetchTodos } = usePlannerStore();
-  const { getOverdueReminders, markCompleted } = useReminderStore();
   
   useEffect(() => {
     fetchTodos();
@@ -21,7 +18,6 @@ export default function PlannerPage() {
 
   const dateKey = currentDate.toISOString().slice(0, 10);
   const tasks = getTasksForDate(dateKey);
-  const overdueReminders = getOverdueReminders();
 
   const isToday = new Date().toISOString().slice(0, 10) === dateKey;
 
@@ -84,156 +80,79 @@ export default function PlannerPage() {
         </div>
       </div>
 
-      <GlassCard className="p-0 overflow-hidden flex flex-col">
-        {/* Tabs Header */}
-        <div className="flex border-b border-[var(--bolt-border-color)]">
-          <button 
-            onClick={() => setActiveTab("tasks")}
-            className={cn(
-              "flex-1 py-4 text-sm font-semibold transition-colors relative",
-              activeTab === "tasks" ? "text-[var(--bolt-accent)]" : "text-[var(--bolt-text-secondary)] hover:text-white"
-            )}
-          >
-            Daily Tasks
-            {activeTab === "tasks" && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[var(--bolt-accent)]" />
-            )}
-          </button>
-          <button 
-            onClick={() => setActiveTab("overdue")}
-            className={cn(
-              "flex-1 py-4 text-sm font-semibold transition-colors relative flex items-center justify-center gap-2",
-              activeTab === "overdue" ? "text-rose-400" : "text-[var(--bolt-text-secondary)] hover:text-white"
-            )}
-          >
-            Overdue Calls
-            {overdueReminders.length > 0 && (
-              <span className="bg-rose-500/20 text-rose-400 text-xs px-2 py-0.5 rounded-full border border-rose-500/20">
-                {overdueReminders.length}
+      <GlassCard className="p-6">
+        <div className="flex items-center justify-between mb-6">
+          <h2 className="text-lg font-bold text-[var(--bolt-text-primary)]">Tasks for {currentDate.toLocaleDateString("en-US", { weekday: "long" })}</h2>
+          {tasks.length > 0 && (
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-semibold text-[var(--bolt-text-secondary)]">
+                {completedCount} of {tasks.length} done
               </span>
-            )}
-            {activeTab === "overdue" && (
-              <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-rose-400" />
-            )}
-          </button>
+              <div className="w-24 h-2 rounded-full bg-[var(--bolt-bg-depth-3)] overflow-hidden">
+                <div className="h-full bg-[var(--bolt-accent)] transition-all duration-300" style={{ width: `${progress}%` }} />
+              </div>
+            </div>
+          )}
         </div>
 
-        <div className="p-6">
-          {activeTab === "tasks" ? (
-            <>
-              <div className="flex items-center justify-between mb-6">
-                <h2 className="text-lg font-bold text-[var(--bolt-text-primary)]">Tasks for {currentDate.toLocaleDateString("en-US", { weekday: "long" })}</h2>
-                {tasks.length > 0 && (
-                  <div className="flex items-center gap-3">
-                    <span className="text-xs font-semibold text-[var(--bolt-text-secondary)]">
-                      {completedCount} of {tasks.length} done
-                    </span>
-                    <div className="w-24 h-2 rounded-full bg-[var(--bolt-bg-depth-3)] overflow-hidden">
-                      <div className="h-full bg-[var(--bolt-accent)] transition-all duration-300" style={{ width: `${progress}%` }} />
-                    </div>
-                  </div>
-                )}
-              </div>
+        <form onSubmit={handleAddTask} className="mb-6 relative">
+          <input
+            type="text"
+            placeholder="Add a new task..."
+            value={newTask}
+            onChange={(e) => setNewTask(e.target.value)}
+            className="w-full bg-[var(--bolt-bg-depth-3)] border border-[var(--bolt-border-color)] rounded-xl py-3 pl-4 pr-12 text-sm text-[var(--bolt-text-primary)] placeholder:text-[var(--bolt-text-tertiary)] outline-none focus:border-[var(--bolt-accent)] transition-colors shadow-inner"
+          />
+          <button 
+            type="submit" 
+            disabled={!newTask.trim()}
+            className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-[var(--bolt-accent)] text-black flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#eab308] transition-colors"
+          >
+            <Plus size={16} />
+          </button>
+        </form>
 
-              <form onSubmit={handleAddTask} className="mb-6 relative">
-                <input
-                  type="text"
-                  placeholder="Add a new task..."
-                  value={newTask}
-                  onChange={(e) => setNewTask(e.target.value)}
-                  className="w-full bg-[var(--bolt-bg-depth-3)] border border-[var(--bolt-border-color)] rounded-xl py-3 pl-4 pr-12 text-sm text-[var(--bolt-text-primary)] placeholder:text-[var(--bolt-text-tertiary)] outline-none focus:border-[var(--bolt-accent)] transition-colors shadow-inner"
-                />
-                <button 
-                  type="submit" 
-                  disabled={!newTask.trim()}
-                  className="absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 rounded-lg bg-[var(--bolt-accent)] text-black flex items-center justify-center disabled:opacity-50 disabled:cursor-not-allowed hover:bg-[#eab308] transition-colors"
-                >
-                  <Plus size={16} />
-                </button>
-              </form>
-
-              <div className="space-y-2">
-                {tasks.length === 0 ? (
-                  <div className="py-12 flex flex-col items-center justify-center text-center">
-                    <Calendar size={48} className="text-[var(--bolt-text-tertiary)] mb-4 opacity-50" />
-                    <p className="text-[var(--bolt-text-secondary)] font-medium">No tasks scheduled for this day.</p>
-                    <p className="text-xs text-[var(--bolt-text-tertiary)] mt-1">Use the input above to add one.</p>
-                  </div>
-                ) : (
-                  tasks.map((task) => (
-                    <div 
-                      key={task.id} 
-                      className={cn(
-                        "flex items-center justify-between p-4 rounded-xl border transition-all group",
-                        task.done 
-                          ? "bg-[var(--bolt-bg-depth-3)]/50 border-transparent" 
-                          : "bg-[var(--bolt-bg-depth-2)] border-[var(--bolt-border-color)] hover:border-[var(--bolt-accent)]/50"
-                      )}
-                    >
-                      <div className="flex items-center gap-3 flex-1 cursor-pointer" onClick={() => toggleTask(dateKey, task.id)}>
-                        <div className={cn(
-                          "w-5 h-5 rounded border flex items-center justify-center transition-colors shrink-0",
-                          task.done ? "bg-[var(--bolt-accent)] border-[var(--bolt-accent)] text-black" : "border-[var(--bolt-text-tertiary)] group-hover:border-[var(--bolt-accent)] text-transparent"
-                        )}>
-                          <CheckSquare size={14} className={task.done ? "opacity-100" : "opacity-0"} />
-                        </div>
-                        <span className={cn(
-                          "text-sm font-medium transition-all select-none",
-                          task.done ? "text-[var(--bolt-text-tertiary)] line-through" : "text-[var(--bolt-text-primary)]"
-                        )}>
-                          {task.text}
-                        </span>
-                      </div>
-                      
-                      <button 
-                        onClick={() => deleteTask(dateKey, task.id)}
-                        className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--bolt-text-tertiary)] hover:text-rose-400 hover:bg-rose-400/10 opacity-0 group-hover:opacity-100 transition-all shrink-0"
-                      >
-                        <Trash2 size={14} />
-                      </button>
-                    </div>
-                  ))
-                )}
-              </div>
-            </>
-          ) : (
-            <div className="space-y-2">
-              <h2 className="text-lg font-bold text-[var(--bolt-text-primary)] mb-6">Overdue Calls</h2>
-              {overdueReminders.length === 0 ? (
-                <div className="py-12 flex flex-col items-center justify-center text-center">
-                  <CheckSquare size={48} className="text-emerald-500/50 mb-4" />
-                  <p className="text-[var(--bolt-text-secondary)] font-medium">No overdue calls!</p>
-                  <p className="text-xs text-[var(--bolt-text-tertiary)] mt-1">You are all caught up.</p>
-                </div>
-              ) : (
-                overdueReminders.map((r) => (
-                  <div key={r.id} className="flex flex-col sm:flex-row sm:items-center justify-between p-4 rounded-xl border border-[var(--bolt-border-color)] bg-[var(--bolt-bg-depth-2)] gap-4">
-                    <div className="flex flex-col">
-                      <span className="font-semibold text-rose-400">{r.leadName || "Lead"}</span>
-                      <span className="text-xs text-[var(--bolt-text-secondary)] mt-1">
-                        Scheduled for: {new Date(r.date).toLocaleString([], { dateStyle: "medium", timeStyle: "short" })}
-                      </span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <a 
-                        href={`/leads/${r.leadUuid}`} 
-                        className="px-4 py-2 rounded-lg bg-[var(--bolt-bg-depth-3)] text-sm font-medium hover:bg-white/10 transition-colors flex items-center gap-2"
-                      >
-                        <PhoneCall size={14} />
-                        View Lead
-                      </a>
-                      <button 
-                        onClick={() => markCompleted(r.id)}
-                        className="w-9 h-9 rounded-lg bg-green-500/10 text-green-400 flex items-center justify-center hover:bg-green-500/20 transition-colors shrink-0"
-                        title="Mark Done"
-                      >
-                        <CheckSquare size={16} />
-                      </button>
-                    </div>
-                  </div>
-                ))
-              )}
+        <div className="space-y-2">
+          {tasks.length === 0 ? (
+            <div className="py-12 flex flex-col items-center justify-center text-center">
+              <Calendar size={48} className="text-[var(--bolt-text-tertiary)] mb-4 opacity-50" />
+              <p className="text-[var(--bolt-text-secondary)] font-medium">No tasks scheduled for this day.</p>
+              <p className="text-xs text-[var(--bolt-text-tertiary)] mt-1">Use the input above to add one.</p>
             </div>
+          ) : (
+            tasks.map((task) => (
+              <div 
+                key={task.id} 
+                className={cn(
+                  "flex items-center justify-between p-4 rounded-xl border transition-all group",
+                  task.done 
+                    ? "bg-[var(--bolt-bg-depth-3)]/50 border-transparent" 
+                    : "bg-[var(--bolt-bg-depth-2)] border-[var(--bolt-border-color)] hover:border-[var(--bolt-accent)]/50"
+                )}
+              >
+                <div className="flex items-center gap-3 flex-1 cursor-pointer" onClick={() => toggleTask(dateKey, task.id)}>
+                  <div className={cn(
+                    "w-5 h-5 rounded border flex items-center justify-center transition-colors shrink-0",
+                    task.done ? "bg-[var(--bolt-accent)] border-[var(--bolt-accent)] text-black" : "border-[var(--bolt-text-tertiary)] group-hover:border-[var(--bolt-accent)] text-transparent"
+                  )}>
+                    <CheckSquare size={14} className={task.done ? "opacity-100" : "opacity-0"} />
+                  </div>
+                  <span className={cn(
+                    "text-sm font-medium transition-all select-none",
+                    task.done ? "text-[var(--bolt-text-tertiary)] line-through" : "text-[var(--bolt-text-primary)]"
+                  )}>
+                    {task.text}
+                  </span>
+                </div>
+                
+                <button 
+                  onClick={() => deleteTask(dateKey, task.id)}
+                  className="w-8 h-8 rounded-lg flex items-center justify-center text-[var(--bolt-text-tertiary)] hover:text-rose-400 hover:bg-rose-400/10 opacity-0 group-hover:opacity-100 transition-all shrink-0"
+                >
+                  <Trash2 size={14} />
+                </button>
+              </div>
+            ))
           )}
         </div>
       </GlassCard>
