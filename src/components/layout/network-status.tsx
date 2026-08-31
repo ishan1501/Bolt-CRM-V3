@@ -1,33 +1,51 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { WifiOff, Activity } from "lucide-react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useRef } from "react";
+import { toast } from "sonner";
 
 export function NetworkStatus() {
-  const [isOffline, setIsOffline] = useState(false);
-  const [isSlow, setIsSlow] = useState(false);
+  const offlineToastId = useRef<string | number | null>(null);
+  const slowToastId = useRef<string | number | null>(null);
 
   useEffect(() => {
-    setIsOffline(!navigator.onLine);
-    
     const checkConnection = () => {
       const conn = (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
       if (conn) {
-        // effectiveType can be 'slow-2g', '2g', '3g', or '4g'
         if (conn.effectiveType === 'slow-2g' || conn.effectiveType === '2g' || conn.effectiveType === '3g') {
-          setIsSlow(true);
+          if (!slowToastId.current) {
+            slowToastId.current = toast.warning("Slow connection detected. Loading may take longer.", {
+              duration: 5000,
+            });
+          }
         } else {
-          setIsSlow(false);
+          if (slowToastId.current) {
+            toast.dismiss(slowToastId.current);
+            slowToastId.current = null;
+          }
         }
       }
     };
 
-    const handleOffline = () => setIsOffline(true);
+    const handleOffline = () => {
+      if (!offlineToastId.current) {
+        offlineToastId.current = toast.error("You are currently offline. Check your connection.", {
+          duration: Infinity,
+        });
+      }
+    };
+
     const handleOnline = () => {
-      setIsOffline(false);
+      if (offlineToastId.current) {
+        toast.dismiss(offlineToastId.current);
+        offlineToastId.current = null;
+        toast.success("Connection restored!");
+      }
       checkConnection();
     };
+
+    if (!navigator.onLine) {
+      handleOffline();
+    }
 
     window.addEventListener("offline", handleOffline);
     window.addEventListener("online", handleOnline);
@@ -47,28 +65,5 @@ export function NetworkStatus() {
     };
   }, []);
 
-  return (
-    <AnimatePresence>
-      {(isOffline || isSlow) && (
-        <motion.div 
-          initial={{ opacity: 0, y: 50, scale: 0.9 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          exit={{ opacity: 0, y: 50, scale: 0.9 }}
-          className="fixed bottom-20 md:bottom-4 left-1/2 -translate-x-1/2 z-[9999]"
-        >
-          {isOffline ? (
-            <div className="bg-red-500 text-white px-4 py-3 rounded-2xl shadow-[0_10px_40px_rgba(239,68,68,0.4)] flex items-center gap-3 font-medium text-sm border border-red-400">
-              <WifiOff size={18} />
-              <span>You are currently offline. Check your connection.</span>
-            </div>
-          ) : (
-            <div className="bg-orange-500 text-white px-4 py-3 rounded-2xl shadow-[0_10px_40px_rgba(249,115,22,0.4)] flex items-center gap-3 font-medium text-sm border border-orange-400">
-              <Activity size={18} className="animate-pulse" />
-              <span>Slow connection detected. Loading may take longer.</span>
-            </div>
-          )}
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
+  return null;
 }
