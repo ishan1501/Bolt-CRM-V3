@@ -10,6 +10,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useUIStore } from "@/stores/ui-store";
 import { useEffect } from "react";
+import { LeadDrawer } from "@/components/leads/lead-drawer";
 
 export default function CallsPage() {
   const { reminders, markCompleted, removeReminder } = useReminderStore();
@@ -239,6 +240,7 @@ export default function CallsPage() {
         </div>
 
       </div>
+      <LeadDrawer />
     </div>
   );
 }

@@ -3,6 +3,7 @@ import { X, Plus, Trash2, Filter } from "lucide-react";
 import { useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 const FILTER_GROUPS = [
   {
@@ -268,7 +269,7 @@ export function FilterLeadsDrawer() {
         </div>
 
         {/* Footer */}
-        <div className="px-6 py-5 border-t border-[var(--bolt-border-color)] flex items-center justify-between surface-2">
+        <div className="px-6 py-5 border-t border-[var(--bolt-border-color)] flex items-center justify-between surface-2 relative">
           <div className="flex items-center gap-3">
             <button 
               onClick={() => setLocalFilters([])}
@@ -276,25 +277,35 @@ export function FilterLeadsDrawer() {
             >
               Reset
             </button>
-            <button 
-              onClick={() => {
-                const name = window.prompt("Enter the name for this Saved View (e.g. 'RNR FR'):");
-                if (!name) return;
-                const jsonString = window.prompt("Paste the 'advanceFilter' payload JSON from the Network tab (e.g. { advanceFilter: [...] }):");
-                if (!jsonString) return;
-                try {
-                  const payload = JSON.parse(jsonString);
-                  useViewStore.getState().createView(name, payload);
-                  alert("Successfully imported view! You can now select it from the view dropdown.");
-                  setFilterDrawerOpen(false);
-                } catch (_e) {
-                  alert("Invalid JSON format. Please make sure you copied valid JSON.");
-                }
-              }}
-              className="px-4 py-2 text-[13px] font-semibold text-[var(--bolt-accent)] bg-[var(--bolt-accent)]/10 hover:bg-[var(--bolt-accent)]/20 transition-colors rounded-lg border border-[var(--bolt-accent)]/20"
-            >
-              Import Backend View
-            </button>
+            
+            {/* Inline Import UI instead of window.prompt */}
+            <div className="relative group">
+              <button 
+                onClick={() => {
+                  try {
+                    // Just take clipboard text directly for a better UX than prompt
+                    navigator.clipboard.readText().then(text => {
+                      if (!text) {
+                        toast.error("Clipboard is empty");
+                        return;
+                      }
+                      const payload = JSON.parse(text);
+                      const name = `Imported View ${Math.floor(Math.random() * 1000)}`;
+                      useViewStore.getState().createView(name, payload);
+                      toast.success(`Successfully imported view as '${name}'`);
+                      setFilterDrawerOpen(false);
+                    }).catch(() => {
+                      toast.error("Please copy the JSON payload to your clipboard first, then click Import");
+                    });
+                  } catch (_e) {
+                    toast.error("Invalid JSON format in clipboard");
+                  }
+                }}
+                className="px-4 py-2 text-[13px] font-semibold text-[var(--bolt-accent)] bg-[var(--bolt-accent)]/10 hover:bg-[var(--bolt-accent)]/20 transition-colors rounded-lg border border-[var(--bolt-accent)]/20"
+              >
+                Import from Clipboard
+              </button>
+            </div>
           </div>
           <button 
             onClick={handleApply}

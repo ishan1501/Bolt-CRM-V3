@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { formatDistanceToNow } from "date-fns";
 
-export function RemindersTab({ uuid }: { uuid: string }) {
+export function RemindersTab({ uuid, leadName }: { uuid: string; leadName?: string }) {
   const { reminders, addReminder, markCompleted } = useReminderStore();
   const [title, setTitle] = useState("");
   const [date, setDate] = useState("");
@@ -22,7 +22,6 @@ export function RemindersTab({ uuid }: { uuid: string }) {
     
     const dateTime = new Date(`${date}T${time}`).toISOString();
     
-    // Request notification permission
     if ("Notification" in window && Notification.permission !== "granted") {
       Notification.requestPermission();
     }
@@ -30,7 +29,7 @@ export function RemindersTab({ uuid }: { uuid: string }) {
     addReminder({
       id: Math.random().toString(36).substr(2, 9),
       leadUuid: uuid,
-      leadName: "Lead", // We'd ideally pass the name down, but this works for demo
+      leadName: leadName || "Lead",
       title,
       date: dateTime,
       completed: false

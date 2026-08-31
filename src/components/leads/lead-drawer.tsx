@@ -24,6 +24,7 @@ import { queryKeys } from "@/lib/query-keys";
 import { toast } from "sonner";
 import { createPortal } from "react-dom";
 import { Lead, LeadStage } from "@/types/crm";
+import { PromptModal } from "@/components/ui/prompt-modal";
 
 const TABS = [
   { id: "profile", label: "Lead Details" },
@@ -49,6 +50,7 @@ export function LeadDrawer({ leads = [] }: { leads?: Lead[] }) {
   const { profile, isLoading } = useLeadProfile(activeLeadUuid);
   const queryClient = useQueryClient();
   const [mounted, setMounted] = useState(false);
+  const [promptModalConfig, setPromptModalConfig] = useState<any>(null);
 
   useEffect(() => {
     setMounted(true);
@@ -116,7 +118,7 @@ export function LeadDrawer({ leads = [] }: { leads?: Lead[] }) {
             animate={{ x: 0 }}
             exit={{ x: "100%", transition: { ease: "easeInOut", duration: 0.3 } }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed top-0 right-0 bottom-0 w-full md:w-[80%] lg:w-[75%] xl:w-[70%] surface-1 z-[101] flex shadow-2xl overflow-hidden"
+            className="fixed top-0 right-0 bottom-0 w-full surface-1 z-[101] flex shadow-2xl overflow-hidden"
           >
         {/* Save Lead Button */}
         {activeLeadUuid && (
@@ -129,34 +131,42 @@ export function LeadDrawer({ leads = [] }: { leads?: Lead[] }) {
                 store.removeLead(activeLeadUuid, savedLead.dbId);
                 toast.success("Lead removed from saved list");
               } else {
-                const note = window.prompt("Add a note for this saved lead (optional):");
-                if (note !== null) {
-                  if (profile) {
-                    store.saveLead({
-                      uuid: activeLeadUuid,
-                      name: profile.name || 'Unknown',
-                      email: profile.email || '',
-                      mobile: profile.mobile || '',
-                      stageName: profile.stageName || 'Lead',
-                      timestamp: Date.now(),
-                      note: note
-                    });
-                    toast.success("Lead saved!");
-                  }
-                }
+                setPromptModalConfig({
+                  isOpen: true,
+                  title: "Save Lead",
+                  description: "Add a note for this saved lead (optional):",
+                  onConfirm: (note: string) => {
+                    if (profile) {
+                      store.saveLead({
+                        uuid: activeLeadUuid,
+                        name: profile.name || profile.registeredName || 'Unknown',
+                        email: profile.email || profile.registeredEmail || '',
+                        mobile: profile.mobile || profile.registeredMobile || '',
+                        stageName: profile.stageName || 'Lead',
+                        timestamp: Date.now(),
+                        note: note
+                      });
+                      toast.success("Lead saved!");
+                    }
+                    setPromptModalConfig(null);
+                  },
+                  onCancel: () => setPromptModalConfig(null)
+                });
               }
             }}
-            className="absolute top-4 right-14 p-2 rounded-full hover:bg-white/10 transition-colors z-50 text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-accent)] bg-[var(--bolt-bg-depth-3)]/50 backdrop-blur-sm border border-[var(--bolt-border-color)] shadow-sm md:border-none md:bg-transparent md:backdrop-blur-none md:shadow-none"
-            title="Save Lead with Note"
+            className={cn(
+              "absolute right-14 top-4 w-10 h-10 rounded-xl flex items-center justify-center transition-colors border border-[var(--bolt-border-color)] z-50",
+              isSaved ? "bg-[var(--bolt-accent)] text-black" : "bg-[var(--bolt-bg-depth-2)] text-[var(--bolt-text-secondary)] hover:text-white"
+            )}
           >
-            <Bookmark size={20} className={isSaved ? "fill-current text-[var(--bolt-accent)]" : ""} />
+            <Bookmark size={18} className={isSaved ? "fill-black" : ""} />
           </button>
         )}
 
         {/* Close Button */}
         <button 
           onClick={closeDrawer}
-          className="absolute top-4 right-4 p-2 rounded-full hover:bg-white/10 transition-colors z-50 text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] bg-[var(--bolt-bg-depth-3)]/50 backdrop-blur-sm border border-[var(--bolt-border-color)] shadow-sm md:border-none md:bg-transparent md:backdrop-blur-none md:shadow-none"
+          className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white/10 transition-colors z-50 text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] bg-[var(--bolt-bg-depth-3)]/50 backdrop-blur-sm border border-[var(--bolt-border-color)] shadow-sm md:border md:bg-[var(--bolt-bg-depth-2)] md:backdrop-blur-none"
         >
           <X size={20} />
         </button>
@@ -358,7 +368,7 @@ export function LeadDrawer({ leads = [] }: { leads?: Lead[] }) {
                   {drawerTab === "profile" && <ProfileTab uuid={activeLeadUuid} />}
                   {drawerTab === "notes" && <NotesTab uuid={activeLeadUuid} />}
                   {drawerTab === "history" && <HistoryTab uuid={activeLeadUuid} />}
-                  {drawerTab === "reminders" && <RemindersTab uuid={activeLeadUuid} />}
+                  {drawerTab === "reminders" && <RemindersTab uuid={activeLeadUuid} leadName={profile?.registeredName || profile?.name || ""} />}
                   {drawerTab === "email" && <EmailTab uuid={activeLeadUuid} />}
                   {drawerTab === "whatsapp" && <WhatsAppTab uuid={activeLeadUuid} />}
                 </div>
@@ -372,6 +382,17 @@ export function LeadDrawer({ leads = [] }: { leads?: Lead[] }) {
         )}
           </motion.div>
         </>
+      )}
+      
+      {/* Our custom prompt replacement */}
+      {promptModalConfig && (
+        <PromptModal
+          isOpen={promptModalConfig.isOpen}
+          title={promptModalConfig.title}
+          description={promptModalConfig.description}
+          onConfirm={promptModalConfig.onConfirm}
+          onCancel={promptModalConfig.onCancel}
+        />
       )}
     </AnimatePresence>,
     document.body

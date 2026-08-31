@@ -53,15 +53,17 @@ export const useUIStore = create<UIState>((set) => ({
   setSidebarExpanded: (expanded: boolean) => set({ sidebarExpanded: expanded }),
 
   toggleLeadSelection: (uuid) => set((state) => {
-    const newSelection = new Set<string>();
-    if (!state.selectedLeadIds.has(uuid)) {
-      newSelection.add(uuid); // only allow 1, replace previous
+    const newSelection = new Set<string>(state.selectedLeadIds);
+    if (newSelection.has(uuid)) {
+      newSelection.delete(uuid);
+    } else {
+      newSelection.add(uuid);
     }
     return { selectedLeadIds: newSelection };
   }),
 
-  selectAllLeads: (uuids) => {}, // Disabled since we only allow 1
-  
+  selectAllLeads: (uuids) => set({ selectedLeadIds: new Set<string>(uuids) }),
+
   clearSelection: () => set({ selectedLeadIds: new Set() }),
 
   openDrawer: (uuid, tab?) => set((state) => ({

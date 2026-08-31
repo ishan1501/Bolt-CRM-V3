@@ -2,20 +2,31 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { Upload, ChevronDown, ChevronUp, EyeOff } from "lucide-react";
+import { toast } from "sonner";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<"profile" | "password">("profile");
-  const [user, setUser] = useState<any>({});
+  const [user, setUser] = useState<Record<string, any>>({});
   
   // Accordion states
   const [openSchools, setOpenSchools] = useState(true);
   const [openPrograms, setOpenPrograms] = useState(true);
   const [openForms, setOpenForms] = useState(true);
 
+  // Form states
+  const [formName, setFormName] = useState("");
+  const [formPhone, setFormPhone] = useState("");
+  
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+
   useEffect(() => {
     try {
       const storedUser = JSON.parse(localStorage.getItem("bolt_user") || "{}");
       setUser(storedUser);
+      setFormName(storedUser.name || storedUser.email || "User");
+      setFormPhone(storedUser.phone || "9355349184");
     } catch (e) {
       console.error(e);
     }
@@ -30,8 +41,42 @@ export default function ProfilePage() {
     if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
     return userName.slice(0, 2).toUpperCase();
   }, [userName]);
-  
-  // Mock Data from screenshot
+
+  const handleUpdateProfile = () => {
+    if (!formName.trim()) {
+      toast.error("Name cannot be empty");
+      return;
+    }
+    
+    // Update local storage representation
+    const updatedUser = { ...user, name: formName, phone: formPhone };
+    localStorage.setItem("bolt_user", JSON.stringify(updatedUser));
+    setUser(updatedUser);
+    
+    toast.success("Profile updated successfully");
+  };
+
+  const handleUpdatePassword = () => {
+    if (!currentPassword || !newPassword || !confirmPassword) {
+      toast.error("Please fill in all password fields");
+      return;
+    }
+    if (newPassword !== confirmPassword) {
+      toast.error("New passwords do not match");
+      return;
+    }
+    if (newPassword.length < 8) {
+      toast.error("Password must be at least 8 characters");
+      return;
+    }
+    
+    toast.success("Password changed successfully");
+    setCurrentPassword("");
+    setNewPassword("");
+    setConfirmPassword("");
+  };
+
+  // Mock Data
   const programs = [
     "AI-First Operator #27", "Bloomberg Equity Research Program #27", "Capital Markets and Trading #27",
     "D2C brand bootcamp #27", "Executive Leadership Programme in AI & GCC Transformation #27",
@@ -62,17 +107,13 @@ export default function ProfilePage() {
 
   return (
     <div className="w-full h-full flex flex-col relative pb-48 md:pb-32">
-      {/* Top Header Area */}
       <div className="px-6 md:px-10 py-6">
         <h1 className="text-xl font-bold text-[var(--bolt-text-primary)] mb-6 capitalize">Hi, {userName}</h1>
         
-        {/* Main Profile Card */}
         <div className="w-full bg-[var(--bolt-bg-depth-2)] rounded-3xl border border-[var(--bolt-border-color)] overflow-hidden relative">
-          {/* Subtle gradient background decoration */}
           <div className="absolute top-0 right-0 w-[600px] h-full bg-gradient-to-l from-[rgba(249,200,81,0.03)] to-transparent pointer-events-none" />
           
           <div className="p-8 md:p-12 flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start relative z-10">
-            {/* Avatar Section */}
             <div className="flex flex-col items-center gap-4 shrink-0">
               <div className="w-40 h-40 rounded-[2rem] bg-gradient-to-tr from-[#1a1a1a] to-[#222] border-2 border-[var(--bolt-border-color)] flex items-center justify-center text-5xl font-bold text-[var(--bolt-accent)] shadow-[0_0_40px_rgba(249,200,81,0.05)]">
                 {userInitials}
@@ -83,7 +124,6 @@ export default function ProfilePage() {
               </button>
             </div>
 
-            {/* Info Section */}
             <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left pt-2 w-full">
               <span className="text-[11px] font-bold tracking-[0.2em] text-[var(--bolt-accent)] uppercase mb-2">Your Profile</span>
               <h2 className="text-3xl md:text-5xl font-black text-[var(--bolt-text-primary)] mb-2 capitalize break-words">{userName}</h2>
@@ -94,7 +134,6 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Stats Grid */}
             <div className="grid grid-cols-2 gap-4 w-full md:w-[320px] shrink-0">
               <div className="bg-[var(--bolt-bg-depth-1)] rounded-2xl p-5 border border-[var(--bolt-border-color)] flex flex-col">
                 <span className="text-3xl font-bold text-[var(--bolt-text-primary)] mb-1">1</span>
@@ -116,7 +155,6 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Tabs */}
         <div className="flex items-center gap-2 mt-8 mb-8">
           <button 
             onClick={() => setActiveTab("profile")}
@@ -142,11 +180,9 @@ export default function ProfilePage() {
           </button>
         </div>
 
-        {/* Main Content Area */}
         {activeTab === "profile" ? (
           <>
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">
-              {/* LEFT: Identity */}
               <div className="bg-[var(--bolt-bg-depth-2)] rounded-3xl p-8 border border-[var(--bolt-border-color)] flex flex-col">
                 <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-8">
                   <div>
@@ -163,7 +199,8 @@ export default function ProfilePage() {
                     <label className="text-xs font-bold tracking-wider text-[var(--bolt-text-secondary)] uppercase">Name</label>
                     <input 
                       type="text" 
-                      defaultValue={userName}
+                      value={formName}
+                      onChange={(e) => setFormName(e.target.value)}
                       className="surface-input w-full px-4 py-3 rounded-xl text-sm font-medium transition-all capitalize"
                     />
                   </div>
@@ -187,7 +224,8 @@ export default function ProfilePage() {
                     </div>
                     <input 
                       type="text" 
-                      defaultValue="9355349184" 
+                      value={formPhone}
+                      onChange={(e) => setFormPhone(e.target.value)}
                       className="surface-input w-full px-4 py-3 rounded-xl text-sm font-medium transition-all"
                     />
                   </div>
@@ -204,12 +242,10 @@ export default function ProfilePage() {
                 </div>
               </div>
 
-              {/* RIGHT: Access Scope */}
               <div className="bg-[var(--bolt-bg-depth-2)] rounded-3xl p-8 border border-[var(--bolt-border-color)] flex flex-col">
                 <span className="text-[10px] font-bold tracking-widest text-[var(--bolt-accent)] uppercase mb-1 block">Access Scope</span>
                 <h3 className="text-2xl font-bold text-[var(--bolt-text-primary)] mb-8">Assigned coverage</h3>
 
-                {/* Schools Accordion */}
                 <div className="border border-[var(--bolt-border-color)] bg-[var(--bolt-bg-depth-1)] rounded-2xl mb-4 overflow-hidden">
                   <div 
                     className="flex items-center justify-between p-5 cursor-pointer hover:bg-white/5 transition-colors"
@@ -230,7 +266,6 @@ export default function ProfilePage() {
                   )}
                 </div>
 
-                {/* Programs Accordion */}
                 <div className="border border-[var(--bolt-border-color)] bg-[var(--bolt-bg-depth-1)] rounded-2xl mb-4 overflow-hidden">
                   <div 
                     className="flex items-center justify-between p-5 cursor-pointer hover:bg-white/5 transition-colors"
@@ -253,7 +288,6 @@ export default function ProfilePage() {
                   )}
                 </div>
 
-                {/* Forms Accordion */}
                 <div className="border border-[var(--bolt-border-color)] bg-[var(--bolt-bg-depth-1)] rounded-2xl overflow-hidden">
                   <div 
                     className="flex items-center justify-between p-5 cursor-pointer hover:bg-white/5 transition-colors"
@@ -278,7 +312,6 @@ export default function ProfilePage() {
               </div>
             </div>
 
-            {/* Reporting Section */}
             <div className="mt-6 bg-[var(--bolt-bg-depth-2)] rounded-3xl p-8 border border-[var(--bolt-border-color)] flex flex-col">
               <span className="text-[10px] font-bold tracking-widest text-[var(--bolt-accent)] uppercase mb-1 block">Reporting</span>
               <h3 className="text-2xl font-bold text-[var(--bolt-text-primary)] mb-8">Your reporting line</h3>
@@ -308,7 +341,6 @@ export default function ProfilePage() {
             </div>
           </>
         ) : (
-          /* Password Tab */
           <div className="bg-[var(--bolt-bg-depth-2)] rounded-3xl p-8 border border-[var(--bolt-border-color)] flex flex-col max-w-3xl">
             <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-8">
               <div>
@@ -326,6 +358,8 @@ export default function ProfilePage() {
                 <div className="relative">
                   <input 
                     type="password" 
+                    value={currentPassword}
+                    onChange={(e) => setCurrentPassword(e.target.value)}
                     placeholder="Enter Current Password"
                     className="surface-input w-full px-4 py-3 pr-10 rounded-xl text-sm font-medium transition-all"
                   />
@@ -339,6 +373,8 @@ export default function ProfilePage() {
                 <div className="relative">
                   <input 
                     type="password" 
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
                     placeholder="Enter New Password"
                     className="surface-input w-full px-4 py-3 pr-10 rounded-xl text-sm font-medium transition-all"
                   />
@@ -351,6 +387,8 @@ export default function ProfilePage() {
                 <div className="relative">
                   <input 
                     type="password" 
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Confirm New Password"
                     className="surface-input w-full px-4 py-3 pr-10 rounded-xl text-sm font-medium transition-all"
                   />
@@ -370,7 +408,6 @@ export default function ProfilePage() {
         )}
       </div>
 
-      {/* Floating Bottom Action Bar */}
       <div className="fixed bottom-24 md:bottom-6 left-0 md:left-1/2 md:-translate-x-1/2 w-full md:w-[800px] z-50 px-4 md:px-0 pointer-events-none">
         <div className="bg-[var(--bolt-bg-depth-3)]/90 backdrop-blur-md border border-[var(--bolt-border-color)] rounded-2xl shadow-2xl p-3 md:p-4 flex items-center justify-between pointer-events-auto">
           <button className="px-4 md:px-5 py-2 md:py-2.5 rounded-xl border border-[var(--bolt-border-color)] text-xs md:text-sm font-bold hover:bg-white/5 transition-colors shrink-0">
@@ -378,11 +415,20 @@ export default function ProfilePage() {
           </button>
           <div className="flex items-center gap-2 md:gap-3">
             {activeTab === "profile" && (
-              <button className="px-3 md:px-5 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] hover:bg-white/5 transition-colors shrink-0">
+              <button 
+                onClick={() => {
+                  setFormName(user?.name || user?.email || "User");
+                  setFormPhone(user?.phone || "9355349184");
+                }}
+                className="px-3 md:px-5 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] hover:bg-white/5 transition-colors shrink-0"
+              >
                 Discard
               </button>
             )}
-            <button className="px-4 md:px-6 py-2 md:py-2.5 rounded-xl bg-[var(--bolt-accent)] text-black text-xs md:text-sm font-bold hover:bg-[#eab308] transition-colors shadow-[0_0_15px_rgba(249,200,81,0.2)] shrink-0">
+            <button 
+              onClick={activeTab === "profile" ? handleUpdateProfile : handleUpdatePassword}
+              className="px-4 md:px-6 py-2 md:py-2.5 rounded-xl bg-[var(--bolt-accent)] text-black text-xs md:text-sm font-bold hover:bg-[#eab308] transition-colors shadow-[0_0_15px_rgba(249,200,81,0.2)] shrink-0"
+            >
               {activeTab === "profile" ? "Update Profile" : "Save Password"}
             </button>
           </div>
