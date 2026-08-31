@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { useUIStore } from "@/stores/ui-store";
 import { LeadDrawer } from "@/components/leads/lead-drawer";
@@ -18,14 +18,31 @@ export default function LeadDetailPage() {
   const router = useRouter();
   const { openDrawer, closeDrawer, drawerOpen } = useUIStore();
 
+  const [hasOpened, setHasOpened] = useState(false);
+
   useEffect(() => {
     if (uuid) {
       openDrawer(uuid);
+      setHasOpened(true);
     }
     return () => {
       closeDrawer();
     };
   }, [uuid, openDrawer, closeDrawer]);
+
+  useEffect(() => {
+    // If the drawer was opened and then closed while we are still on this page, navigate back
+    if (hasOpened && !drawerOpen) {
+      router.back();
+      // Fallback in case router.back() does nothing (e.g. direct link visit)
+      const fallbackTimer = setTimeout(() => {
+        if (window.location.pathname.startsWith("/leads/")) {
+          router.push("/leads");
+        }
+      }, 100);
+      return () => clearTimeout(fallbackTimer);
+    }
+  }, [drawerOpen, hasOpened, router]);
 
   return (
     <div className="w-full h-full flex flex-col">
