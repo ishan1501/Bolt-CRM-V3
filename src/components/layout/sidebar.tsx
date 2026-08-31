@@ -65,19 +65,14 @@ export function Sidebar() {
         )}
       >
         {/* Brand */}
-        <div className="py-4 flex flex-col justify-center px-6 border-b border-[var(--bolt-border-color)] overflow-hidden shrink-0 min-h-[72px]">
-          <div className="flex items-center justify-between w-full">
-            <div 
-              className={cn(
-                "flex flex-col items-center transition-opacity duration-300",
-                (sidebarCollapsed && !mobileDrawerOpen) ? "md:opacity-0" : "opacity-100"
-              )}
-            >
-              <BrandLogo />
+        <div className="h-16 flex flex-col justify-center px-4 border-b border-[var(--bolt-border-color)] overflow-hidden shrink-0">
+          <div className="flex items-center justify-between w-full h-full">
+            <div className="flex items-center h-full">
+              <BrandLogo iconOnly={sidebarCollapsed && !mobileDrawerOpen} className={cn("transition-all duration-300", sidebarCollapsed && !mobileDrawerOpen ? "ml-3" : "ml-2")} />
             </div>
             {/* Mobile close button */}
             <button 
-              className="md:hidden p-1 text-[var(--bolt-text-secondary)] hover:text-white"
+              className="md:hidden p-1 text-[var(--bolt-text-secondary)] hover:text-white mr-2"
               onClick={() => setMobileDrawerOpen(false)}
             >
               <X size={20} />
@@ -123,14 +118,6 @@ export function Sidebar() {
 
         {/* Bottom Actions */}
         <div className="p-3 border-t border-[var(--bolt-border-color)] flex flex-col gap-2 shrink-0">
-          <div 
-            className={cn(
-              "text-[9px] text-[var(--bolt-text-secondary)] font-medium tracking-wide text-center pt-2 transition-opacity duration-300",
-              (sidebarCollapsed && !mobileDrawerOpen) ? "md:opacity-0 md:hidden" : "opacity-100"
-            )}
-          >
-            Made with ❤️ by Ishan
-          </div>
           <Link
             href="/settings"
             onClick={closeMobile}

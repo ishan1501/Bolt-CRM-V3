@@ -1,6 +1,6 @@
 "use client";
 
-import { Bell, Search, Loader2, CheckCircle2, Play, Pause, X, Menu } from "lucide-react";
+import { Bell, Search, Loader2, CheckCircle2, Play, Pause, X, Menu, Settings } from "lucide-react";
 import Link from "next/link";
 import { useState, useRef, useEffect, useMemo } from "react";
 
@@ -9,6 +9,7 @@ import { useUIStore } from "@/stores/ui-store";
 import { useJobStore } from "@/stores/job-store";
 import { usePathname } from "next/navigation";
 import { GlassCard } from "../ui/glass-card";
+import { supabase } from "@/lib/supabase";
 
 export function TopBar() {
   const { reminders } = useReminderStore();
@@ -60,11 +61,17 @@ export function TopBar() {
   useEffect(() => {
     const notified5m = new Set<string>();
     const notified1m = new Set<string>();
+    
+    // Pace and Power Shot tracking
+    const notifiedPowerShots = new Set<string>();
+    let lastPaceCheck = 0;
 
-    const checkReminders = () => {
+    const checkReminders = async () => {
       if (!("Notification" in window) || Notification.permission !== "granted") return;
 
       const now = new Date();
+      
+      // 1. Regular Call Reminders
       reminders.filter(r => !r.completed).forEach(r => {
         const callTime = new Date(r.date);
         const diffMs = callTime.getTime() - now.getTime();
@@ -86,6 +93,66 @@ export function TopBar() {
           notified1m.add(r.id);
         }
       });
+
+      // 2. Power Shot Reminders & Pacing
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
+      
+      // Power Shot 1: 11:00 AM
+      if (timeStr === "10:55" && !notifiedPowerShots.has("ps1")) {
+        new Notification("⚡ Power Shot 1 Approaching!", { body: "Get ready! 11:00 AM - 12:30 PM is for aggressive pipeline building.", icon: "/icon.png" });
+        notifiedPowerShots.add("ps1");
+      }
+      // Power Shot 2: 3:00 PM
+      if (timeStr === "14:55" && !notifiedPowerShots.has("ps2")) {
+        new Notification("⚡ Power Shot 2 Approaching!", { body: "3:00 PM - 5:00 PM: Extreme volume calling. Let's go!", icon: "/icon.png" });
+        notifiedPowerShots.add("ps2");
+      }
+      // Power Shot 3: 6:00 PM
+      if (timeStr === "17:55" && !notifiedPowerShots.has("ps3")) {
+        new Notification("⚡ Final Power Shot Approaching!", { body: "6:00 PM - 7:30 PM: Close the day strong!", icon: "/icon.png" });
+        notifiedPowerShots.add("ps3");
+      }
+
+      // Pacing check (every 30 mins)
+      if (now.getTime() - lastPaceCheck > 30 * 60 * 1000) {
+        lastPaceCheck = now.getTime();
+        
+        // Only check pacing during office hours (10:30 to 19:30)
+        const currentMins = hours * 60 + minutes;
+        const startMins = 10 * 60 + 30; // 10:30
+        const endMins = 19 * 60 + 30; // 19:30
+        
+        if (currentMins >= startMins && currentMins <= endMins) {
+          try {
+            const user = JSON.parse(localStorage.getItem("bolt_user") || "{}");
+            const userId = user.email || user.id;
+            if (userId) {
+              const startOfDay = new Date(now.getFullYear(), now.getMonth(), now.getDate()).toISOString();
+              const { count } = await supabase
+                .from('call_logs')
+                .select('*', { count: 'exact', head: true })
+                .eq('user_id', userId)
+                .gte('created_at', startOfDay);
+
+              if (count !== null) {
+                const targetCalls = 200;
+                const totalWorkingMins = endMins - startMins; // 9 hours = 540 mins
+                const elapsedMins = currentMins - startMins;
+                const expectedCalls = Math.round((targetCalls / totalWorkingMins) * elapsedMins);
+                
+                if (count < expectedCalls - 10) {
+                  new Notification("⚠️ Pick up the pace!", {
+                    body: `You've made ${count} calls. You should be around ${expectedCalls} by now to hit 200 today!`,
+                    icon: "/icon.png"
+                  });
+                }
+              }
+            }
+          } catch (e) {}
+        }
+      }
     };
 
     const interval = setInterval(checkReminders, 10000); // Check every 10 seconds
@@ -221,6 +288,13 @@ export function TopBar() {
             </GlassCard>
           )}
         </div>
+        <Link 
+          href="/settings"
+          className="md:hidden w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-[var(--bolt-text-secondary)] transition-colors"
+          title="Settings"
+        >
+          <Settings size={16} />
+        </Link>
         <Link 
           href="/profile" 
           title="Profile"
