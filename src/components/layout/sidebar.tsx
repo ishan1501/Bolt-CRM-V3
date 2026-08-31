@@ -74,9 +74,6 @@ export function Sidebar() {
               )}
             >
               <BrandLogo />
-              <div className="text-[9px] text-[var(--bolt-text-secondary)] mt-1.5 font-medium tracking-wide text-center">
-                Made with ❤️ by Ishan
-              </div>
             </div>
             {/* Mobile close button */}
             <button 
@@ -126,6 +123,14 @@ export function Sidebar() {
 
         {/* Bottom Actions */}
         <div className="p-3 border-t border-[var(--bolt-border-color)] flex flex-col gap-2 shrink-0">
+          <div 
+            className={cn(
+              "text-[9px] text-[var(--bolt-text-secondary)] font-medium tracking-wide text-center pt-2 transition-opacity duration-300",
+              (sidebarCollapsed && !mobileDrawerOpen) ? "md:opacity-0 md:hidden" : "opacity-100"
+            )}
+          >
+            Made with ❤️ by Ishan
+          </div>
           <Link
             href="/settings"
             onClick={closeMobile}

@@ -22,6 +22,7 @@ interface ReminderState {
   removeReminder: (id: string) => void;
   markCompleted: (id: string) => void;
   getUpcomingReminders: () => Reminder[];
+  getOverdueReminders: () => Reminder[];
 }
 
 export const useReminderStore = create<ReminderState>()(
@@ -48,6 +49,13 @@ export const useReminderStore = create<ReminderState>()(
         return get().reminders
           .filter(r => !r.completed && r.date >= now)
           .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
+      },
+
+      getOverdueReminders: () => {
+        const now = new Date().toISOString();
+        return get().reminders
+          .filter(r => !r.completed && r.date < now)
+          .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()); // Most recent overdue first
       },
     }),
     {

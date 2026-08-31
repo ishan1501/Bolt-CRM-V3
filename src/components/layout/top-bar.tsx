@@ -49,6 +49,49 @@ export function TopBar() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Request Notification permission
+  useEffect(() => {
+    if ("Notification" in window && Notification.permission === "default") {
+      Notification.requestPermission();
+    }
+  }, []);
+
+  // Check for upcoming calls to fire notifications
+  useEffect(() => {
+    const notified5m = new Set<string>();
+    const notified1m = new Set<string>();
+
+    const checkReminders = () => {
+      if (!("Notification" in window) || Notification.permission !== "granted") return;
+
+      const now = new Date();
+      reminders.filter(r => !r.completed).forEach(r => {
+        const callTime = new Date(r.date);
+        const diffMs = callTime.getTime() - now.getTime();
+        const diffMins = Math.round(diffMs / 60000);
+
+        if (diffMins === 5 && !notified5m.has(r.id)) {
+          new Notification("Upcoming Call in 5 Minutes!", {
+            body: `Reminder for ${r.leadName || "Lead"} at ${callTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`,
+            icon: "/icon.png"
+          });
+          notified5m.add(r.id);
+        }
+
+        if (diffMins === 1 && !notified1m.has(r.id)) {
+          new Notification("Call Starting Soon!", {
+            body: `Your call with ${r.leadName || "Lead"} is in 1 minute.`,
+            icon: "/icon.png"
+          });
+          notified1m.add(r.id);
+        }
+      });
+    };
+
+    const interval = setInterval(checkReminders, 10000); // Check every 10 seconds
+    return () => clearInterval(interval);
+  }, [reminders]);
+
   return (
     <header className="h-16 bg-[var(--bolt-bg-depth-2)]/80 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between px-4 md:px-6 border-b border-[var(--bolt-border-color)] shadow-sm gap-2 md:gap-4 shrink-0">
       
