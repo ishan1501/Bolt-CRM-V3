@@ -11,6 +11,8 @@ import { motion, AnimatePresence } from "framer-motion";
 export default function AdminDashboard() {
   const queryClient = useQueryClient();
   const [isAdminAuthenticated, setIsAdminAuthenticated] = useState<boolean | null>(null);
+  const [loginMode, setLoginMode] = useState<"passcode" | "email">("passcode");
+  const [loginPasscode, setLoginPasscode] = useState("");
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -25,15 +27,22 @@ export default function AdminDashboard() {
 
   const handleAdminLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (
-      (loginEmail === "ratan.sethi@bolt.app" && loginPassword === "Ratan@123") ||
-      (loginPassword === "152001") // Support passcode as well
-    ) {
-      localStorage.setItem("bolt_admin_auth", "true");
-      setIsAdminAuthenticated(true);
-      setLoginError("");
+    if (loginMode === "passcode") {
+      if (loginPasscode === "152001") {
+        localStorage.setItem("bolt_admin_auth", "true");
+        setIsAdminAuthenticated(true);
+        setLoginError("");
+      } else {
+        setLoginError("Invalid passcode");
+      }
     } else {
-      setLoginError("Invalid admin credentials");
+      if (loginEmail === "ratan.sethi@bolt.app" && loginPassword === "Ratan@123") {
+        localStorage.setItem("bolt_admin_auth", "true");
+        setIsAdminAuthenticated(true);
+        setLoginError("");
+      } else {
+        setLoginError("Invalid admin credentials");
+      }
     }
   };
 
@@ -245,36 +254,47 @@ export default function AdminDashboard() {
           </div>
 
           <form onSubmit={handleAdminLogin} className="space-y-4">
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Email or Passcode</label>
-              <input
-                type="text"
-                value={loginEmail}
-                onChange={(e) => {
-                  setLoginEmail(e.target.value);
-                  // If they type just the passcode in the email field, auto-sync it to password to make it easy
-                  if (e.target.value === "152001") {
-                    setLoginPassword("152001");
-                  }
-                }}
-                placeholder="admin@bolt.app"
-                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#eab308]/50 focus:ring-1 focus:ring-[#eab308]/50 transition-all"
-              />
-            </div>
-            
-            <div className="space-y-2">
-              <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Password</label>
-              <input
-                type="password"
-                value={loginPassword}
-                onChange={(e) => setLoginPassword(e.target.value)}
-                placeholder="••••••••"
-                className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#eab308]/50 focus:ring-1 focus:ring-[#eab308]/50 transition-all"
-              />
-            </div>
+            {loginMode === "passcode" ? (
+              <div className="space-y-2">
+                <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Passcode</label>
+                <input
+                  type="password"
+                  value={loginPasscode}
+                  onChange={(e) => setLoginPasscode(e.target.value)}
+                  placeholder="••••••"
+                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#eab308]/50 focus:ring-1 focus:ring-[#eab308]/50 transition-all text-center tracking-[0.5em] text-lg"
+                  autoFocus
+                />
+              </div>
+            ) : (
+              <>
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Email</label>
+                  <input
+                    type="email"
+                    value={loginEmail}
+                    onChange={(e) => setLoginEmail(e.target.value)}
+                    placeholder="admin@bolt.app"
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#eab308]/50 focus:ring-1 focus:ring-[#eab308]/50 transition-all"
+                    autoFocus
+                  />
+                </div>
+                
+                <div className="space-y-2">
+                  <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Password</label>
+                  <input
+                    type="password"
+                    value={loginPassword}
+                    onChange={(e) => setLoginPassword(e.target.value)}
+                    placeholder="••••••••"
+                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#eab308]/50 focus:ring-1 focus:ring-[#eab308]/50 transition-all"
+                  />
+                </div>
+              </>
+            )}
 
             {loginError && (
-              <div className="text-red-400 text-sm font-medium bg-red-400/10 border border-red-400/20 rounded-lg p-3 text-center">
+              <div className="text-red-400 text-sm font-medium bg-red-400/10 border border-red-400/20 rounded-lg p-3 text-center animate-in fade-in zoom-in-95">
                 {loginError}
               </div>
             )}
@@ -285,6 +305,17 @@ export default function AdminDashboard() {
             >
               <Lock size={18} />
               Secure Login
+            </button>
+            
+            <button
+              type="button"
+              onClick={() => {
+                setLoginMode(loginMode === "passcode" ? "email" : "passcode");
+                setLoginError("");
+              }}
+              className="w-full text-white/40 hover:text-white/80 text-sm font-medium mt-2 transition-colors"
+            >
+              {loginMode === "passcode" ? "Login with Email instead" : "Use Passcode instead"}
             </button>
           </form>
         </motion.div>
