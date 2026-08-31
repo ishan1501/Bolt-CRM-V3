@@ -152,7 +152,19 @@ export function LeadsTable({ leads }: LeadsTableProps) {
             </tr>
           </thead>
           <tbody>
-            {leads.map((lead) => {
+            {leads.length === 0 ? (
+              <tr>
+                <td colSpan={activeColumns.length + 1} className="px-4 py-24 text-center">
+                  <div className="flex flex-col items-center justify-center gap-3">
+                    <div className="w-16 h-16 rounded-full bg-[var(--bolt-bg-depth-3)] border border-[var(--bolt-border-color)] flex items-center justify-center mb-2">
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--bolt-text-secondary)]"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                    </div>
+                    <h3 className="text-lg font-bold text-[var(--bolt-text-primary)]">No leads found</h3>
+                    <p className="text-sm text-[var(--bolt-text-secondary)]">Try adjusting your filters or search query to find what you're looking for.</p>
+                  </div>
+                </td>
+              </tr>
+            ) : leads.map((lead) => {
               const isSelected = selectedLeadIds.has(lead.uuid);
               const isUntouched = (lead.stage_name || (lead as any).stageName)?.toLowerCase() === "untouched";
               

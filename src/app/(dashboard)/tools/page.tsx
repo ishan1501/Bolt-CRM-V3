@@ -56,7 +56,7 @@ function EmiCalculator() {
       "*Total Repayment: " + fmtINR(res.totalPayment) + "*"
     ];
     navigator.clipboard.writeText(lines.join("\n")).then(() => {
-      alert("Copied to clipboard!");
+      toast.success("Copied to clipboard!");
     });
   };
 
@@ -351,7 +351,7 @@ function FeeCalculator() {
                   `*Net Payable Amount:* ${fmtINR(res.total)}\n`;
                 
                 navigator.clipboard.writeText(text);
-                toast.success("Fee breakdown copied to clipboard");
+                toast.success("Copied to clipboard!");
               }}
               className="w-full py-3 bg-[var(--bolt-accent)]/10 text-[var(--bolt-accent)] font-semibold rounded-xl border border-[var(--bolt-accent)]/20 hover:bg-[var(--bolt-accent)]/20 transition-colors"
             >

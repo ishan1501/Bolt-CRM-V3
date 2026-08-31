@@ -39,6 +39,21 @@ export function TopBar() {
   const activeJobsCount = jobs.filter(j => j.status === 'running').length;
   
   const totalNotifications = upcomingCount + activeJobsCount;
+  const [unreadNotifications, setUnreadNotifications] = useState(false);
+  const prevNotifCount = useRef(totalNotifications);
+
+  useEffect(() => {
+    if (totalNotifications > prevNotifCount.current) {
+      setUnreadNotifications(true);
+    }
+    prevNotifCount.current = totalNotifications;
+  }, [totalNotifications]);
+
+  useEffect(() => {
+    if (!isLeadsPage) {
+      setSearchQuery("");
+    }
+  }, [isLeadsPage, setSearchQuery]);
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -83,6 +98,7 @@ export function TopBar() {
             icon: "/icon.png"
           });
           notified5m.current.add(r.id);
+          setUnreadNotifications(true);
         }
 
         if (diffMins === 1 && !notified1m.current.has(r.id)) {
@@ -91,6 +107,7 @@ export function TopBar() {
             icon: "/icon.png"
           });
           notified1m.current.add(r.id);
+          setUnreadNotifications(true);
         }
       });
 
@@ -182,10 +199,13 @@ export function TopBar() {
         <div className="relative" ref={notifRef}>
           <div 
             className="cursor-pointer w-9 h-9 flex items-center justify-center rounded-lg hover:bg-white/5 transition-colors text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)]"
-            onClick={() => setShowNotifications(!showNotifications)}
+            onClick={() => {
+              setShowNotifications(!showNotifications);
+              if (!showNotifications) setUnreadNotifications(false);
+            }}
           >
             <Bell size={18} />
-            {totalNotifications > 0 && (
+            {unreadNotifications && (
               <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-[var(--bolt-accent)] rounded-full ring-2 ring-[var(--bolt-bg-depth-2)] shadow-[0_0_8px_var(--bolt-accent-glow)]" />
             )}
           </div>
@@ -235,7 +255,7 @@ export function TopBar() {
                         <div className="w-full bg-black/40 rounded-full h-1.5 overflow-hidden">
                           <div 
                             className={`h-full rounded-full transition-all duration-500 ${job.status === 'completed' ? 'bg-green-400' : job.status === 'failed' ? 'bg-red-400' : 'bg-[var(--bolt-accent)]'}`}
-                            style={{ width: `${(job.completed / job.total) * 100}%` }}
+                            style={{ width: `${job.total > 0 ? (job.completed / job.total) * 100 : 0}%` }}
                           />
                         </div>
                       </div>

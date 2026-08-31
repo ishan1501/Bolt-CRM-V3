@@ -1,0 +1,32 @@
+"use client";
+
+import { usePathname } from "next/navigation";
+import { useEffect } from "react";
+
+export function TitleUpdater() {
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (!pathname) return;
+    
+    let title = "Bolt CRM";
+    
+    if (pathname.startsWith("/leads/")) {
+      title = "Lead Profile | Bolt CRM";
+    } else {
+      const pathParts = pathname.split("/").filter(Boolean);
+      if (pathParts.length > 0) {
+        const pageName = pathParts[0];
+        const formattedName = pageName
+          .split("-")
+          .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+          .join(" ");
+        title = `${formattedName} | Bolt CRM`;
+      }
+    }
+
+    document.title = title;
+  }, [pathname]);
+
+  return null;
+}

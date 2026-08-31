@@ -4,6 +4,7 @@ import { AppLayout } from "@/components/layout/app-layout";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useSubscriptionStore } from "@/stores/subscription-store";
+import { TitleUpdater } from "@/components/layout/title-updater";
 import { Loader2 } from "lucide-react";
 
 export default function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -71,5 +72,10 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
     );
   }
 
-  return <AppLayout>{children}</AppLayout>;
+  return (
+    <>
+      <TitleUpdater />
+      <AppLayout>{children}</AppLayout>
+    </>
+  );
 }
