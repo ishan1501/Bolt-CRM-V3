@@ -56,9 +56,11 @@ export function LeadDrawer({ leads: propLeads = [] }: { leads?: Lead[] }) {
 
   const handleClose = () => {
     closeDrawer();
-    // If we're on the main table routes but the URL was spoofed for deep-linking, revert it
-    if (pathname === '/leads' || pathname === '/saved-leads') {
-      window.history.pushState(null, '', pathname);
+    // If the URL was spoofed for deep-linking, we should undo it by popping the history state.
+    // If we are on the standalone page with no history, history.back() does nothing, 
+    // and LeadDetailPage's useEffect will handle the fallback navigation to /leads.
+    if (window.location.pathname !== '/leads' && window.location.pathname !== '/saved-leads') {
+      window.history.back();
     }
   };
 
@@ -67,6 +69,17 @@ export function LeadDrawer({ leads: propLeads = [] }: { leads?: Lead[] }) {
 
   useEffect(() => {
     setMounted(true);
+
+    const handlePopState = () => {
+      // If user presses back button, the URL changes back to a table route, so we close the drawer
+      const path = window.location.pathname;
+      if (path === '/leads' || path === '/saved-leads' || path === '/applications') {
+        useUIStore.getState().closeDrawer();
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
   const { data: stages = [] } = useQuery({
@@ -117,15 +130,68 @@ export function LeadDrawer({ leads: propLeads = [] }: { leads?: Lead[] }) {
 
   if (!mounted) return null;
 
+  const drawerActions = (
+    <>
+      {activeLeadUuid && (
+        <button
+          onClick={() => {
+            const store = useSavedLeadsStore.getState();
+            const savedLead = store.savedLeads.find(l => l.uuid === activeLeadUuid);
+            
+            if (savedLead) {
+              store.removeLead(activeLeadUuid, savedLead.dbId);
+              toast.success("Lead removed from saved list");
+            } else {
+              setPromptModalConfig({
+                isOpen: true,
+                title: "Save Lead",
+                description: "Add a note for this saved lead (optional):",
+                onConfirm: (note: string) => {
+                  if (profile) {
+                    store.saveLead({
+                      uuid: activeLeadUuid,
+                      name: profile.name || profile.registeredName || 'Unknown',
+                      email: profile.email || profile.registeredEmail || '',
+                      mobile: profile.mobile || profile.registeredMobile || '',
+                      stageName: profile.stageName || 'Lead',
+                      timestamp: Date.now(),
+                      note: note
+                    });
+                    toast.success("Lead saved!");
+                  }
+                  setPromptModalConfig(null);
+                },
+                onCancel: () => setPromptModalConfig(null)
+              });
+            }
+          }}
+          className={cn(
+            "w-9 h-9 rounded-xl flex items-center justify-center transition-colors border border-[var(--bolt-border-color)] shadow-sm backdrop-blur-sm md:bg-[var(--bolt-bg-depth-2)] md:backdrop-blur-none",
+            isSaved ? "bg-[var(--bolt-accent)] text-black" : "bg-[var(--bolt-bg-depth-3)]/50 text-[var(--bolt-text-secondary)] hover:text-white"
+          )}
+        >
+          <Bookmark size={16} className={isSaved ? "fill-black" : ""} />
+        </button>
+      )}
+      <button 
+        onClick={handleClose}
+        className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white/10 transition-colors text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] bg-[var(--bolt-bg-depth-3)]/50 backdrop-blur-sm border border-[var(--bolt-border-color)] shadow-sm md:bg-[var(--bolt-bg-depth-2)] md:backdrop-blur-none"
+      >
+        <X size={18} />
+      </button>
+    </>
+  );
+
   return createPortal(
-    <AnimatePresence>
-      {drawerOpen && (
+    <>
+      <AnimatePresence>
+        {drawerOpen && (
         <>
           <motion.div 
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100]"
+            className="fixed inset-0 md:left-[80px] bg-black/40 backdrop-blur-sm z-[100]"
             onClick={handleClose}
           />
           <motion.div 
@@ -133,58 +199,11 @@ export function LeadDrawer({ leads: propLeads = [] }: { leads?: Lead[] }) {
             animate={{ x: 0 }}
             exit={{ x: "100%", transition: { type: "tween", ease: "easeInOut", duration: 0.3 } }}
             transition={{ type: "tween", ease: "easeOut", duration: 0.3 }}
-            className="fixed top-0 right-0 bottom-0 w-full surface-1 z-[101] flex shadow-2xl overflow-hidden"
+            className="fixed top-0 right-0 bottom-0 w-full md:w-[calc(100%-80px)] surface-1 z-[101] flex shadow-2xl overflow-hidden"
           >
-        {/* Save Lead Button */}
-        {activeLeadUuid && (
-          <button
-            onClick={() => {
-              const store = useSavedLeadsStore.getState();
-              const savedLead = store.savedLeads.find(l => l.uuid === activeLeadUuid);
-              
-              if (savedLead) {
-                store.removeLead(activeLeadUuid, savedLead.dbId);
-                toast.success("Lead removed from saved list");
-              } else {
-                setPromptModalConfig({
-                  isOpen: true,
-                  title: "Save Lead",
-                  description: "Add a note for this saved lead (optional):",
-                  onConfirm: (note: string) => {
-                    if (profile) {
-                      store.saveLead({
-                        uuid: activeLeadUuid,
-                        name: profile.name || profile.registeredName || 'Unknown',
-                        email: profile.email || profile.registeredEmail || '',
-                        mobile: profile.mobile || profile.registeredMobile || '',
-                        stageName: profile.stageName || 'Lead',
-                        timestamp: Date.now(),
-                        note: note
-                      });
-                      toast.success("Lead saved!");
-                    }
-                    setPromptModalConfig(null);
-                  },
-                  onCancel: () => setPromptModalConfig(null)
-                });
-              }
-            }}
-            className={cn(
-              "absolute right-20 top-4 w-10 h-10 rounded-xl flex items-center justify-center transition-colors border border-[var(--bolt-border-color)] z-50",
-              isSaved ? "bg-[var(--bolt-accent)] text-black" : "bg-[var(--bolt-bg-depth-2)] text-[var(--bolt-text-secondary)] hover:text-white"
-            )}
-          >
-            <Bookmark size={18} className={isSaved ? "fill-black" : ""} />
-          </button>
-        )}
-
-        {/* Close Button */}
-        <button 
-          onClick={handleClose}
-          className="absolute top-4 right-4 w-10 h-10 flex items-center justify-center rounded-xl hover:bg-white/10 transition-colors z-50 text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] bg-[var(--bolt-bg-depth-3)]/50 backdrop-blur-sm border border-[var(--bolt-border-color)] shadow-sm md:border md:bg-[var(--bolt-bg-depth-2)] md:backdrop-blur-none"
-        >
-          <X size={20} />
-        </button>
+        <div className="absolute top-4 right-4 flex md:hidden items-center gap-2 z-50">
+          {drawerActions}
+        </div>
 
         {activeLeadUuid ? (
           isLoading ? (
@@ -344,9 +363,16 @@ export function LeadDrawer({ leads: propLeads = [] }: { leads?: Lead[] }) {
 
               {/* RIGHT MAIN AREA */}
               <div className="flex-1 flex flex-col surface-1 relative h-auto md:h-full md:overflow-hidden">
-                <LeadProgress profile={profile} />
+                <div className="flex items-center justify-between border-b border-[var(--bolt-border-color)]">
+                  <div className="flex-1 overflow-x-auto hide-scrollbar">
+                    <LeadProgress profile={profile} />
+                  </div>
+                  <div className="hidden md:flex items-center gap-2 px-6 py-2 shrink-0 border-l border-[var(--bolt-border-color)]">
+                    {drawerActions}
+                  </div>
+                </div>
 
-                <div className="grid grid-cols-3 lg:grid-cols-6 divide-x divide-y lg:divide-y-0 divide-[var(--bolt-border-color)] border-b border-[var(--bolt-border-color)] surface-2">
+                <div className="grid grid-cols-2 md:grid-cols-6 gap-px bg-[var(--bolt-border-color)] border-b border-[var(--bolt-border-color)]">
                   {[
                     { label: "Communication", value: profile.communicationStatus || "—" },
                     { label: "Lead Score", value: profile.leadScore ?? "—" },
@@ -355,7 +381,7 @@ export function LeadDrawer({ leads: propLeads = [] }: { leads?: Lead[] }) {
                     { label: "Medium", value: profile.medium || "—" },
                     { label: "Lead Type", value: profile.leadType || "—" },
                   ].map(({ label, value }) => (
-                    <div key={label} className="p-5 flex flex-col gap-1">
+                    <div key={label} className="p-5 flex flex-col gap-1 surface-2">
                       <div className="text-[10px] font-semibold text-[var(--bolt-text-tertiary)] uppercase tracking-widest">{label}</div>
                       <div className="text-[13px] font-semibold text-[var(--bolt-text-primary)] truncate" title={String(value)}>{String(value)}</div>
                     </div>
@@ -400,18 +426,19 @@ export function LeadDrawer({ leads: propLeads = [] }: { leads?: Lead[] }) {
           </motion.div>
         </>
       )}
-      
-      {/* Our custom prompt replacement */}
-      {promptModalConfig && (
-        <PromptModal
-          isOpen={promptModalConfig.isOpen}
-          title={promptModalConfig.title}
-          description={promptModalConfig.description}
-          onConfirm={promptModalConfig.onConfirm}
-          onCancel={promptModalConfig.onCancel}
-        />
-      )}
-    </AnimatePresence>,
+    </AnimatePresence>
+    
+    {/* Our custom prompt replacement (hoisted outside main AnimatePresence) */}
+    {promptModalConfig && (
+      <PromptModal
+        isOpen={promptModalConfig.isOpen}
+        title={promptModalConfig.title}
+        description={promptModalConfig.description}
+        onConfirm={promptModalConfig.onConfirm}
+        onCancel={promptModalConfig.onCancel}
+      />
+    )}
+    </>,
     document.body
   );
 }

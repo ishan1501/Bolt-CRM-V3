@@ -3,6 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { Upload, ChevronDown, ChevronUp, EyeOff } from "lucide-react";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<"profile" | "password">("profile");
@@ -21,19 +22,21 @@ export default function ProfilePage() {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
 
+  const router = useRouter();
+
   useEffect(() => {
     try {
       const storedUser = JSON.parse(localStorage.getItem("bolt_user") || "{}");
       setUser(storedUser);
       setFormName(storedUser.name || storedUser.email || "User");
-      setFormPhone(storedUser.phone || "9355349184");
+      setFormPhone(storedUser.phone || storedUser.mobile || "");
     } catch (e) {
       console.error(e);
     }
   }, []);
 
   const userName = user?.name || user?.email || "User";
-  const userRole = user?.role || "User";
+  const userRole = user?.role || user?.roles?.[0]?.name || "User";
   
   const userInitials = useMemo(() => {
     if (!userName || userName === "User") return "U";
@@ -76,39 +79,24 @@ export default function ProfilePage() {
     setConfirmPassword("");
   };
 
-  // Mock Data
-  const programs = [
-    "AI-First Operator #27", "Bloomberg Equity Research Program #27", "Capital Markets and Trading #27",
-    "D2C brand bootcamp #27", "Executive Leadership Programme in AI & GCC Transformation #27",
-    "Executive Presence and Public Speaking #27", "Executive Presence and Public Speaking US #27",
-    "Global business programme IN #27", "Global business programme US #27", "London Immersion #27",
-    "London Immersion US #27", "PGP BHARAT #27", "PGP BHARAT IN #27", "PGP EUROPE #27",
-    "PGP EUROPE IN #27", "PGP in Capital Markets & Trading (IN) #27", "PGP in Capital Markets & Trading (US) #27",
-    "PGP in Entrepreneurship & Business Acceleration #27", "PGP Rise: General Management #27",
-    "PGP Rise: General Management (Global) #27", "PGP Rise: Owners & Promoters Management #27",
-    "Strategic Business Management #27", "Strategic Business Management - Agentic AI, Product & Digital Innovation #27",
-    "Strategic Business Management - Finance #27", "Strategic Business Management - Human Resources & Organisation Strategy #27",
-    "Strategic Business Management - Marketing & Sales #27", "Strategic Business Management - Operations & Supply Chain Management #27"
-  ];
-
-  const forms = [
-    "AI-First Operator #54", "Bloomberg Equity Research Program #72", "D2C brand bootcamp #79",
-    "Executive Leadership Programme in AI & GCC Transformation #84", "Executive Presence and Public Speaking #62",
-    "Executive Presence and Public Speaking US #87", "Four Nations Global Business Programme #56",
-    "Four Nations Global Business Programme US #78", "London Immersion #59", "London Immersion US #93",
-    "PGP BHARAT #53", "PGP BHARAT IN #69", "PGP : Capital Markets and Trading #96", "PGP EUROPE #51",
-    "PGP EUROPE IN #60", "PGP in Capital Markets & Trading (IN) #61", "PGP in Capital Markets & Trading (US) #52",
-    "PGP in Entrepreneurship and Business Acceleration #80", "PGP Rise: General Management #73",
-    "PGP Rise: General Management (Global) #74", "PGP Rise: Owners & Promoters Management #76",
-    "Strategic Business Management - Agentic AI, Product & Digital Innovation #90", "Strategic Business Management- Core #86",
-    "Strategic Business Management - Finance #91", "Strategic Business Management - Human Resources & Organisation Strategy #89",
-    "Strategic Business Management - Marketing & Sales #88", "Strategic Business Management - Operations & Supply Chain Management #92"
-  ];
+  // Real Data Extraction
+  const roles = user?.roles ? (Array.isArray(user.roles) ? user.roles : [user.roles]) : (user?.role ? [user.role] : []);
+  const schools = user?.schools || user?.allocatedSchools || [];
+  const programs = user?.programs || user?.allocatedPrograms || [];
+  const forms = user?.forms || user?.allocatedForms || [];
 
   return (
     <div className="w-full h-full flex flex-col relative pb-48 md:pb-32">
       <div className="px-6 md:px-10 py-6">
-        <h1 className="text-xl font-bold text-[var(--bolt-text-primary)] mb-6 capitalize">Hi, {userName}</h1>
+        <div className="flex items-center gap-4 mb-6">
+          <button 
+            onClick={() => router.back()}
+            className="w-10 h-10 rounded-full flex items-center justify-center bg-[var(--bolt-bg-depth-3)] hover:bg-[var(--bolt-accent)] text-[var(--bolt-text-secondary)] hover:text-white transition-colors"
+          >
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
+          </button>
+          <h1 className="text-xl font-bold text-[var(--bolt-text-primary)] capitalize">Hi, {userName}</h1>
+        </div>
         
         <div className="w-full bg-[var(--bolt-bg-depth-2)] rounded-3xl border border-[var(--bolt-border-color)] overflow-hidden relative">
           <div className="absolute top-0 right-0 w-[600px] h-full bg-gradient-to-l from-[rgba(249,200,81,0.03)] to-transparent pointer-events-none" />
@@ -136,19 +124,19 @@ export default function ProfilePage() {
 
             <div className="grid grid-cols-2 gap-4 w-full md:w-[320px] shrink-0">
               <div className="bg-[var(--bolt-bg-depth-1)] rounded-2xl p-5 border border-[var(--bolt-border-color)] flex flex-col">
-                <span className="text-3xl font-bold text-[var(--bolt-text-primary)] mb-1">1</span>
+                <span className="text-3xl font-bold text-[var(--bolt-text-primary)] mb-1">{roles.length || 1}</span>
                 <span className="text-xs font-bold tracking-widest text-[var(--bolt-text-secondary)] uppercase">Roles</span>
               </div>
               <div className="bg-[var(--bolt-bg-depth-1)] rounded-2xl p-5 border border-[var(--bolt-border-color)] flex flex-col">
-                <span className="text-3xl font-bold text-[var(--bolt-text-primary)] mb-1">1</span>
+                <span className="text-3xl font-bold text-[var(--bolt-text-primary)] mb-1">{schools.length || 1}</span>
                 <span className="text-xs font-bold tracking-widest text-[var(--bolt-text-secondary)] uppercase">Schools</span>
               </div>
               <div className="bg-[var(--bolt-bg-depth-1)] rounded-2xl p-5 border border-[var(--bolt-border-color)] flex flex-col">
-                <span className="text-3xl font-bold text-[var(--bolt-text-primary)] mb-1">27</span>
+                <span className="text-3xl font-bold text-[var(--bolt-text-primary)] mb-1">{programs.length}</span>
                 <span className="text-xs font-bold tracking-widest text-[var(--bolt-text-secondary)] uppercase">Programs</span>
               </div>
               <div className="bg-[var(--bolt-bg-depth-1)] rounded-2xl p-5 border border-[var(--bolt-border-color)] flex flex-col">
-                <span className="text-3xl font-bold text-[var(--bolt-text-primary)] mb-1">27</span>
+                <span className="text-3xl font-bold text-[var(--bolt-text-primary)] mb-1">{forms.length}</span>
                 <span className="text-xs font-bold tracking-widest text-[var(--bolt-text-secondary)] uppercase">Forms</span>
               </div>
             </div>
@@ -235,7 +223,7 @@ export default function ProfilePage() {
                   <label className="text-xs font-bold tracking-wider text-[var(--bolt-text-secondary)] uppercase">Roles Assigned</label>
                   <input 
                     type="text" 
-                    defaultValue="Counsellor (sales) (L1)" 
+                    value={roles.map((r: any) => r.name || r).join(', ') || "No roles assigned"}
                     readOnly
                     className="surface-input w-full px-4 py-3 rounded-xl text-sm font-medium text-[var(--bolt-text-tertiary)] bg-white/5 cursor-not-allowed"
                   />
@@ -253,15 +241,23 @@ export default function ProfilePage() {
                   >
                     <span className="font-bold tracking-wider text-sm uppercase">Schools</span>
                     <div className="flex items-center gap-4">
-                      <span className="bg-[var(--bolt-accent)]/10 text-[var(--bolt-accent)] text-xs font-bold px-2 py-0.5 rounded-full">1</span>
+                      <span className="bg-[var(--bolt-accent)]/10 text-[var(--bolt-accent)] text-xs font-bold px-2 py-0.5 rounded-full">{schools.length || 1}</span>
                       {openSchools ? <ChevronUp size={16} className="text-[var(--bolt-accent)]" /> : <ChevronDown size={16} className="text-[var(--bolt-text-secondary)]" />}
                     </div>
                   </div>
                   {openSchools && (
                     <div className="px-5 pb-5 pt-0">
-                      <span className="inline-block bg-[#1a1a1a] text-blue-400 border border-blue-500/30 text-sm px-3 py-1.5 rounded-lg font-medium">
-                        Executive Education
-                      </span>
+                      {schools.length > 0 ? (
+                        schools.map((school: any, idx: number) => (
+                          <span key={idx} className="inline-block bg-[#1a1a1a] text-blue-400 border border-blue-500/30 text-sm px-3 py-1.5 rounded-lg font-medium mr-2 mb-2">
+                            {school.name || school}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="inline-block bg-[#1a1a1a] text-blue-400 border border-blue-500/30 text-sm px-3 py-1.5 rounded-lg font-medium">
+                          Executive Education
+                        </span>
+                      )}
                     </div>
                   )}
                 </div>
@@ -273,17 +269,21 @@ export default function ProfilePage() {
                   >
                     <span className="font-bold tracking-wider text-sm uppercase">Programs</span>
                     <div className="flex items-center gap-4">
-                      <span className="bg-[var(--bolt-accent)]/10 text-[var(--bolt-accent)] text-xs font-bold px-2 py-0.5 rounded-full">27</span>
+                      <span className="bg-[var(--bolt-accent)]/10 text-[var(--bolt-accent)] text-xs font-bold px-2 py-0.5 rounded-full">{programs.length}</span>
                       {openPrograms ? <ChevronUp size={16} className="text-[var(--bolt-accent)]" /> : <ChevronDown size={16} className="text-[var(--bolt-text-secondary)]" />}
                     </div>
                   </div>
                   {openPrograms && (
                     <div className="px-5 pb-5 pt-0 flex flex-wrap gap-2 max-h-[300px] overflow-y-auto custom-scrollbar">
-                      {programs.map((program, idx) => (
-                        <span key={idx} className="inline-block bg-[#1a1a1a] text-emerald-400 border border-emerald-500/30 text-xs px-3 py-1.5 rounded-lg font-medium cursor-pointer hover:border-emerald-400 transition-colors">
-                          {program}
-                        </span>
-                      ))}
+                      {programs.length > 0 ? (
+                        programs.map((program: any, idx: number) => (
+                          <span key={idx} className="inline-block bg-[#1a1a1a] text-emerald-400 border border-emerald-500/30 text-xs px-3 py-1.5 rounded-lg font-medium cursor-pointer hover:border-emerald-400 transition-colors">
+                            {program.name || program}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-sm text-[var(--bolt-text-secondary)] italic">No programs assigned</span>
+                      )}
                     </div>
                   )}
                 </div>
@@ -295,17 +295,21 @@ export default function ProfilePage() {
                   >
                     <span className="font-bold tracking-wider text-sm uppercase">Application Forms</span>
                     <div className="flex items-center gap-4">
-                      <span className="bg-[var(--bolt-accent)]/10 text-[var(--bolt-accent)] text-xs font-bold px-2 py-0.5 rounded-full">27</span>
+                      <span className="bg-[var(--bolt-accent)]/10 text-[var(--bolt-accent)] text-xs font-bold px-2 py-0.5 rounded-full">{forms.length}</span>
                       {openForms ? <ChevronUp size={16} className="text-[var(--bolt-accent)]" /> : <ChevronDown size={16} className="text-[var(--bolt-text-secondary)]" />}
                     </div>
                   </div>
                   {openForms && (
                     <div className="px-5 pb-5 pt-0 flex flex-wrap gap-2 max-h-[300px] overflow-y-auto custom-scrollbar">
-                      {forms.map((form, idx) => (
-                        <span key={idx} className="inline-block bg-[#1a1a1a] text-indigo-400 border border-indigo-500/30 text-xs px-3 py-1.5 rounded-lg font-medium cursor-pointer hover:border-indigo-400 transition-colors">
-                          {form}
-                        </span>
-                      ))}
+                      {forms.length > 0 ? (
+                        forms.map((form: any, idx: number) => (
+                          <span key={idx} className="inline-block bg-[#1a1a1a] text-indigo-400 border border-indigo-500/30 text-xs px-3 py-1.5 rounded-lg font-medium cursor-pointer hover:border-indigo-400 transition-colors">
+                            {form.name || form}
+                          </span>
+                        ))
+                      ) : (
+                        <span className="text-sm text-[var(--bolt-text-secondary)] italic">No forms assigned</span>
+                      )}
                     </div>
                   )}
                 </div>

@@ -60,8 +60,8 @@ export function CustomizeColumnsDrawer() {
         className="fixed inset-0 bg-black/40 backdrop-blur-sm z-[100] animate-in fade-in"
         onClick={() => setCustomizeColumnsOpen(false)}
       />
-      <div className="fixed right-0 top-0 bottom-0 w-[600px] surface-1 z-[101] shadow-2xl flex flex-col border-l border-[var(--bolt-border-color)] animate-in slide-in-from-right duration-300">
-        <div className="p-4 border-b border-[var(--bolt-border-color)] flex items-center justify-between">
+      <div className="fixed right-0 top-0 bottom-0 w-full max-w-[600px] surface-1 z-[101] shadow-2xl flex flex-col border-l border-[var(--bolt-border-color)] animate-in slide-in-from-right duration-300">
+        <div className="p-4 border-b border-[var(--bolt-border-color)] flex items-center justify-between shrink-0">
           <h2 className="text-lg font-bold text-[var(--bolt-text-primary)]">Customize Columns</h2>
           <button 
             onClick={() => setCustomizeColumnsOpen(false)}
@@ -71,10 +71,10 @@ export function CustomizeColumnsDrawer() {
           </button>
         </div>
 
-        <div className="flex-1 overflow-hidden flex">
+        <div className="flex-1 overflow-hidden flex flex-col md:flex-row">
           {/* Left Side: Available Fields */}
-          <div className="w-1/2 border-r border-[var(--bolt-border-color)] flex flex-col">
-            <div className="p-4 border-b border-[var(--bolt-border-color)] surface-2 font-medium text-sm text-[var(--bolt-text-primary)]">
+          <div className="w-full md:w-1/2 h-1/2 md:h-full border-b md:border-b-0 md:border-r border-[var(--bolt-border-color)] flex flex-col">
+            <div className="p-4 border-b border-[var(--bolt-border-color)] surface-2 font-medium text-sm text-[var(--bolt-text-primary)] shrink-0">
               Available Fields
             </div>
             <div className="flex-1 overflow-y-auto p-2">
@@ -84,11 +84,11 @@ export function CustomizeColumnsDrawer() {
                   <label key={col.id} className="flex items-center gap-3 p-2 hover:surface-2 rounded-lg cursor-pointer transition-colors">
                     <input 
                       type="checkbox" 
-                      className="rounded border-[var(--bolt-border-color)] bg-transparent text-[var(--bolt-accent)] focus:ring-[var(--bolt-accent-glow)]"
+                      className="rounded border-[var(--bolt-border-color)] bg-transparent text-[var(--bolt-accent)] focus:ring-[var(--bolt-accent-glow)] shrink-0"
                       checked={isActive}
                       onChange={() => toggleColumn(col.id)}
                     />
-                    <span className="text-sm text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)]">{col.label}</span>
+                    <span className="text-sm text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] truncate">{col.label}</span>
                   </label>
                 );
               })}
@@ -96,8 +96,8 @@ export function CustomizeColumnsDrawer() {
           </div>
 
           {/* Right Side: Active Columns */}
-          <div className="w-1/2 flex flex-col surface-1">
-            <div className="p-4 border-b border-[var(--bolt-border-color)] font-medium text-sm text-[var(--bolt-text-secondary)]">
+          <div className="w-full md:w-1/2 h-1/2 md:h-full flex flex-col surface-1">
+            <div className="p-4 border-b border-[var(--bolt-border-color)] font-medium text-sm text-[var(--bolt-text-secondary)] shrink-0">
               Active Columns ({localColumns.length}/20)
             </div>
             <div className="flex-1 overflow-y-auto p-4 space-y-2">

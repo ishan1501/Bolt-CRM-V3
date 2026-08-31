@@ -10,6 +10,7 @@ import { BulkActionBar } from "@/components/leads/bulk-action-bar";
 import { TableToolbar } from "@/components/leads/table-toolbar";
 import { CustomizeColumnsDrawer } from "@/components/leads/customize-columns-drawer";
 import { FilterLeadsDrawer } from "@/components/leads/filter-leads-drawer";
+import { LeadDrawer } from "@/components/leads/lead-drawer";
 import { useUIStore } from "@/stores/ui-store";
 import { useViewStore } from "@/stores/view-store";
 import { Lead } from "@/types/crm";
@@ -162,6 +163,7 @@ export default function LeadsPage() {
       <BulkActionBar stages={stages} allLeads={allLeads} />
       <CustomizeColumnsDrawer />
       <FilterLeadsDrawer />
+      <LeadDrawer />
     </div>
   );
 }

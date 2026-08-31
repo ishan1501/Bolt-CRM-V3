@@ -100,7 +100,7 @@ export function FilterLeadsDrawer() {
         onClick={() => setFilterDrawerOpen(false)}
       />
       
-      <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-full max-w-3xl bg-[var(--bolt-bg-depth-1)] rounded-2xl z-[101] shadow-2xl flex flex-col max-h-[85vh] animate-in zoom-in-95 duration-200 border border-[var(--bolt-border-color)] overflow-hidden">
+      <div className="fixed left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-[calc(100%-2rem)] md:w-full max-w-3xl bg-[var(--bolt-bg-depth-1)] rounded-2xl z-[101] shadow-2xl flex flex-col max-h-[85vh] animate-in zoom-in-95 duration-200 border border-[var(--bolt-border-color)] overflow-hidden">
         
         {/* Header */}
         <div className="flex items-center justify-between px-6 py-4 border-b border-[var(--bolt-border-color)] surface-2 shrink-0">

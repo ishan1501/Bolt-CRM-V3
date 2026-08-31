@@ -46,20 +46,20 @@ export function Sidebar() {
       {/* Mobile Backdrop */}
       {mobileDrawerOpen && (
         <div 
-          className="fixed inset-0 bg-black/60 z-40 md:hidden backdrop-blur-sm"
+          className="fixed inset-0 bg-black/60 z-[105] md:hidden backdrop-blur-sm"
           onClick={() => setMobileDrawerOpen(false)}
         />
       )}
 
       {/* Desktop space placeholder */}
-      <div className="hidden md:block w-[80px] h-screen shrink-0 relative z-50" />
+      <div className="hidden md:block w-[80px] h-screen shrink-0 relative z-[109]" />
 
       {/* Actual Sidebar */}
       <aside
         onMouseEnter={() => setSidebarExpanded(true)}
         onMouseLeave={() => setSidebarExpanded(false)}
         className={cn(
-          "fixed left-0 top-0 h-screen bg-[var(--bolt-bg-depth-2)]/95 backdrop-blur-xl border-r border-[var(--bolt-border-color)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] flex flex-col shadow-2xl z-50",
+          "fixed left-0 top-0 h-screen bg-[var(--bolt-bg-depth-2)]/95 backdrop-blur-xl border-r border-[var(--bolt-border-color)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] flex flex-col shadow-2xl z-[110]",
           mobileDrawerOpen ? "translate-x-0 w-[260px]" : "-translate-x-full md:translate-x-0",
           sidebarCollapsed ? "md:w-[80px]" : "md:w-[260px]"
         )}

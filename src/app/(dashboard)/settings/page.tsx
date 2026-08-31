@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import { TemplateSettings } from "@/components/ui/template-settings";
 import { Settings, MessageSquare, Shield, Users, LogOut, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<"templates" | "security" | "team" | "notifications">("templates");
@@ -27,6 +28,19 @@ export default function SettingsPage() {
         body: "You'll now receive alerts for upcoming calls and power shots.",
         icon: "/icon.png"
       });
+    }
+  };
+
+  const handleTestNotification = () => {
+    const title = "Test Notification!";
+    const body = "This is a test to verify your notifications are working perfectly.";
+    
+    // In-app toast
+    toast.success(title, { description: body, duration: 5000 });
+    
+    // OS-level notification
+    if ('Notification' in window && Notification.permission === 'granted') {
+      new Notification(title, { body, icon: "/icon.png" });
     }
   };
 
@@ -150,8 +164,16 @@ export default function SettingsPage() {
                       Enable Notifications
                     </button>
                   ) : (
-                    <div className="w-full text-center py-2.5 bg-emerald-500/10 text-emerald-400 rounded-lg text-sm font-medium mt-4 border border-emerald-500/20">
-                      Notifications are active
+                    <div className="flex flex-col gap-3 mt-4">
+                      <div className="w-full text-center py-2.5 bg-emerald-500/10 text-emerald-400 rounded-lg text-sm font-medium border border-emerald-500/20">
+                        Notifications are active
+                      </div>
+                      <button 
+                        onClick={handleTestNotification}
+                        className="w-full bg-[var(--bolt-bg-depth-3)] hover:bg-[var(--bolt-bg-depth-4)] border border-[var(--bolt-border-color)] text-[var(--bolt-text-primary)] font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"
+                      >
+                        <Bell size={16} /> Send Test Notification
+                      </button>
                     </div>
                   )}
 

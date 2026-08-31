@@ -23,6 +23,7 @@ interface ReminderState {
   markCompleted: (id: string) => void;
   getUpcomingReminders: () => Reminder[];
   getOverdueReminders: () => Reminder[];
+  pruneOldReminders: () => void;
 }
 
 export const useReminderStore = create<ReminderState>()(
@@ -57,6 +58,13 @@ export const useReminderStore = create<ReminderState>()(
           .filter(r => !r.completed && r.date < now)
           .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()); // Most recent overdue first
       },
+
+      pruneOldReminders: () => set((state) => {
+        const oneWeekAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
+        const filtered = state.reminders.filter(r => new Date(r.date).getTime() >= oneWeekAgo);
+        if (filtered.length === state.reminders.length) return state;
+        return { reminders: filtered };
+      }),
     }),
     {
       name: "bolt-crm-reminders",

@@ -10,9 +10,10 @@ import { useJobStore } from "@/stores/job-store";
 import { usePathname } from "next/navigation";
 import { GlassCard } from "../ui/glass-card";
 import { supabase } from "@/lib/supabase";
+import { toast } from "sonner";
 
 export function TopBar() {
-  const { reminders } = useReminderStore();
+  const { reminders, pruneOldReminders } = useReminderStore();
   const { searchQuery, setSearchQuery } = useUIStore();
   const { jobs, pauseJob, startJob, removeJob } = useJobStore();
   const pathname = usePathname();
@@ -78,11 +79,16 @@ export function TopBar() {
   const notifiedPowerShots = useRef(new Set<string>());
   const lastPaceCheck = useRef<number>(0);
 
+  // Prune reminders on mount
+  useEffect(() => {
+    pruneOldReminders();
+  }, [pruneOldReminders]);
+
   // Check for upcoming calls to fire notifications
   useEffect(() => {
 
     const checkReminders = async () => {
-      if (!("Notification" in window) || Notification.permission !== "granted") return;
+      const canUseOSNotifs = "Notification" in window && Notification.permission === "granted";
 
       const now = new Date();
       
@@ -93,19 +99,21 @@ export function TopBar() {
         const diffMins = Math.round(diffMs / 60000);
 
         if (diffMins === 5 && !notified5m.current.has(r.id)) {
-          new Notification("Upcoming Call in 5 Minutes!", {
-            body: `Reminder for ${r.leadName || "Lead"} at ${callTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`,
-            icon: "/icon.png"
-          });
+          const title = "Upcoming Call in 5 Minutes!";
+          const body = `Reminder for ${r.leadName || "Lead"} at ${callTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
+          toast.info(title, { description: body, duration: 10000 });
+          if (canUseOSNotifs) new Notification(title, { body, icon: "/icon.png" });
+          
           notified5m.current.add(r.id);
           setUnreadNotifications(true);
         }
 
         if (diffMins === 1 && !notified1m.current.has(r.id)) {
-          new Notification("Call Starting Soon!", {
-            body: `Your call with ${r.leadName || "Lead"} is in 1 minute.`,
-            icon: "/icon.png"
-          });
+          const title = "Call Starting Soon!";
+          const body = `Your call with ${r.leadName || "Lead"} is in 1 minute.`;
+          toast.warning(title, { description: body, duration: 15000 });
+          if (canUseOSNotifs) new Notification(title, { body, icon: "/icon.png" });
+          
           notified1m.current.add(r.id);
           setUnreadNotifications(true);
         }
@@ -117,15 +125,24 @@ export function TopBar() {
       const timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
       
       if (timeStr === "10:55" && !notifiedPowerShots.current.has("ps1")) {
-        new Notification("⚡ Power Shot 1 Approaching!", { body: "Get ready! 11:00 AM - 12:30 PM is for aggressive pipeline building.", icon: "/icon.png" });
+        const title = "⚡ Power Shot 1 Approaching!";
+        const body = "Get ready! 11:00 AM - 12:30 PM is for aggressive pipeline building.";
+        toast.info(title, { description: body, duration: 10000 });
+        if (canUseOSNotifs) new Notification(title, { body, icon: "/icon.png" });
         notifiedPowerShots.current.add("ps1");
       }
       if (timeStr === "14:55" && !notifiedPowerShots.current.has("ps2")) {
-        new Notification("⚡ Power Shot 2 Approaching!", { body: "3:00 PM - 5:00 PM: Extreme volume calling. Let's go!", icon: "/icon.png" });
+        const title = "⚡ Power Shot 2 Approaching!";
+        const body = "3:00 PM - 5:00 PM: Extreme volume calling. Let's go!";
+        toast.info(title, { description: body, duration: 10000 });
+        if (canUseOSNotifs) new Notification(title, { body, icon: "/icon.png" });
         notifiedPowerShots.current.add("ps2");
       }
       if (timeStr === "17:55" && !notifiedPowerShots.current.has("ps3")) {
-        new Notification("⚡ Final Power Shot Approaching!", { body: "6:00 PM - 7:30 PM: Close the day strong!", icon: "/icon.png" });
+        const title = "⚡ Final Power Shot Approaching!";
+        const body = "6:00 PM - 7:30 PM: Close the day strong!";
+        toast.info(title, { description: body, duration: 10000 });
+        if (canUseOSNotifs) new Notification(title, { body, icon: "/icon.png" });
         notifiedPowerShots.current.add("ps3");
       }
 
@@ -156,10 +173,15 @@ export function TopBar() {
                 const expectedCalls = Math.round((targetCalls / totalWorkingMins) * elapsedMins);
                 
                 if (count < expectedCalls - 10) {
-                  new Notification("⚠️ Pick up the pace!", {
-                    body: `You've made ${count} calls. You should be around ${expectedCalls} by now to hit 200 today!`,
-                    icon: "/icon.png"
-                  });
+                  const title = "⚠️ Pick up the pace!";
+                  const body = `You've made ${count} calls. You should be around ${expectedCalls} by now to hit 200 today!`;
+                  toast.warning(title, { description: body, duration: 15000 });
+                  if (canUseOSNotifs) new Notification(title, { body, icon: "/icon.png" });
+                } else if (count >= expectedCalls) {
+                  const title = "🔥 Great pace!";
+                  const body = `You're at ${count} calls, tracking ahead of the ${expectedCalls} expectation!`;
+                  toast.success(title, { description: body, duration: 8000 });
+                  if (canUseOSNotifs) new Notification(title, { body, icon: "/icon.png" });
                 }
               }
             }

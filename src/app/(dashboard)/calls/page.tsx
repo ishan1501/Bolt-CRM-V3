@@ -52,8 +52,8 @@ export default function CallsPage() {
   const completedReminders = reminders.filter(r => r.completed);
 
   // Group active reminders
-  const overdue = activeReminders.filter(r => isPast(new Date(r.date)) && !isToday(new Date(r.date)));
-  const today = activeReminders.filter(r => isToday(new Date(r.date)));
+  const overdue = activeReminders.filter(r => isPast(new Date(r.date)));
+  const today = activeReminders.filter(r => isToday(new Date(r.date)) && !isPast(new Date(r.date)));
   const upcoming = activeReminders.filter(r => !isPast(new Date(r.date)) && !isToday(new Date(r.date)));
 
   // Group call logs

@@ -95,13 +95,13 @@ export default function HomePage() {
   // Extract real stats — gracefully handle varying API response shapes
   const ov = (overviewData as any)?.data || overviewData || {};
 
-  const getNum = (val: any, fallback = 0): number => {
+  const getNum = (val: any, fallback: number | string = 0): any => {
     if (typeof val === 'number') return val;
-    if (typeof val === 'string') return parseInt(val, 10) || fallback;
+    if (typeof val === 'string' && !isNaN(parseInt(val, 10))) return parseInt(val, 10);
     if (val && typeof val === 'object') {
       return val.total ?? val.count ?? val.value ?? fallback;
     }
-    return fallback;
+    return val ?? fallback;
   };
 
   const totalLeads = getNum(ov.totalLeads || ov.total_leads, 0);
@@ -115,11 +115,6 @@ export default function HomePage() {
   const totalApps = getNum(ov.applicationsStarted || ov.total_applications || ov.totalApplications, 0);
   const paidApps = getNum(ov.paidApplications || ov.paid_applications, 0);
   const unpaidApps = getNum(ov.unpaidApplications || ov.unpaid_applications, Math.max(0, totalApps - paidApps));
-  
-  const appInitiated = getNum(ov.applicationInitiated || ov.app_initiated, 0);
-  const appNotInitiated = Math.max(0, totalApps - appInitiated);
-  const paymentInitiated = getNum(ov.paymentInitiated || ov.payment_initiated, 0);
-  const paymentNotInitiated = Math.max(0, unpaidApps - paymentInitiated);
 
   // Channels — handle varying shapes
   const rawChannels: any[] = Array.isArray(channelsData)
@@ -234,111 +229,61 @@ export default function HomePage() {
         {overviewLoading && <Loader2 size={16} className="animate-spin text-[var(--bolt-text-secondary)]" />}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-6 gap-4">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Card 1: Leads */}
-        <GlassCard className="p-5 flex flex-col gap-4">
-          <div className="flex justify-between items-start">
-            <div className="text-sm font-medium text-[var(--bolt-text-secondary)]">Total Leads</div>
-            <button onClick={() => refetchOverview()} className="hover:text-white transition-colors text-slate-400">
+        <GlassCard className="p-6 flex flex-col gap-5 border border-[var(--bolt-border-color)] relative overflow-hidden">
+          <div className="flex justify-between items-start relative z-10">
+            <div className="text-sm font-semibold text-[var(--bolt-text-secondary)] uppercase tracking-wider">Total Leads</div>
+            <button onClick={() => refetchOverview()} className="hover:text-[var(--bolt-text-primary)] transition-colors text-[var(--bolt-text-tertiary)] bg-[var(--bolt-bg-depth-3)] p-1.5 rounded-lg">
               <RefreshCw size={14} className={overviewLoading ? "animate-spin" : ""} />
             </button>
           </div>
-          <div className="text-3xl font-bold text-[var(--bolt-text-primary)]">{totalLeads}</div>
-          <div className="mt-2 space-y-4">
+          <div className="text-4xl font-extrabold text-[var(--bolt-text-primary)] relative z-10">{totalLeads}</div>
+          <div className="mt-2 space-y-5 relative z-10">
             <div>
-              <div className="flex justify-between text-xs text-[var(--bolt-text-secondary)] mb-1">
-                <span>Verified: <strong>{verifiedLeads}</strong></span>
+              <div className="flex justify-between text-xs text-[var(--bolt-text-secondary)] mb-1.5 font-medium">
+                <span>Verified Leads (<strong>{verifiedLeads}</strong>)</span>
                 <span>{totalLeads > 0 ? ((verifiedLeads / totalLeads) * 100).toFixed(0) : "0"}%</span>
               </div>
-              <ProgressBar value={verifiedLeads} max={totalLeads} colorClass="bg-purple-500" />
+              <ProgressBar value={verifiedLeads} max={totalLeads} colorClass="bg-[var(--bolt-accent)]" />
             </div>
             <div>
-              <div className="flex justify-between text-xs text-[var(--bolt-text-secondary)] mb-1">
-                <span>Unverified: <strong>{unverifiedLeads}</strong></span>
+              <div className="flex justify-between text-xs text-[var(--bolt-text-secondary)] mb-1.5 font-medium">
+                <span>Unverified Leads (<strong>{unverifiedLeads}</strong>)</span>
                 <span>{totalLeads > 0 ? ((unverifiedLeads / totalLeads) * 100).toFixed(0) : "0"}%</span>
               </div>
-              <ProgressBar value={unverifiedLeads} max={totalLeads} colorClass="bg-purple-600" />
+              <ProgressBar value={unverifiedLeads} max={totalLeads} colorClass="bg-purple-500" />
             </div>
           </div>
+          <div className="absolute -right-20 -top-20 w-64 h-64 bg-purple-500/5 blur-[100px] pointer-events-none" />
         </GlassCard>
 
         {/* Card 2: Applications */}
-        <GlassCard className="p-5 flex flex-col gap-4">
-          <div className="flex justify-between items-start">
-            <div className="text-sm font-medium text-[var(--bolt-text-secondary)]">Total Applications</div>
-            <button onClick={() => refetchOverview()} className="hover:text-white transition-colors text-slate-400">
+        <GlassCard className="p-6 flex flex-col gap-5 border border-[var(--bolt-border-color)] relative overflow-hidden">
+          <div className="flex justify-between items-start relative z-10">
+            <div className="text-sm font-semibold text-[var(--bolt-text-secondary)] uppercase tracking-wider">Total Applications</div>
+            <button onClick={() => refetchOverview()} className="hover:text-[var(--bolt-text-primary)] transition-colors text-[var(--bolt-text-tertiary)] bg-[var(--bolt-bg-depth-3)] p-1.5 rounded-lg">
               <RefreshCw size={14} className={overviewLoading ? "animate-spin" : ""} />
             </button>
           </div>
-          <div className="text-3xl font-bold text-[var(--bolt-text-primary)]">{totalApps}</div>
-          <div className="mt-2 space-y-4">
+          <div className="text-4xl font-extrabold text-[var(--bolt-text-primary)] relative z-10">{totalApps}</div>
+          <div className="mt-2 space-y-5 relative z-10">
             <div>
-              <div className="flex justify-between text-xs text-[var(--bolt-text-secondary)] mb-1">
-                <span>App Initiated: <strong>{appInitiated}</strong></span>
+              <div className="flex justify-between text-xs text-[var(--bolt-text-secondary)] mb-1.5 font-medium">
+                <span>Paid Applications (<strong>{paidApps}</strong>)</span>
+                <span>{totalApps > 0 ? ((paidApps / totalApps) * 100).toFixed(0) : "0"}%</span>
               </div>
-              <ProgressBar value={appInitiated} max={totalApps} colorClass="bg-red-400" />
+              <ProgressBar value={paidApps} max={totalApps} colorClass="bg-emerald-500" />
             </div>
             <div>
-              <div className="flex justify-between text-xs text-[var(--bolt-text-secondary)] mb-1">
-                <span>Not Initiated: <strong>{appNotInitiated}</strong></span>
+              <div className="flex justify-between text-xs text-[var(--bolt-text-secondary)] mb-1.5 font-medium">
+                <span>Unpaid Applications (<strong>{unpaidApps}</strong>)</span>
+                <span>{totalApps > 0 ? ((unpaidApps / totalApps) * 100).toFixed(0) : "0"}%</span>
               </div>
-              <ProgressBar value={appNotInitiated} max={totalApps} colorClass="bg-purple-600" />
+              <ProgressBar value={unpaidApps} max={totalApps} colorClass="bg-amber-500" />
             </div>
           </div>
-        </GlassCard>
-
-        {/* Card 3: Paid */}
-        <GlassCard className="p-5 flex flex-col gap-4">
-          <div className="flex justify-between items-start">
-            <div className="text-sm font-medium text-[var(--bolt-text-secondary)]">Paid Applications</div>
-            <button onClick={() => refetchOverview()} className="hover:text-white transition-colors text-slate-400">
-              <RefreshCw size={14} className={overviewLoading ? "animate-spin" : ""} />
-            </button>
-          </div>
-          <div className="text-3xl font-bold text-[var(--bolt-text-primary)]">{paidApps}</div>
-          <div className="mt-2 space-y-3">
-            <div>
-              <div className="flex justify-between text-xs text-[var(--bolt-text-secondary)] mb-1"><span>of Total Apps</span></div>
-              <ProgressBar value={paidApps} max={totalApps} colorClass="bg-green-500" />
-            </div>
-          </div>
-        </GlassCard>
-
-        {/* Card 4: Unpaid */}
-        <GlassCard className="p-5 flex flex-col gap-4">
-          <div className="flex justify-between items-start">
-            <div className="text-sm font-medium text-[var(--bolt-text-secondary)]">Unpaid Applications</div>
-            <button onClick={() => refetchOverview()} className="hover:text-white transition-colors text-slate-400">
-              <RefreshCw size={14} className={overviewLoading ? "animate-spin" : ""} />
-            </button>
-          </div>
-          <div className="text-3xl font-bold text-[var(--bolt-text-primary)]">{unpaidApps}</div>
-          <div className="mt-2 space-y-4">
-            <div>
-              <div className="flex justify-between text-xs text-[var(--bolt-text-secondary)] mb-1"><span>Payment Initiated: <strong>{paymentInitiated}</strong></span></div>
-              <ProgressBar value={paymentInitiated} max={unpaidApps} colorClass="bg-orange-500" />
-            </div>
-            <div>
-              <div className="flex justify-between text-xs text-[var(--bolt-text-secondary)] mb-1"><span>Not Initiated: <strong>{paymentNotInitiated}</strong></span></div>
-              <ProgressBar value={paymentNotInitiated} max={unpaidApps} colorClass="bg-purple-600" />
-            </div>
-          </div>
-        </GlassCard>
-
-        {/* Card 5: Placeholder — Communications (no API yet) */}
-        <GlassCard className="p-5 flex flex-col gap-4 opacity-60">
-          <div className="flex justify-between items-start">
-            <div className="text-sm font-medium text-[var(--bolt-text-secondary)]">Communications</div>
-          </div>
-          <div className="text-sm text-[var(--bolt-text-tertiary)] mt-2">Data coming soon</div>
-        </GlassCard>
-
-        {/* Card 6: Placeholder — Queries (no API yet) */}
-        <GlassCard className="p-5 flex flex-col gap-4 opacity-60">
-          <div className="flex justify-between items-start">
-            <div className="text-sm font-medium text-[var(--bolt-text-secondary)]">Total Queries</div>
-          </div>
-          <div className="text-sm text-[var(--bolt-text-tertiary)] mt-2">Data coming soon</div>
+          <div className="absolute -right-20 -bottom-20 w-64 h-64 bg-emerald-500/5 blur-[100px] pointer-events-none" />
         </GlassCard>
       </div>
 
@@ -385,8 +330,8 @@ export default function HomePage() {
                   {filteredChannels.map((ch: any, i: number) => (
                     <tr key={i} className="hover:bg-white/5 transition-colors">
                       <td className="px-5 py-3 text-[var(--bolt-text-primary)]">{ch.name || ch.source || "—"}</td>
-                      <td className="px-5 py-3 text-[var(--bolt-text-secondary)]">{ch.totalLeads ?? ch.leads ?? "—"}</td>
-                      <td className="px-5 py-3 text-[var(--bolt-text-secondary)]">{ch.totalApplications ?? ch.applications ?? "—"}</td>
+                      <td className="px-5 py-3 text-[var(--bolt-text-secondary)]">{getNum(ch.totalLeads ?? ch.leads, "—")}</td>
+                      <td className="px-5 py-3 text-[var(--bolt-text-secondary)]">{getNum(ch.totalApplications ?? ch.applications, "—")}</td>
                     </tr>
                   ))}
                 </tbody>

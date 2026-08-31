@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import { useUIStore } from "@/stores/ui-store";
 import { Lead } from "@/types/crm";
 import { useRouter } from "next/navigation";
+import { LeadDrawer } from "@/components/leads/lead-drawer";
 
 export default function SavedLeadsPage() {
   const { savedLeads, removeLead, fetchLeads } = useSavedLeadsStore();
@@ -68,7 +69,10 @@ export default function SavedLeadsPage() {
                 </div>
                 <div className="min-w-0">
                   <button
-                    onClick={() => router.push(`/leads/${lead.uuid}`)}
+                    onClick={() => {
+                      window.history.pushState(null, '', `/leads/${lead.uuid}`);
+                      openDrawer(lead.uuid);
+                    }}
                     className="font-semibold text-[var(--bolt-text-primary)] hover:text-[var(--bolt-accent)] transition-colors line-clamp-1 text-left w-full"
                   >
                     {lead.name || "Unknown Lead"}
@@ -104,7 +108,10 @@ export default function SavedLeadsPage() {
                   {lead.stageName || "Unknown"}
                 </span>
                 <button
-                  onClick={() => router.push(`/leads/${lead.uuid}`)}
+                  onClick={() => {
+                    window.history.pushState(null, '', `/leads/${lead.uuid}`);
+                    openDrawer(lead.uuid);
+                  }}
                   className="text-xs font-semibold text-[var(--bolt-accent)] hover:text-white transition-colors"
                 >
                   View Profile →
@@ -114,7 +121,7 @@ export default function SavedLeadsPage() {
           ))}
         </div>
       )}
-
+      <LeadDrawer />
     </div>
   );
 }

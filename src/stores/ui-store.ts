@@ -78,8 +78,17 @@ export const useUIStore = create<UIState>((set) => ({
     drawerTab: tab ?? (state.activeLeadUuid !== uuid ? "profile" : state.drawerTab),
   })),
   
-  closeDrawer: () => set({ drawerOpen: false }),
-  
+  closeDrawer: () => {
+    set({ drawerOpen: false, drawerTab: "profile" });
+    setTimeout(() => {
+      set((state) => {
+        if (!state.drawerOpen) {
+          return { activeLeadUuid: null };
+        }
+        return state;
+      });
+    }, 300);
+  },
   setDrawerTab: (tab) => set({ drawerTab: tab }),
 
   setSearchQuery: (query) => set({ searchQuery: query }),

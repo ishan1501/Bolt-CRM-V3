@@ -64,7 +64,10 @@ export function ApplicationsTable({ apps }: { apps: Lead[] }) {
             return (
               <tr 
                 key={app.uuid || index} 
-                onClick={() => router.push(`/leads/${app.uuid}`)}
+                onClick={() => {
+                  window.history.pushState(null, '', `/leads/${app.uuid}`);
+                  useUIStore.getState().openDrawer(app.uuid);
+                }}
                 className="hover:bg-[var(--bolt-bg-depth-2)] cursor-pointer group transition-colors"
               >
                 <td className="px-4 py-3 border-b border-[var(--bolt-border-color)]">
@@ -163,7 +166,10 @@ export function ApplicationsTable({ apps }: { apps: Lead[] }) {
           return (
             <div 
               key={app.uuid || index}
-              onClick={() => router.push(`/leads/${app.uuid}`)}
+              onClick={() => {
+                window.history.pushState(null, '', `/leads/${app.uuid}`);
+                useUIStore.getState().openDrawer(app.uuid);
+              }}
               className="p-4 flex gap-3 transition-colors cursor-pointer bg-[var(--bolt-bg-depth-1)] active:bg-[var(--bolt-bg-depth-2)]"
             >
               <div className="flex-1 min-w-0">

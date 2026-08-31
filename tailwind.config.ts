@@ -55,9 +55,25 @@ const config: Config = {
         shimmer: {
           "100%": { transform: "translateX(100%)" },
         },
+        "infinite-scroll": {
+          from: { transform: "translateX(0)" },
+          to: { transform: "translateX(-50%)" }
+        },
+        "gradient-x": {
+          "0%, 100%": {
+            "background-size": "200% 200%",
+            "background-position": "left center"
+          },
+          "50%": {
+            "background-size": "200% 200%",
+            "background-position": "right center"
+          }
+        }
       },
       animation: {
         shimmer: "shimmer 2s infinite",
+        "infinite-scroll": "infinite-scroll 25s linear infinite",
+        "gradient-x": "gradient-x 3s ease infinite",
       },
     },
   },

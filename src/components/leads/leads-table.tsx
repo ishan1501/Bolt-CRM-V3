@@ -179,7 +179,10 @@ export function LeadsTable({ leads }: LeadsTableProps) {
               return (
                 <tr
                   key={lead.uuid}
-                  onClick={() => router.push(`/leads/${lead.uuid}`)}
+                  onClick={() => {
+                    window.history.pushState(null, '', `/leads/${lead.uuid}`);
+                    openDrawer(lead.uuid);
+                  }}
                   className={cn(
                     "group/row cursor-pointer transition-colors whitespace-nowrap",
                     isSelected ? "bg-[var(--bolt-accent-glow)]" : 
@@ -236,14 +239,25 @@ export function LeadsTable({ leads }: LeadsTableProps) {
 
       {/* Mobile Card View */}
       <div className="md:hidden flex flex-col divide-y divide-[var(--bolt-border-color)]">
-        {leads.map((lead) => {
+        {leads.length === 0 ? (
+          <div className="px-4 py-24 text-center flex flex-col items-center justify-center gap-3">
+            <div className="w-16 h-16 rounded-full bg-[var(--bolt-bg-depth-3)] border border-[var(--bolt-border-color)] flex items-center justify-center mb-2">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-[var(--bolt-text-secondary)]"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+            </div>
+            <h3 className="text-lg font-bold text-[var(--bolt-text-primary)]">No leads found</h3>
+            <p className="text-sm text-[var(--bolt-text-secondary)] px-4">Try adjusting your filters or search query to find what you're looking for.</p>
+          </div>
+        ) : leads.map((lead) => {
           const isSelected = selectedLeadIds.has(lead.uuid);
           const isUntouched = (lead.stage_name || (lead as any).stageName)?.toLowerCase() === "untouched";
           
           return (
             <div 
               key={lead.uuid}
-              onClick={() => router.push(`/leads/${lead.uuid}`)}
+              onClick={() => {
+                window.history.pushState(null, '', `/leads/${lead.uuid}`);
+                useUIStore.getState().openDrawer(lead.uuid);
+              }}
               className={cn(
                 "p-4 flex gap-3 transition-colors cursor-pointer",
                 isSelected ? "bg-[var(--bolt-accent-glow)]" : 

@@ -11,6 +11,7 @@ import { CustomizeColumnsDrawer } from "@/components/leads/customize-columns-dra
 import { TableToolbar } from "@/components/leads/table-toolbar";
 import { BulkActionBar } from "@/components/leads/bulk-action-bar";
 import { FilterLeadsDrawer } from "@/components/leads/filter-leads-drawer";
+import { LeadDrawer } from "@/components/leads/lead-drawer";
 import { queryKeys } from "@/lib/query-keys";
 
 import { useViewStore } from "@/stores/view-store";
@@ -109,6 +110,7 @@ export default function ApplicationsPage() {
       <BulkActionBar stages={stages} allLeads={allApps || []} />
       <CustomizeColumnsDrawer />
       <FilterLeadsDrawer />
+      <LeadDrawer />
     </div>
   );
 }
