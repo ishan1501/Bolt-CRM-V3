@@ -44,7 +44,7 @@ export default function PlannerPage() {
   const progress = tasks.length > 0 ? (completedCount / tasks.length) * 100 : 0;
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto w-full">
+    <div className="space-y-6 max-w-4xl mx-auto w-full pb-10">
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-[var(--bolt-bg-depth-2)] flex items-center justify-center shadow-sm border border-[var(--bolt-border-color)]">
@@ -57,24 +57,26 @@ export default function PlannerPage() {
         </div>
 
         {/* Navigator */}
-        <div className="flex items-center gap-2 bg-[var(--bolt-bg-depth-2)] p-1.5 rounded-xl border border-[var(--bolt-border-color)] shadow-sm">
-          <button onClick={handlePrevDay} className="p-2 hover:bg-white/10 rounded-lg text-[var(--bolt-text-secondary)] hover:text-white transition-colors">
+        <div className="flex items-center justify-between w-full md:w-auto bg-[var(--bolt-bg-depth-2)] p-1.5 rounded-xl border border-[var(--bolt-border-color)] shadow-sm">
+          <button onClick={handlePrevDay} className="p-2 hover:bg-white/10 rounded-lg text-[var(--bolt-text-secondary)] hover:text-white transition-colors shrink-0">
             <ChevronLeft size={18} />
           </button>
-          <div className="w-40 text-center flex flex-col items-center justify-center">
+          <div className="flex-1 text-center flex flex-col items-center justify-center">
             <span className="text-sm font-bold text-[var(--bolt-text-primary)]">
               {currentDate.toLocaleDateString("en-US", { weekday: "short", month: "short", day: "numeric" })}
             </span>
             {isToday && <span className="text-[10px] text-[var(--bolt-accent)] font-bold uppercase tracking-wider">Today</span>}
           </div>
-          <button onClick={handleNextDay} className="p-2 hover:bg-white/10 rounded-lg text-[var(--bolt-text-secondary)] hover:text-white transition-colors">
-            <ChevronRight size={18} />
-          </button>
-          {!isToday && (
-            <button onClick={handleToday} className="ml-2 px-3 py-1.5 text-xs font-bold rounded-lg bg-[var(--bolt-accent)] text-black">
-              Today
+          <div className="flex items-center gap-1 shrink-0">
+            <button onClick={handleNextDay} className="p-2 hover:bg-white/10 rounded-lg text-[var(--bolt-text-secondary)] hover:text-white transition-colors">
+              <ChevronRight size={18} />
             </button>
-          )}
+            {!isToday && (
+              <button onClick={handleToday} className="ml-1 px-3 py-1.5 text-xs font-bold rounded-lg bg-[var(--bolt-accent)] text-black">
+                Today
+              </button>
+            )}
+          </div>
         </div>
       </div>
 

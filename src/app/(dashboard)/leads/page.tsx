@@ -39,7 +39,7 @@ export default function LeadsPage() {
   const { data: rawData, isLoading, error } = useQuery({
     queryKey: ["allLeads", activeView?.backendFilterPayload],
     queryFn: () => crmApi.fetchAllLeads(activeView?.backendFilterPayload),
-    refetchInterval: 1000 * 30 // Poll every 30s — frequent enough for changelog but avoids spam
+    staleTime: 1000 * 60 * 2, // Cache for 2 minutes to save backend load
   });
 
   const { data: stages = [] } = useQuery({

@@ -42,6 +42,7 @@ export function ProfileTab({ uuid }: { uuid: string }) {
 
   if (isLoading) return <div className="flex justify-center p-8"><Spinner /></div>;
   if (error) return <div className="text-red-500 text-sm">Failed to load profile details.</div>;
+  if (!profile) return <div className="text-center p-8 text-[var(--bolt-text-secondary)] text-sm">No profile data available.</div>;
 
   return (
     <div className="space-y-6">

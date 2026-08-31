@@ -3,6 +3,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { Providers } from "@/components/providers";
 import { ErrorBoundary } from "@/components/error-boundary";
+import { NetworkStatus } from "@/components/layout/network-status";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -28,6 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} font-sans antialiased selection:bg-[#eab308]/30`}>
+        <NetworkStatus />
         <ErrorBoundary>
           <Providers>
             {children}

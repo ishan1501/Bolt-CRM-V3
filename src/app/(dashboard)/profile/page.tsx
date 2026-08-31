@@ -1,15 +1,35 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Upload, ChevronDown, ChevronUp, EyeOff } from "lucide-react";
 
 export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState<"profile" | "password">("profile");
+  const [user, setUser] = useState<any>({});
   
   // Accordion states
   const [openSchools, setOpenSchools] = useState(true);
   const [openPrograms, setOpenPrograms] = useState(true);
   const [openForms, setOpenForms] = useState(true);
+
+  useEffect(() => {
+    try {
+      const storedUser = JSON.parse(localStorage.getItem("bolt_user") || "{}");
+      setUser(storedUser);
+    } catch (e) {
+      console.error(e);
+    }
+  }, []);
+
+  const userName = user?.name || user?.email || "User";
+  const userRole = user?.role || "User";
+  
+  const userInitials = useMemo(() => {
+    if (!userName || userName === "User") return "U";
+    const parts = userName.trim().split(/\s+/);
+    if (parts.length >= 2) return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    return userName.slice(0, 2).toUpperCase();
+  }, [userName]);
   
   // Mock Data from screenshot
   const programs = [
@@ -44,7 +64,7 @@ export default function ProfilePage() {
     <div className="w-full h-full flex flex-col relative pb-48 md:pb-32">
       {/* Top Header Area */}
       <div className="px-6 md:px-10 py-6">
-        <h1 className="text-xl font-bold text-[var(--bolt-text-primary)] mb-6">Hi, Ishan Jain</h1>
+        <h1 className="text-xl font-bold text-[var(--bolt-text-primary)] mb-6 capitalize">Hi, {userName}</h1>
         
         {/* Main Profile Card */}
         <div className="w-full bg-[var(--bolt-bg-depth-2)] rounded-3xl border border-[var(--bolt-border-color)] overflow-hidden relative">
@@ -55,7 +75,7 @@ export default function ProfilePage() {
             {/* Avatar Section */}
             <div className="flex flex-col items-center gap-4 shrink-0">
               <div className="w-40 h-40 rounded-[2rem] bg-gradient-to-tr from-[#1a1a1a] to-[#222] border-2 border-[var(--bolt-border-color)] flex items-center justify-center text-5xl font-bold text-[var(--bolt-accent)] shadow-[0_0_40px_rgba(249,200,81,0.05)]">
-                IJ
+                {userInitials}
               </div>
               <button className="flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-full bg-[var(--bolt-bg-depth-3)] hover:bg-white/5 border border-[var(--bolt-border-color)] transition-colors">
                 <Upload size={16} />
@@ -64,13 +84,13 @@ export default function ProfilePage() {
             </div>
 
             {/* Info Section */}
-            <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left pt-2">
+            <div className="flex-1 flex flex-col items-center md:items-start text-center md:text-left pt-2 w-full">
               <span className="text-[11px] font-bold tracking-[0.2em] text-[var(--bolt-accent)] uppercase mb-2">Your Profile</span>
-              <h2 className="text-4xl md:text-5xl font-black text-[var(--bolt-text-primary)] mb-2">Ishan Jain</h2>
-              <p className="text-lg text-[var(--bolt-text-secondary)] mb-4">Masters Union</p>
+              <h2 className="text-3xl md:text-5xl font-black text-[var(--bolt-text-primary)] mb-2 capitalize break-words">{userName}</h2>
+              <p className="text-sm md:text-lg text-[var(--bolt-text-secondary)] mb-4 break-all w-full">{user?.email || "No Email Provided"}</p>
               
-              <div className="inline-flex items-center px-4 py-1.5 rounded-full border border-[var(--bolt-accent)]/30 bg-[var(--bolt-accent)]/10 text-[var(--bolt-accent)] text-sm font-semibold">
-                Counsellor (sales) · L1
+              <div className="inline-flex items-center px-4 py-1.5 rounded-full border border-[var(--bolt-accent)]/30 bg-[var(--bolt-accent)]/10 text-[var(--bolt-accent)] text-sm font-semibold capitalize mt-2">
+                {userRole}
               </div>
             </div>
 
@@ -143,16 +163,17 @@ export default function ProfilePage() {
                     <label className="text-xs font-bold tracking-wider text-[var(--bolt-text-secondary)] uppercase">Name</label>
                     <input 
                       type="text" 
-                      defaultValue="Ishan Jain" 
-                      className="surface-input w-full px-4 py-3 rounded-xl text-sm font-medium transition-all"
+                      defaultValue={userName}
+                      className="surface-input w-full px-4 py-3 rounded-xl text-sm font-medium transition-all capitalize"
                     />
                   </div>
                   <div className="flex flex-col gap-2">
                     <label className="text-xs font-bold tracking-wider text-[var(--bolt-text-secondary)] uppercase">Email</label>
                     <input 
                       type="email" 
-                      defaultValue="ishan.jain@mastersunion.org" 
-                      className="surface-input w-full px-4 py-3 rounded-xl text-sm font-medium transition-all"
+                      value={user?.email || ""}
+                      disabled
+                      className="surface-input w-full px-4 py-3 rounded-xl text-sm font-medium transition-all opacity-50 cursor-not-allowed"
                     />
                   </div>
                 </div>
@@ -350,19 +371,19 @@ export default function ProfilePage() {
       </div>
 
       {/* Floating Bottom Action Bar */}
-      <div className="fixed bottom-24 md:bottom-6 left-0 md:left-1/2 md:-translate-x-1/2 w-full md:w-[800px] z-50 p-4">
-        <div className="bg-[var(--bolt-bg-depth-3)]/90 backdrop-blur-md border border-[var(--bolt-border-color)] rounded-2xl shadow-2xl p-4 flex items-center justify-between">
-          <button className="px-5 py-2.5 rounded-xl border border-[var(--bolt-border-color)] text-sm font-bold hover:bg-white/5 transition-colors">
+      <div className="fixed bottom-24 md:bottom-6 left-0 md:left-1/2 md:-translate-x-1/2 w-full md:w-[800px] z-50 px-4 md:px-0 pointer-events-none">
+        <div className="bg-[var(--bolt-bg-depth-3)]/90 backdrop-blur-md border border-[var(--bolt-border-color)] rounded-2xl shadow-2xl p-3 md:p-4 flex items-center justify-between pointer-events-auto">
+          <button className="px-4 md:px-5 py-2 md:py-2.5 rounded-xl border border-[var(--bolt-border-color)] text-xs md:text-sm font-bold hover:bg-white/5 transition-colors shrink-0">
             {activeTab === "profile" ? "Back" : "Discard"}
           </button>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 md:gap-3">
             {activeTab === "profile" && (
-              <button className="px-5 py-2.5 rounded-xl text-sm font-bold text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] hover:bg-white/5 transition-colors">
+              <button className="px-3 md:px-5 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] hover:bg-white/5 transition-colors shrink-0">
                 Discard
               </button>
             )}
-            <button className="px-6 py-2.5 rounded-xl bg-[var(--bolt-accent)] text-black text-sm font-bold hover:bg-[#eab308] transition-colors shadow-[0_0_15px_rgba(249,200,81,0.2)]">
-              {activeTab === "profile" ? "Update Profile" : "Save New Password"}
+            <button className="px-4 md:px-6 py-2 md:py-2.5 rounded-xl bg-[var(--bolt-accent)] text-black text-xs md:text-sm font-bold hover:bg-[#eab308] transition-colors shadow-[0_0_15px_rgba(249,200,81,0.2)] shrink-0">
+              {activeTab === "profile" ? "Update Profile" : "Save Password"}
             </button>
           </div>
         </div>

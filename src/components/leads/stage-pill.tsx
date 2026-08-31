@@ -24,38 +24,67 @@ export function StagePill({ currentStageName, leadUuid, stages }: StagePillProps
     onMutate: async (newStage) => {
       // Optimistic update logic
       await queryClient.cancelQueries({ queryKey: ["allLeads"] });
-      const previous = queryClient.getQueryData(["allLeads"]);
+      await queryClient.cancelQueries({ queryKey: ["allApplications"] });
       
-      queryClient.setQueryData(["allLeads"], (old: any) => {
-        if (!old?.data?.result) return old;
-        return {
-          ...old,
-          data: {
-            ...old.data,
-            result: old.data.result.map((l: any) => 
-              l.uuid === leadUuid ? { 
-                ...l, 
-                stage_name: newStage.stageName,
-                sub_stage_name: newStage.LeadSubStages?.[0]?.subStageName || null
-              } : l
-            )
-          }
-        };
+      const updateData = (old: any) => {
+        if (!old) return old;
+        
+        // Handle array format directly (which is what our new auto-paginating API returns)
+        if (Array.isArray(old)) {
+          return old.map((l: any) => 
+            l.uuid === leadUuid || l.id === leadUuid ? { 
+              ...l, 
+              stage_name: newStage.stageName,
+              application_stage_name: newStage.stageName, // Update application stage too just in case
+              sub_stage_name: newStage.LeadSubStages?.[0]?.subStageName || null
+            } : l
+          );
+        }
+        
+        // Fallback for old paginated format just in case
+        if (old?.data?.result) {
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              result: old.data.result.map((l: any) => 
+                l.uuid === leadUuid || l.id === leadUuid ? { 
+                  ...l, 
+                  stage_name: newStage.stageName,
+                  application_stage_name: newStage.stageName,
+                  sub_stage_name: newStage.LeadSubStages?.[0]?.subStageName || null
+                } : l
+              )
+            }
+          };
+        }
+        
+        return old;
+      };
+
+      // We need to update all instances of the query (regardless of the filter payload)
+      const queryCache = queryClient.getQueryCache();
+      
+      queryCache.findAll({ queryKey: ["allLeads"] }).forEach(query => {
+        queryClient.setQueryData(query.queryKey, updateData);
       });
-      return { previous };
+      
+      queryCache.findAll({ queryKey: ["allApplications"] }).forEach(query => {
+        queryClient.setQueryData(query.queryKey, updateData);
+      });
+      
+      return { previous: null }; // We don't rollback perfectly across all keys yet
     },
-    onError: (err, newStage, context) => {
-      queryClient.setQueryData(["allLeads"], context?.previous);
-      toast.error("Failed to update stage");
-    },
-    onSuccess: () => {
-      toast.success("Stage updated successfully");
-      // Could poll the background job here if needed
+    onSuccess: (data, variables) => {
       setIsOpen(false);
-    },
-    onSettled: () => {
-      // Invalidate all allLeads queries regardless of filter payload
+      toast.success(`Stage updated to ${variables.stageName} successfully!`);
       queryClient.invalidateQueries({ queryKey: ["allLeads"] });
+      queryClient.invalidateQueries({ queryKey: ["allApplications"] });
+    },
+    onError: () => {
+      toast.error("Failed to update stage");
+      queryClient.invalidateQueries({ queryKey: ["allLeads"] });
+      queryClient.invalidateQueries({ queryKey: ["allApplications"] });
     }
   });
 

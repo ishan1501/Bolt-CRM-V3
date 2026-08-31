@@ -6,13 +6,23 @@ import { PhoneCall, Calendar, CheckCircle2, Clock, PhoneOutgoing, Activity } fro
 import Link from "next/link";
 import { formatDistanceToNow, isPast, isToday, format } from "date-fns";
 import { cn } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/lib/supabase";
 import { useUIStore } from "@/stores/ui-store";
+import { useEffect } from "react";
 
 export default function CallsPage() {
   const { reminders, markCompleted, removeReminder } = useReminderStore();
   const { openDrawer } = useUIStore();
+  const queryClient = useQueryClient();
+
+  useEffect(() => {
+    const handleCallLogged = () => {
+      queryClient.invalidateQueries({ queryKey: ['callLogs'] });
+    };
+    window.addEventListener("bolt_call_logged", handleCallLogged);
+    return () => window.removeEventListener("bolt_call_logged", handleCallLogged);
+  }, [queryClient]);
 
   // Fetch real call logs from Supabase
   const { data: callLogs, isLoading } = useQuery({

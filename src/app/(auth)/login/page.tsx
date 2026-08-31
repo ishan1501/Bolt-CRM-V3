@@ -6,19 +6,31 @@ import { useRouter } from "next/navigation";
 import { crmApi } from "@/lib/api";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import { BrandLogo } from "@/components/ui/brand-logo";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [isChecking, setIsChecking] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     if (localStorage.getItem("bolt_auth_token")) {
-      router.push("/leads");
+      router.replace("/leads");
+    } else {
+      setIsChecking(false);
     }
   }, [router]);
+
+  if (isChecking) {
+    return (
+      <div className="min-h-screen bg-black flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-[var(--bolt-accent)] animate-spin" />
+      </div>
+    );
+  }
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,7 +54,7 @@ export default function LoginPage() {
       localStorage.setItem("bolt_user", JSON.stringify(user));
 
       toast.success("Welcome back!");
-      router.push("/leads");
+      window.location.href = "/leads";
     } catch (err: unknown) {
       const message =
         err instanceof Error ? err.message : "Login failed. Please check your credentials.";
@@ -65,8 +77,7 @@ export default function LoginPage() {
 
       {/* Top Left Logo */}
       <div className="absolute top-8 left-10 flex items-center gap-3 z-20">
-        <img src="/logo.png" alt="Logo" className="h-8 w-auto object-contain" />
-        <span className="text-xl font-bold tracking-tight text-white">Bolt CRM</span>
+        <BrandLogo className="h-8 w-auto" />
       </div>
 
       {/* Left Content */}

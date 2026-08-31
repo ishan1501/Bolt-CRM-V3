@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandLogo } from "@/components/ui/brand-logo";
 
 export default function PublicLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -6,8 +7,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
       {/* Public Header */}
       <header className="h-20 flex items-center justify-between px-6 md:px-12 border-b border-white/10 sticky top-0 bg-black/80 backdrop-blur-md z-50">
         <Link href="/" className="flex items-center gap-3">
-          <img src="/logo.png" alt="Bolt CRM" className="h-8" />
-          <span className="font-bold text-xl tracking-tight">Bolt CRM</span>
+          <BrandLogo />
         </Link>
         <div className="flex items-center gap-6 text-sm font-medium">
           <Link href="/#features" className="hidden md:block text-white/70 hover:text-white transition-colors">Features</Link>
@@ -29,7 +29,7 @@ export default function PublicLayout({ children }: { children: React.ReactNode }
         <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
           <div className="col-span-1 md:col-span-2">
             <Link href="/" className="flex items-center gap-3 mb-6">
-              <img src="/logo.png" alt="Bolt CRM" className="h-6 opacity-80 grayscale" />
+              <img src="/bolt-logo.png" alt="Bolt CRM" className="h-6 opacity-80 grayscale" />
               <span className="font-bold text-lg tracking-tight text-white/90">Bolt CRM</span>
             </Link>
             <p className="text-white/50 text-sm leading-relaxed max-w-sm">

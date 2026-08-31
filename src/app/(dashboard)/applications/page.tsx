@@ -4,17 +4,32 @@ import { useQuery } from "@tanstack/react-query";
 import { crmApi } from "@/lib/api";
 import { GlassCard } from "@/components/ui/glass-card";
 import { Spinner } from "@/components/ui/spinner";
-import { ApplicationsTable } from "@/components/applications/applications-table";
+import { LeadsTable } from "@/components/leads/leads-table";
 import { useMemo } from "react";
 import { useUIStore } from "@/stores/ui-store";
-import { MultiSelect } from "@/components/ui/multi-select";
+import { CustomizeColumnsDrawer } from "@/components/leads/customize-columns-drawer";
+import { TableToolbar } from "@/components/leads/table-toolbar";
+import { BulkActionBar } from "@/components/leads/bulk-action-bar";
+import { FilterLeadsDrawer } from "@/components/leads/filter-leads-drawer";
+import { queryKeys } from "@/lib/query-keys";
+
+import { useViewStore } from "@/stores/view-store";
 
 export default function ApplicationsPage() {
-  const { searchQuery, programFilters, stageFilters, toggleProgramFilter, clearProgramFilters, toggleStageFilter, clearStageFilters } = useUIStore();
+  const { searchQuery, programFilters, stageFilters } = useUIStore();
+  const { views, activeViewId } = useViewStore();
+
+  const activeView = views.find(v => v.id === activeViewId);
 
   const { data: allApps, isLoading, error } = useQuery({
-    queryKey: ["allApplications"],
-    queryFn: () => crmApi.fetchAllApplications(),
+    queryKey: ["allApplications", activeView?.backendFilterPayload],
+    queryFn: () => crmApi.fetchAllApplications(activeView?.backendFilterPayload),
+    staleTime: 1000 * 60 * 2, // 2 minutes cache to avoid over-querying on window focus
+  });
+
+  const { data: stages = [] } = useQuery({
+    queryKey: queryKeys.stages(),
+    queryFn: () => crmApi.fetchStages(),
   });
 
   const uniquePrograms = useMemo(() => {
@@ -72,29 +87,12 @@ export default function ApplicationsPage() {
 
   return (
     <div className="space-y-4 relative h-full flex flex-col">
-      <div className="flex flex-wrap items-center justify-between gap-4 p-3 surface-1 border border-[var(--bolt-border-color)] rounded-xl shadow-sm mb-4">
-        <div className="flex items-center gap-4 flex-wrap">
-          <div className="text-[var(--bolt-text-secondary)] px-1 py-1.5 text-sm font-medium">
-            Showing <span className="text-slate-900 dark:text-slate-100">{filteredApps.length}</span> Applications
-          </div>
-          
-          <MultiSelect 
-            label="All Programs"
-            options={uniquePrograms}
-            selectedValues={programFilters}
-            onToggle={toggleProgramFilter}
-            onClear={clearProgramFilters}
-          />
-          
-          <MultiSelect 
-            label="All Stages"
-            options={uniqueStages}
-            selectedValues={stageFilters}
-            onToggle={toggleStageFilter}
-            onClear={clearStageFilters}
-          />
-        </div>
-      </div>
+      <TableToolbar 
+        totalRecords={filteredApps.length} 
+        uniquePrograms={uniquePrograms} 
+        stages={stages} 
+        referrer="manageApplicants"
+      />
       
       <GlassCard className="flex-1 flex flex-col overflow-hidden p-0 border border-[var(--bolt-border-color)]">
         {isLoading ? (
@@ -102,12 +100,15 @@ export default function ApplicationsPage() {
             <Spinner size={40} />
           </div>
         ) : (
-          <div className="flex-1 overflow-hidden relative group">
-            <ApplicationsTable apps={filteredApps} />
+          <div className="flex-1 overflow-auto relative group">
+            <LeadsTable leads={filteredApps} />
           </div>
         )}
       </GlassCard>
 
+      <BulkActionBar stages={stages} allLeads={allApps || []} />
+      <CustomizeColumnsDrawer />
+      <FilterLeadsDrawer />
     </div>
   );
 }

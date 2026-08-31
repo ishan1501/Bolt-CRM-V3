@@ -26,13 +26,14 @@ export function BulkActionBar({ stages, allLeads = [] }: BulkActionBarProps) {
 
   const bulkMutation = useMutation({
     mutationFn: (stage: LeadStage) => crmApi.changeLeadStage(Array.from(selectedLeadIds), stage),
-    onSuccess: (data) => {
-      toast.success(`Bulk job created with ID: ${data.data.jobId}`);
+    onSuccess: (data, variables) => {
+      toast.success(`Successfully queued stage update to ${variables.stageName} for ${selectedLeadIds.size} leads!`);
       clearSelection();
       queryClient.invalidateQueries({ queryKey: ["allLeads"] });
+      queryClient.invalidateQueries({ queryKey: ["allApplications"] });
     },
     onError: () => {
-      toast.error("Failed to execute bulk action");
+      toast.error("Failed to execute bulk stage update");
     }
   });
 

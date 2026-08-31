@@ -15,6 +15,7 @@ export type View = {
   matchType: "all" | "any";
   lockedColumns: string[];
   backendFilterPayload?: any;
+  referrer?: string;
 };
 
 interface ViewState {
@@ -28,8 +29,8 @@ interface ViewState {
   setCustomizeColumnsOpen: (open: boolean) => void;
   setFilterDrawerOpen: (open: boolean) => void;
 
-  createView: (name: string, backendFilterPayload?: any) => void;
-  syncBackendViews: (backendViews: any[]) => void;
+  createView: (name: string, backendFilterPayload?: any, referrer?: string) => void;
+  syncBackendViews: (backendViews: any[], referrer: string) => void;
   setActiveView: (id: string) => void;
   updateActiveViewColumns: (columns: string[]) => void;
   updateActiveViewFilters: (filters: FilterCondition[], matchType: "all" | "any") => void;
@@ -67,7 +68,7 @@ export const useViewStore = create<ViewState>()(
       setCustomizeColumnsOpen: (open) => set({ isCustomizeColumnsOpen: open }),
       setFilterDrawerOpen: (open) => set({ isFilterDrawerOpen: open }),
 
-      createView: (name, backendFilterPayload) => set((state) => {
+      createView: (name, backendFilterPayload, referrer) => set((state) => {
         const newView: View = {
           id: name.toLowerCase().replace(/\s+/g, '-'),
           name,
@@ -75,7 +76,8 @@ export const useViewStore = create<ViewState>()(
           filters: [],
           matchType: "all",
           lockedColumns: [],
-          backendFilterPayload
+          backendFilterPayload,
+          referrer
         };
         return { 
           views: [...state.views, newView],
@@ -83,7 +85,7 @@ export const useViewStore = create<ViewState>()(
         };
       }),
 
-      syncBackendViews: (backendViews) => set((state) => {
+      syncBackendViews: (backendViews, referrer) => set((state) => {
         const updatedViews = [...state.views];
         backendViews.forEach(bv => {
           const id = bv.name.toLowerCase().replace(/\s+/g, '-');
@@ -100,7 +102,7 @@ export const useViewStore = create<ViewState>()(
 
           const existingIdx = updatedViews.findIndex(v => v.id === id);
           if (existingIdx >= 0) {
-            updatedViews[existingIdx] = { ...updatedViews[existingIdx], backendFilterPayload: payload };
+            updatedViews[existingIdx] = { ...updatedViews[existingIdx], backendFilterPayload: payload, referrer };
           } else {
             updatedViews.push({
               id,
@@ -109,7 +111,8 @@ export const useViewStore = create<ViewState>()(
               filters: [],
               matchType: "all",
               lockedColumns: [],
-              backendFilterPayload: payload
+              backendFilterPayload: payload,
+              referrer
             });
           }
         });

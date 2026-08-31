@@ -64,7 +64,7 @@ export function EmailTab({ uuid }: { uuid: string }) {
           {emailTemplates.length === 0 ? (
             <div className="text-center py-8 text-[var(--bolt-text-secondary)] text-sm space-y-3">
               <p>No email templates found.</p>
-              <Button size="sm" variant="outline" onClick={() => setSettingsOpen(true)}>Create a Template</Button>
+              <Button size="sm" variant="outline" onClick={() => router.push('/settings')}>Create a Template</Button>
             </div>
           ) : (
             <>

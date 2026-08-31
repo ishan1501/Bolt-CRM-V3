@@ -5,6 +5,8 @@ export interface Template {
   id: string;
   name: string;
   type: 'email' | 'whatsapp';
+  program?: string;
+  useCase?: string;
   subject?: string;
   body: string;
 }

@@ -1,7 +1,18 @@
+"use client";
+
 import Link from "next/link";
 import { ArrowRight, Zap, Users, ShieldCheck, CheckCircle2 } from "lucide-react";
+import { useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export default function LandingPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    if (typeof window !== "undefined" && localStorage.getItem("bolt_auth_token")) {
+      router.replace("/leads");
+    }
+  }, [router]);
   return (
     <div className="flex flex-col items-center">
       {/* Hero Section */}

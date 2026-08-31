@@ -127,7 +127,7 @@ export const crmApi = {
   },
 
   /** Fetches ALL applications by auto-paginating through every page */
-  fetchAllApplications: async (): Promise<Lead[]> => {
+  fetchAllApplications: async (filterPayload?: any): Promise<Lead[]> => {
     const PAGE_SIZE = 250;
     let page = 1;
     let allApps: Lead[] = [];
@@ -136,7 +136,7 @@ export const crmApi = {
     while (allApps.length < total) {
       const res = await fetchApi<any>(
         `/api/v2/org/manage-leads/fetchAllApplicationLeads?page=${page}&limit=${PAGE_SIZE}&schoolId=${SCHOOL_UUID}`,
-        { method: "POST", body: JSON.stringify({}) }
+        { method: "POST", body: JSON.stringify(filterPayload || {}) }
       );
 
       const apps: Lead[] = Array.isArray(res?.data) ? res.data : (res?.data?.result ?? res?.result ?? []);
@@ -153,12 +153,12 @@ export const crmApi = {
     return allApps;
   },
 
-  fetchSavedViews: async (): Promise<any[]> => {
+  fetchSavedViews: async (referrer = "manageLeads"): Promise<any[]> => {
     try {
-      const res = await fetchApi<any>(`/api/savedFilter?referrer=manageLeads`);
+      const res = await fetchApi<any>(`/api/savedFilter?referrer=${referrer}`);
       return res?.data?.savedFilters || [];
     } catch (e) {
-      console.error("Failed to fetch saved views", e);
+      console.error(`Failed to fetch saved views for ${referrer}`, e);
       return [];
     }
   },

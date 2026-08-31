@@ -10,10 +10,11 @@ import { SingleSelect } from "@/components/ui/single-select";
 interface TableToolbarProps {
   totalRecords: number;
   uniquePrograms?: string[];
-  stages?: LeadStage[];
+  stages?: LeadStage[] | string[];
+  referrer?: string;
 }
 
-export function TableToolbar({ totalRecords, uniquePrograms = [], stages = [] }: TableToolbarProps) {
+export function TableToolbar({ totalRecords, uniquePrograms = [], stages = [], referrer = "manageLeads" }: TableToolbarProps) {
   const { 
     views, 
     activeViewId, 
@@ -34,17 +35,19 @@ export function TableToolbar({ totalRecords, uniquePrograms = [], stages = [] }:
   }, [views, removeView]);
 
   useQuery({
-    queryKey: ["savedFilters"],
+    queryKey: ["savedFilters", referrer],
     queryFn: async () => {
       const { crmApi } = await import("@/lib/api");
-      const backendViews = await crmApi.fetchSavedViews();
+      const backendViews = await crmApi.fetchSavedViews(referrer);
       if (backendViews && backendViews.length > 0) {
-        syncBackendViews(backendViews);
+        syncBackendViews(backendViews, referrer);
       }
       return backendViews;
     },
     staleTime: 1000 * 60 * 5 // 5 mins
   });
+
+  const filteredViews = views.filter(v => v.id === 'default' || v.referrer === referrer);
 
   return (
     <div className="flex flex-col sm:flex-row sm:flex-wrap items-start sm:items-center justify-between gap-3 p-3 surface-2 rounded-xl mb-4">
@@ -56,7 +59,7 @@ export function TableToolbar({ totalRecords, uniquePrograms = [], stages = [] }:
         <SingleSelect 
           value={activeViewId}
           onChange={setActiveView}
-          options={views.map(v => ({ label: v.name, value: v.id }))}
+          options={filteredViews.map(v => ({ label: v.name, value: v.id }))}
           placeholder="Select View..."
         />
         
@@ -70,14 +73,14 @@ export function TableToolbar({ totalRecords, uniquePrograms = [], stages = [] }:
         
         <MultiSelect 
           label="All Stages"
-          options={stages.map(s => s.stageName)}
+          options={stages.map(s => typeof s === 'string' ? s : s.stageName)}
           selectedValues={stageFilters}
           onToggle={toggleStageFilter}
           onClear={clearStageFilters}
         />
       </div>
 
-      <div className="flex items-center gap-2 shrink-0 self-end sm:self-auto">
+      <div className="hidden md:flex items-center gap-2 shrink-0 self-end sm:self-auto">
         <button 
           onClick={() => setCustomizeColumnsOpen(true)}
           className="w-9 h-9 flex items-center justify-center rounded-lg surface-3 hover:bg-white/5 transition-colors"

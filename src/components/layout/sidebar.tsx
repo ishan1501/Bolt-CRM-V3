@@ -1,20 +1,21 @@
 "use client";
 
 import { useUIStore } from "@/stores/ui-store";
-import { LayoutDashboard, Users, FileText, Activity, Settings, Home, Bookmark, CheckSquare, PhoneCall, X } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Activity, Settings, Home, Bookmark, CheckSquare, PhoneCall, X, Wrench } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
+import { BrandLogo } from "@/components/ui/brand-logo";
 import { supabase } from "@/lib/supabase";
 
 export const NAV_ITEMS = [
   { icon: Users, label: "Leads", href: "/leads" },
   { icon: FileText, label: "Applications", href: "/applications" },
   { icon: Bookmark, label: "Saved Leads", href: "/saved-leads" },
-  { icon: LayoutDashboard, label: "Overview", href: "/overview" },
   { icon: Home, label: "Home", href: "/home" },
   { icon: CheckSquare, label: "To Do", href: "/planner" },
   { icon: PhoneCall, label: "All Calls", href: "/calls" },
+  { icon: Wrench, label: "Tools", href: "/tools" },
 ];
 
 export function Sidebar() {
@@ -65,17 +66,14 @@ export function Sidebar() {
       >
         {/* Brand */}
         <div className="h-16 flex items-center px-6 border-b border-[var(--bolt-border-color)] overflow-hidden shrink-0">
-          <div className="flex items-center justify-center shrink-0 w-8 h-8">
-            <img src="/logo.png" alt="Masters Union" className="h-6 w-auto object-contain" />
-          </div>
-          <span 
+          <div 
             className={cn(
-              "ml-3 font-bold text-lg tracking-tight whitespace-nowrap transition-opacity duration-300 text-[var(--bolt-text-primary)]",
+              "flex items-center gap-2 transition-opacity duration-300",
               (sidebarCollapsed && !mobileDrawerOpen) ? "md:opacity-0" : "opacity-100"
             )}
           >
-            Bolt CRM
-          </span>
+            <BrandLogo />
+          </div>
           {/* Mobile close button */}
           <button 
             className="md:hidden ml-auto p-1 text-[var(--bolt-text-secondary)] hover:text-white"

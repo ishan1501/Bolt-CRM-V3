@@ -32,7 +32,8 @@ export function TopBar() {
     }
   }, []);
 
-  const isLeadsPage = pathname === "/leads";
+  const isLeadsPage = pathname === "/leads" || pathname === "/applications";
+  const isProfilePage = pathname === "/profile";
   const upcomingCount = reminders.filter(r => !r.completed && new Date(r.date) >= new Date()).length;
   const activeJobsCount = jobs.filter(j => j.status === 'running').length;
   
@@ -49,7 +50,7 @@ export function TopBar() {
   }, []);
 
   return (
-    <header className="h-[56px] bg-[var(--bolt-bg-depth-2)]/80 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between px-4 md:px-6 border-b border-[var(--bolt-border-color)] shadow-sm gap-2 md:gap-4 shrink-0">
+    <header className="h-16 bg-[var(--bolt-bg-depth-2)]/80 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between px-4 md:px-6 border-b border-[var(--bolt-border-color)] shadow-sm gap-2 md:gap-4 shrink-0">
       
       {/* Left spacer for perfect centering */}
       <div className="flex-1 hidden md:block"></div>
@@ -139,10 +140,31 @@ export function TopBar() {
                 {upcomingCount > 0 && (
                   <div className="flex flex-col">
                     <div className="px-3 py-2 text-xs font-semibold text-[var(--bolt-text-tertiary)] uppercase tracking-wider bg-black/20">
-                      Reminders
+                      Upcoming Calls & Reminders
                     </div>
-                    <div className="p-3 text-sm text-[var(--bolt-text-secondary)]">
-                      You have {upcomingCount} upcoming reminders.
+                    <div className="flex flex-col divide-y divide-[var(--bolt-border-color)] max-h-[300px] overflow-y-auto hide-scrollbar">
+                      {reminders
+                        .filter(r => !r.completed && new Date(r.date) >= new Date())
+                        .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+                        .map(r => {
+                          const rDate = new Date(r.date);
+                          const isToday = rDate.toDateString() === new Date().toDateString();
+                          return (
+                            <div key={r.id} className="p-3 hover:bg-[var(--bolt-bg-depth-3)] transition-colors">
+                              <div className="flex items-start justify-between gap-3">
+                                <div className="min-w-0 flex-1">
+                                  <div className="text-sm font-medium text-[var(--bolt-text-primary)] truncate">{r.title}</div>
+                                  <div className="text-xs text-[var(--bolt-text-secondary)] mt-0.5 truncate">Lead: {r.leadName}</div>
+                                </div>
+                                <div className={`text-[10px] font-medium whitespace-nowrap px-1.5 py-0.5 rounded-sm ${
+                                  isToday ? "bg-[var(--bolt-accent)]/10 text-[var(--bolt-accent)]" : "bg-white/5 text-[var(--bolt-text-tertiary)]"
+                                }`}>
+                                  {isToday ? "Today" : rDate.toLocaleDateString('en-US', { month: 'short', day: 'numeric' })} {rDate.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}
+                                </div>
+                              </div>
+                            </div>
+                          );
+                      })}
                     </div>
                   </div>
                 )}
@@ -163,12 +185,6 @@ export function TopBar() {
         >
           <span className="text-black text-xs font-bold">{userInitials}</span>
         </Link>
-        <button
-          onClick={() => useUIStore.getState().setMobileDrawerOpen(true)}
-          className="w-9 h-9 md:hidden flex items-center justify-center rounded-lg hover:bg-white/5 transition-colors text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)]"
-        >
-          <Menu size={20} />
-        </button>
       </div>
     </header>
   );

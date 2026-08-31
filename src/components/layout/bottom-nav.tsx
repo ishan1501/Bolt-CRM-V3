@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { cn } from "@/lib/utils";
-import { Users, FileText, Bookmark, CheckSquare, PhoneCall } from "lucide-react";
+import { Users, FileText, Bookmark, CheckSquare, PhoneCall, Wrench } from "lucide-react";
 
 const MOBILE_NAV_ITEMS = [
   { icon: Users, label: "Leads", href: "/leads" },
@@ -11,6 +11,7 @@ const MOBILE_NAV_ITEMS = [
   { icon: Bookmark, label: "Saved Leads", href: "/saved-leads" },
   { icon: CheckSquare, label: "To Do", href: "/planner" },
   { icon: PhoneCall, label: "All Calls", href: "/calls" },
+  { icon: Wrench, label: "Tools", href: "/tools" },
 ];
 
 export function BottomNav() {

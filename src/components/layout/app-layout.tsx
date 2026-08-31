@@ -2,16 +2,23 @@
 
 import { Sidebar } from "./sidebar";
 import { TopBar } from "./top-bar";
-
 import { BottomNav } from "./bottom-nav";
+import { SubscriptionBanner } from "./subscription-banner";
+
+import { usePathname } from "next/navigation";
 
 export function AppLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+  const isProfilePage = pathname === "/profile";
+
   return (
     <div className="min-h-screen flex bg-[var(--bolt-bg-depth-1)] text-[var(--bolt-text-primary)] overflow-hidden">
-      <Sidebar />
+      {!isProfilePage && <Sidebar />}
       <div className="flex-1 flex flex-col min-w-0 h-[100dvh] overflow-hidden">
         <TopBar />
-        <div className="flex-1 overflow-x-hidden overflow-y-auto pb-24 md:pb-0">
+        {/* Renewal reminder — only visible when ≤5 days remain on subscription */}
+        <SubscriptionBanner />
+        <div className="flex-1 overflow-x-hidden overflow-y-auto pb-32 md:pb-0">
           <main className="p-4 md:p-6 min-h-full relative flex flex-col">
             {children}
           </main>
