@@ -57,14 +57,14 @@ export function TopBar() {
     }
   }, []);
 
+  // Persistent refs for notification tracking — must survive re-renders
+  const notified5m = useRef(new Set<string>());
+  const notified1m = useRef(new Set<string>());
+  const notifiedPowerShots = useRef(new Set<string>());
+  const lastPaceCheck = useRef<number>(0);
+
   // Check for upcoming calls to fire notifications
   useEffect(() => {
-    const notified5m = new Set<string>();
-    const notified1m = new Set<string>();
-    
-    // Pace and Power Shot tracking
-    const notifiedPowerShots = new Set<string>();
-    let lastPaceCheck = 0;
 
     const checkReminders = async () => {
       if (!("Notification" in window) || Notification.permission !== "granted") return;
@@ -77,20 +77,20 @@ export function TopBar() {
         const diffMs = callTime.getTime() - now.getTime();
         const diffMins = Math.round(diffMs / 60000);
 
-        if (diffMins === 5 && !notified5m.has(r.id)) {
+        if (diffMins === 5 && !notified5m.current.has(r.id)) {
           new Notification("Upcoming Call in 5 Minutes!", {
             body: `Reminder for ${r.leadName || "Lead"} at ${callTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`,
             icon: "/icon.png"
           });
-          notified5m.add(r.id);
+          notified5m.current.add(r.id);
         }
 
-        if (diffMins === 1 && !notified1m.has(r.id)) {
+        if (diffMins === 1 && !notified1m.current.has(r.id)) {
           new Notification("Call Starting Soon!", {
             body: `Your call with ${r.leadName || "Lead"} is in 1 minute.`,
             icon: "/icon.png"
           });
-          notified1m.add(r.id);
+          notified1m.current.add(r.id);
         }
       });
 
@@ -99,30 +99,26 @@ export function TopBar() {
       const minutes = now.getMinutes();
       const timeStr = `${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')}`;
       
-      // Power Shot 1: 11:00 AM
-      if (timeStr === "10:55" && !notifiedPowerShots.has("ps1")) {
+      if (timeStr === "10:55" && !notifiedPowerShots.current.has("ps1")) {
         new Notification("⚡ Power Shot 1 Approaching!", { body: "Get ready! 11:00 AM - 12:30 PM is for aggressive pipeline building.", icon: "/icon.png" });
-        notifiedPowerShots.add("ps1");
+        notifiedPowerShots.current.add("ps1");
       }
-      // Power Shot 2: 3:00 PM
-      if (timeStr === "14:55" && !notifiedPowerShots.has("ps2")) {
+      if (timeStr === "14:55" && !notifiedPowerShots.current.has("ps2")) {
         new Notification("⚡ Power Shot 2 Approaching!", { body: "3:00 PM - 5:00 PM: Extreme volume calling. Let's go!", icon: "/icon.png" });
-        notifiedPowerShots.add("ps2");
+        notifiedPowerShots.current.add("ps2");
       }
-      // Power Shot 3: 6:00 PM
-      if (timeStr === "17:55" && !notifiedPowerShots.has("ps3")) {
+      if (timeStr === "17:55" && !notifiedPowerShots.current.has("ps3")) {
         new Notification("⚡ Final Power Shot Approaching!", { body: "6:00 PM - 7:30 PM: Close the day strong!", icon: "/icon.png" });
-        notifiedPowerShots.add("ps3");
+        notifiedPowerShots.current.add("ps3");
       }
 
-      // Pacing check (every 30 mins)
-      if (now.getTime() - lastPaceCheck > 30 * 60 * 1000) {
-        lastPaceCheck = now.getTime();
+      // Pacing check (only once every 30 minutes, persisted via ref)
+      if (now.getTime() - lastPaceCheck.current > 30 * 60 * 1000) {
+        lastPaceCheck.current = now.getTime();
         
-        // Only check pacing during office hours (10:30 to 19:30)
         const currentMins = hours * 60 + minutes;
-        const startMins = 10 * 60 + 30; // 10:30
-        const endMins = 19 * 60 + 30; // 19:30
+        const startMins = 10 * 60 + 30;
+        const endMins = 19 * 60 + 30;
         
         if (currentMins >= startMins && currentMins <= endMins) {
           try {
@@ -138,7 +134,7 @@ export function TopBar() {
 
               if (count !== null) {
                 const targetCalls = 200;
-                const totalWorkingMins = endMins - startMins; // 9 hours = 540 mins
+                const totalWorkingMins = endMins - startMins;
                 const elapsedMins = currentMins - startMins;
                 const expectedCalls = Math.round((targetCalls / totalWorkingMins) * elapsedMins);
                 
@@ -155,9 +151,9 @@ export function TopBar() {
       }
     };
 
-    const interval = setInterval(checkReminders, 10000); // Check every 10 seconds
+    const interval = setInterval(checkReminders, 10000);
     return () => clearInterval(interval);
-  }, [reminders]);
+  }, [reminders, notified5m, notified1m, notifiedPowerShots, lastPaceCheck]);
 
   return (
     <header className="h-16 bg-[var(--bolt-bg-depth-2)]/80 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between px-4 md:px-6 border-b border-[var(--bolt-border-color)] shadow-sm gap-2 md:gap-4 shrink-0">

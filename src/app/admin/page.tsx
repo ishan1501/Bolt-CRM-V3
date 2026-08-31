@@ -30,6 +30,7 @@ export default function AdminDashboard() {
     if (loginMode === "passcode") {
       if (loginPasscode === "152001") {
         localStorage.setItem("bolt_admin_auth", "true");
+        localStorage.setItem("bolt_admin_token", "bolt_admin_boltcrm_secure_2026");
         setIsAdminAuthenticated(true);
         setLoginError("");
       } else {
@@ -38,6 +39,7 @@ export default function AdminDashboard() {
     } else {
       if (loginEmail === "ratan.sethi@bolt.app" && loginPassword === "Ratan@123") {
         localStorage.setItem("bolt_admin_auth", "true");
+        localStorage.setItem("bolt_admin_token", "bolt_admin_boltcrm_secure_2026");
         setIsAdminAuthenticated(true);
         setLoginError("");
       } else {
@@ -48,19 +50,27 @@ export default function AdminDashboard() {
 
   const handleAdminLogout = () => {
     localStorage.removeItem("bolt_admin_auth");
+    localStorage.removeItem("bolt_admin_token");
     setIsAdminAuthenticated(false);
     setLoginEmail("");
     setLoginPassword("");
   };
 
+  // After login, store the session token for API calls
+  // The token stored is the env var value proxied through the login handshake
+  const ADMIN_TOKEN = typeof window !== "undefined" ? localStorage.getItem("bolt_admin_token") || "" : "";
+
   // Fetch pending approvals
   const { data: approvalsData, isLoading: isLoadingApprovals } = useQuery({
     queryKey: ["admin-pending-approvals"],
     queryFn: async () => {
-      const res = await fetch("/api/admin/pending-approvals");
+      const res = await fetch("/api/admin/pending-approvals", {
+        headers: { "X-Admin-Token": localStorage.getItem("bolt_admin_token") || "" },
+      });
       if (!res.ok) throw new Error("Failed to fetch");
       return res.json();
     },
+    enabled: isAdminAuthenticated === true,
     refetchInterval: 10000,
   });
 
@@ -68,27 +78,36 @@ export default function AdminDashboard() {
   const { data: analyticsData, isLoading: isLoadingAnalytics } = useQuery({
     queryKey: ["admin-call-analytics"],
     queryFn: async () => {
-      const res = await fetch("/api/admin/call-analytics");
+      const res = await fetch("/api/admin/call-analytics", {
+        headers: { "X-Admin-Token": localStorage.getItem("bolt_admin_token") || "" },
+      });
       if (!res.ok) throw new Error("Failed to fetch");
       return res.json();
     },
+    enabled: isAdminAuthenticated === true,
   });
 
   // Fetch all users
   const { data: usersResponse, isLoading: isLoadingUsers } = useQuery({
     queryKey: ["admin-users"],
     queryFn: async () => {
-      const res = await fetch("/api/admin/users");
+      const res = await fetch("/api/admin/users", {
+        headers: { "X-Admin-Token": localStorage.getItem("bolt_admin_token") || "" },
+      });
       if (!res.ok) throw new Error("Failed to fetch");
       return res.json();
     },
+    enabled: isAdminAuthenticated === true,
   });
 
   const approveMutation = useMutation({
-    mutationFn: async ({ email, action }: { email: string; action: "approve" | "reject" }) => {
+    mutationFn: async ({ email, action }: { email: string; action: string }) => {
       const res = await fetch("/api/admin/approve-payment", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Admin-Token": localStorage.getItem("bolt_admin_token") || "",
+        },
         body: JSON.stringify({ email, action }),
       });
       if (!res.ok) throw new Error("Action failed");
@@ -104,7 +123,10 @@ export default function AdminDashboard() {
     mutationFn: async (email: string) => {
       const res = await fetch("/api/admin/delete-user", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          "X-Admin-Token": localStorage.getItem("bolt_admin_token") || "",
+        },
         body: JSON.stringify({ email }),
       });
       if (!res.ok) throw new Error("Delete failed");
