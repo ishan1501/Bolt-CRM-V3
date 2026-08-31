@@ -33,14 +33,17 @@ export default function LeadDetailPage() {
   useEffect(() => {
     // If the drawer was opened and then closed while we are still on this page, navigate back
     if (hasOpened && !drawerOpen) {
-      router.back();
-      // Fallback in case router.back() does nothing (e.g. direct link visit)
-      const fallbackTimer = setTimeout(() => {
-        if (window.location.pathname.startsWith("/leads/")) {
-          router.push("/leads");
-        }
-      }, 100);
-      return () => clearTimeout(fallbackTimer);
+      const animationTimer = setTimeout(() => {
+        router.back();
+        // Fallback in case router.back() does nothing (e.g. direct link visit)
+        const fallbackTimer = setTimeout(() => {
+          if (window.location.pathname.startsWith("/leads/")) {
+            router.push("/leads");
+          }
+        }, 100);
+      }, 300); // 300ms matches the Framer Motion exit duration
+
+      return () => clearTimeout(animationTimer);
     }
   }, [drawerOpen, hasOpened, router]);
 

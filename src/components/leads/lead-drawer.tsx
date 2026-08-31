@@ -116,8 +116,8 @@ export function LeadDrawer({ leads = [] }: { leads?: Lead[] }) {
           <motion.div 
             initial={{ x: "100%" }}
             animate={{ x: 0 }}
-            exit={{ x: "100%", transition: { ease: "easeInOut", duration: 0.3 } }}
-            transition={{ type: "spring", damping: 25, stiffness: 200 }}
+            exit={{ x: "100%", transition: { type: "tween", ease: "easeInOut", duration: 0.3 } }}
+            transition={{ type: "tween", ease: "easeOut", duration: 0.3 }}
             className="fixed top-0 right-0 bottom-0 w-full surface-1 z-[101] flex shadow-2xl overflow-hidden"
           >
         {/* Save Lead Button */}
@@ -155,7 +155,7 @@ export function LeadDrawer({ leads = [] }: { leads?: Lead[] }) {
               }
             }}
             className={cn(
-              "absolute right-14 top-4 w-10 h-10 rounded-xl flex items-center justify-center transition-colors border border-[var(--bolt-border-color)] z-50",
+              "absolute right-20 top-4 w-10 h-10 rounded-xl flex items-center justify-center transition-colors border border-[var(--bolt-border-color)] z-50",
               isSaved ? "bg-[var(--bolt-accent)] text-black" : "bg-[var(--bolt-bg-depth-2)] text-[var(--bolt-text-secondary)] hover:text-white"
             )}
           >
