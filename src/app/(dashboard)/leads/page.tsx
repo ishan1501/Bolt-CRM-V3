@@ -13,7 +13,7 @@ import { FilterLeadsDrawer } from "@/components/leads/filter-leads-drawer";
 import { useUIStore } from "@/stores/ui-store";
 import { useViewStore } from "@/stores/view-store";
 import { Lead } from "@/types/crm";
-import { useMemo } from "react";
+import { useMemo, useEffect } from "react";
 
 function extractLeads(raw: unknown): Lead[] {
   if (!raw) return [];
