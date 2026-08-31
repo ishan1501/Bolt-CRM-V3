@@ -44,13 +44,16 @@ function formatDate(dateStr: string): string {
   }
 }
 
-export function LeadDrawer({ leads = [] }: { leads?: Lead[] }) {
-  const { drawerOpen, closeDrawer, activeLeadUuid, drawerTab, setDrawerTab, openDrawer } = useUIStore();
+export function LeadDrawer({ leads: propLeads = [] }: { leads?: Lead[] }) {
+  const { drawerOpen, closeDrawer, activeLeadUuid, drawerTab, setDrawerTab, openDrawer, currentLeadList } = useUIStore();
   const isSaved = useSavedLeadsStore(state => activeLeadUuid ? state.savedLeads.some(l => l.uuid === activeLeadUuid) : false);
   const { profile, isLoading } = useLeadProfile(activeLeadUuid);
   const queryClient = useQueryClient();
   const [mounted, setMounted] = useState(false);
   const [promptModalConfig, setPromptModalConfig] = useState<any>(null);
+
+  // Use currentLeadList from store if available, otherwise fallback to propLeads
+  const leads = currentLeadList.length > 0 ? currentLeadList : propLeads;
 
   useEffect(() => {
     setMounted(true);
@@ -190,25 +193,27 @@ export function LeadDrawer({ leads = [] }: { leads?: Lead[] }) {
                   </div>
                   <h2 className="text-lg font-bold text-center text-[var(--bolt-text-primary)]">{profile.name || "Unknown Lead"}</h2>
                   
-                  <div className="flex items-center gap-3 mt-4 mb-6 text-sm">
-                    <button 
-                      onClick={goToPrev}
-                      disabled={currentIndex <= 0}
-                      className="text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center transition-colors"
-                    >
-                      <ChevronLeft size={16} /> Prev
-                    </button>
-                    <span className="font-medium text-[var(--bolt-text-primary)]">
-                      {currentIndex !== -1 ? currentIndex + 1 : 0} / {totalLeads}
-                    </span>
-                    <button 
-                      onClick={goToNext}
-                      disabled={currentIndex >= totalLeads - 1 || currentIndex === -1}
-                      className="text-[var(--bolt-accent)] font-medium hover:text-[var(--bolt-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center transition-colors"
-                    >
-                      Next <ChevronRight size={16} />
-                    </button>
-                  </div>
+                  {totalLeads > 1 && (
+                    <div className="flex items-center gap-3 mt-4 mb-6 text-sm">
+                      <button 
+                        onClick={goToPrev}
+                        disabled={currentIndex <= 0}
+                        className="text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center transition-colors"
+                      >
+                        <ChevronLeft size={16} /> Prev
+                      </button>
+                      <span className="font-medium text-[var(--bolt-text-primary)]">
+                        {currentIndex !== -1 ? currentIndex + 1 : 0} / {totalLeads}
+                      </span>
+                      <button 
+                        onClick={goToNext}
+                        disabled={currentIndex >= totalLeads - 1 || currentIndex === -1}
+                        className="text-[var(--bolt-accent)] font-medium hover:text-[var(--bolt-accent-hover)] disabled:opacity-50 disabled:cursor-not-allowed flex items-center transition-colors"
+                      >
+                        Next <ChevronRight size={16} />
+                      </button>
+                    </div>
+                  )}
 
                   <div className="w-full space-y-4 text-sm">
                     <div className="space-y-1.5">

@@ -1,3 +1,4 @@
+import { Lead } from "@/types/crm";
 import { create } from "zustand";
 
 type DrawerTab = "profile" | "notes" | "history" | "reminders" | "email" | "whatsapp";
@@ -7,6 +8,7 @@ interface UIState {
   drawerOpen: boolean;
   activeLeadUuid: string | null;
   drawerTab: DrawerTab;
+  currentLeadList: Lead[];
   searchQuery: string;
   settingsOpen: boolean;
   
@@ -18,6 +20,7 @@ interface UIState {
   closeDrawer: () => void;
   setDrawerTab: (tab: DrawerTab) => void;
   
+  setCurrentLeadList: (leads: Lead[]) => void;
   setSearchQuery: (query: string) => void;
   
   programFilters: string[];
@@ -43,7 +46,9 @@ export const useUIStore = create<UIState>((set) => ({
   settingsOpen: false,
   activeLeadUuid: null,
   drawerTab: "profile",
+  currentLeadList: [],
   searchQuery: "",
+  setCurrentLeadList: (leads) => set({ currentLeadList: leads }),
   sidebarExpanded: false,
   mobileDrawerOpen: false,
 

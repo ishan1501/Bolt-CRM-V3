@@ -129,9 +129,15 @@ export default function LeadsPage() {
     return result;
   }, [allLeads, searchQuery, activeView, programFilters, stageFilters]);
 
+  const { setCurrentLeadList } = useUIStore();
+
+  useEffect(() => {
+    setCurrentLeadList(filteredLeads);
+  }, [filteredLeads, setCurrentLeadList]);
+
   if (error) {
     return (
-      <div className="p-4 bg-red-100/50 text-red-600 dark:bg-red-900/20 dark:text-red-400 rounded-lg">
+      <div className="flex-1 flex items-center justify-center min-h-[400px] text-red-500">
         Failed to load leads: {(error as Error).message}
       </div>
     );
