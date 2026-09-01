@@ -13,7 +13,7 @@ import { supabase } from "@/lib/supabase";
 import { toast } from "sonner";
 
 export function TopBar() {
-  const { reminders, pruneOldReminders } = useReminderStore();
+  const { reminders, pruneOldReminders, fetchRemindersFromBackend } = useReminderStore();
   const { searchQuery, setSearchQuery } = useUIStore();
   const { jobs, pauseJob, startJob, removeJob } = useJobStore();
   const pathname = usePathname();
@@ -79,10 +79,11 @@ export function TopBar() {
   const notifiedPowerShots = useRef(new Set<string>());
   const lastPaceCheck = useRef<number>(0);
 
-  // Prune reminders on mount
+  // Sync and Prune reminders on mount
   useEffect(() => {
     pruneOldReminders();
-  }, [pruneOldReminders]);
+    fetchRemindersFromBackend();
+  }, [pruneOldReminders, fetchRemindersFromBackend]);
 
   // Check for upcoming calls to fire notifications
   useEffect(() => {

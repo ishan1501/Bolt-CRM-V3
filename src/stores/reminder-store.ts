@@ -24,6 +24,7 @@ interface ReminderState {
   getUpcomingReminders: () => Reminder[];
   getOverdueReminders: () => Reminder[];
   pruneOldReminders: () => void;
+  fetchRemindersFromBackend: () => Promise<void>;
 }
 
 const syncReminderToBackend = async (action: "upsert" | "delete", reminder?: Reminder, id?: string) => {
@@ -105,6 +106,25 @@ export const useReminderStore = create<ReminderState>()(
 
         return { reminders: filtered };
       }),
+
+      fetchRemindersFromBackend: async () => {
+        try {
+          if (typeof window === "undefined") return;
+          const user = JSON.parse(localStorage.getItem("bolt_user") || "{}");
+          const userId = user.email || user.id;
+          if (!userId) return;
+
+          const res = await fetch(`/api/reminders?userId=${encodeURIComponent(userId)}`);
+          if (res.ok) {
+            const data = await res.json();
+            if (data.reminders) {
+              set({ reminders: data.reminders });
+            }
+          }
+        } catch (err) {
+          console.error("Failed to load backend reminders:", err);
+        }
+      },
     }),
     {
       name: "bolt-crm-reminders",
