@@ -5,10 +5,13 @@ import { TemplateSettings } from "@/components/ui/template-settings";
 import { Settings, MessageSquare, Shield, Users, LogOut, Bell } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { useSettingsStore } from "@/stores/settings-store";
 
 export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<"templates" | "security" | "team" | "notifications">("templates");
   const [notifState, setNotifState] = useState<string>("default");
+  
+  const { notificationPreference, setNotificationPreference } = useSettingsStore();
 
   useEffect(() => {
     if (typeof window !== 'undefined' && 'Notification' in window) {
@@ -36,10 +39,12 @@ export default function SettingsPage() {
     const body = "This is a test to verify your notifications are working perfectly.";
     
     // In-app toast
-    toast.success(title, { description: body, duration: 5000 });
+    if (notificationPreference === "both" || notificationPreference === "toast") {
+      toast.success(title, { description: body, duration: 5000 });
+    }
     
     // OS-level notification
-    if ('Notification' in window && Notification.permission === 'granted') {
+    if ((notificationPreference === "both" || notificationPreference === "os") && 'Notification' in window && Notification.permission === 'granted') {
       new Notification(title, { body, icon: "/icon.png" });
     }
   };
@@ -159,20 +164,35 @@ export default function SettingsPage() {
                   {notifState !== "granted" ? (
                     <button 
                       onClick={handleEnableNotifications}
-                      className="w-full bg-[var(--bolt-accent)] text-black font-semibold py-2.5 rounded-lg hover:bg-[#eab308] transition-colors mt-4"
+                      className="w-full py-2.5 rounded-lg bg-[var(--bolt-accent)] text-white text-sm font-medium hover:bg-[var(--bolt-accent-hover)] transition-colors"
                     >
                       Enable Notifications
                     </button>
                   ) : (
-                    <div className="flex flex-col gap-3 mt-4">
-                      <div className="w-full text-center py-2.5 bg-emerald-500/10 text-emerald-400 rounded-lg text-sm font-medium border border-emerald-500/20">
-                        Notifications are active
+                    <div className="space-y-4">
+                      <div className="w-full py-2.5 rounded-lg bg-emerald-500/10 text-emerald-500 border border-emerald-500/20 text-sm font-medium text-center">
+                        OS Notifications are authorized
                       </div>
+                      
+                      <div className="space-y-2 pt-2">
+                        <label className="text-sm font-medium text-[var(--bolt-text-primary)]">Alert Preference</label>
+                        <select 
+                          value={notificationPreference}
+                          onChange={(e) => setNotificationPreference(e.target.value as any)}
+                          className="w-full bg-[var(--bolt-bg-depth-3)] border border-[var(--bolt-border-color)] rounded-lg px-3 py-2 text-sm text-[var(--bolt-text-primary)] focus:outline-none focus:border-[var(--bolt-accent)]"
+                        >
+                          <option value="both">Both (OS Banner + In-App Toast)</option>
+                          <option value="os">OS Banners Only</option>
+                          <option value="toast">In-App Toasts Only</option>
+                        </select>
+                      </div>
+
                       <button 
                         onClick={handleTestNotification}
-                        className="w-full bg-[var(--bolt-bg-depth-3)] hover:bg-[var(--bolt-bg-depth-4)] border border-[var(--bolt-border-color)] text-[var(--bolt-text-primary)] font-semibold py-2.5 rounded-lg transition-colors flex items-center justify-center gap-2"
+                        className="w-full py-2.5 rounded-lg bg-[var(--bolt-bg-depth-3)] border border-[var(--bolt-border-color)] text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] hover:border-[var(--bolt-text-tertiary)] text-sm font-medium transition-all flex items-center justify-center gap-2"
                       >
-                        <Bell size={16} /> Send Test Notification
+                        <Bell size={16} />
+                        Send Test Notification
                       </button>
                     </div>
                   )}

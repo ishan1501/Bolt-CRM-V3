@@ -7,6 +7,7 @@ import { useState, useRef, useEffect, useMemo } from "react";
 import { useReminderStore } from "@/stores/reminder-store";
 import { useUIStore } from "@/stores/ui-store";
 import { useJobStore } from "@/stores/job-store";
+import { useSettingsStore } from "@/stores/settings-store";
 import { usePathname } from "next/navigation";
 import { GlassCard } from "../ui/glass-card";
 import { supabase } from "@/lib/supabase";
@@ -16,6 +17,7 @@ export function TopBar() {
   const { reminders, pruneOldReminders, fetchRemindersFromBackend } = useReminderStore();
   const { searchQuery, setSearchQuery } = useUIStore();
   const { jobs, pauseJob, startJob, removeJob } = useJobStore();
+  const { notificationPreference } = useSettingsStore();
   const pathname = usePathname();
   const [showNotifications, setShowNotifications] = useState(false);
   const notifRef = useRef<HTMLDivElement>(null);
@@ -102,8 +104,13 @@ export function TopBar() {
         if (diffMins === 5 && !notified5m.current.has(r.id)) {
           const title = "Upcoming Call in 5 Minutes!";
           const body = `Reminder for ${r.leadName || "Lead"} at ${callTime.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}`;
-          toast.info(title, { description: body, duration: 10000 });
-          if (canUseOSNotifs) new Notification(title, { body, icon: "/icon.png" });
+          
+          if (notificationPreference === "both" || notificationPreference === "toast") {
+            toast.info(title, { description: body, duration: 10000 });
+          }
+          if ((notificationPreference === "both" || notificationPreference === "os") && canUseOSNotifs) {
+            new Notification(title, { body, icon: "/icon.png" });
+          }
           
           notified5m.current.add(r.id);
           setUnreadNotifications(true);
@@ -112,8 +119,13 @@ export function TopBar() {
         if (diffMins === 1 && !notified1m.current.has(r.id)) {
           const title = "Call Starting Soon!";
           const body = `Your call with ${r.leadName || "Lead"} is in 1 minute.`;
-          toast.warning(title, { description: body, duration: 15000 });
-          if (canUseOSNotifs) new Notification(title, { body, icon: "/icon.png" });
+          
+          if (notificationPreference === "both" || notificationPreference === "toast") {
+            toast.warning(title, { description: body, duration: 15000 });
+          }
+          if ((notificationPreference === "both" || notificationPreference === "os") && canUseOSNotifs) {
+            new Notification(title, { body, icon: "/icon.png" });
+          }
           
           notified1m.current.add(r.id);
           setUnreadNotifications(true);
@@ -128,22 +140,34 @@ export function TopBar() {
       if (timeStr === "10:55" && !notifiedPowerShots.current.has("ps1")) {
         const title = "⚡ Power Shot 1 Approaching!";
         const body = "Get ready! 11:00 AM - 12:30 PM is for aggressive pipeline building.";
-        toast.info(title, { description: body, duration: 10000 });
-        if (canUseOSNotifs) new Notification(title, { body, icon: "/icon.png" });
+        if (notificationPreference === "both" || notificationPreference === "toast") {
+          toast.info(title, { description: body, duration: 10000 });
+        }
+        if ((notificationPreference === "both" || notificationPreference === "os") && canUseOSNotifs) {
+          new Notification(title, { body, icon: "/icon.png" });
+        }
         notifiedPowerShots.current.add("ps1");
       }
       if (timeStr === "14:55" && !notifiedPowerShots.current.has("ps2")) {
         const title = "⚡ Power Shot 2 Approaching!";
         const body = "3:00 PM - 5:00 PM: Extreme volume calling. Let's go!";
-        toast.info(title, { description: body, duration: 10000 });
-        if (canUseOSNotifs) new Notification(title, { body, icon: "/icon.png" });
+        if (notificationPreference === "both" || notificationPreference === "toast") {
+          toast.info(title, { description: body, duration: 10000 });
+        }
+        if ((notificationPreference === "both" || notificationPreference === "os") && canUseOSNotifs) {
+          new Notification(title, { body, icon: "/icon.png" });
+        }
         notifiedPowerShots.current.add("ps2");
       }
       if (timeStr === "17:55" && !notifiedPowerShots.current.has("ps3")) {
-        const title = "⚡ Final Power Shot Approaching!";
-        const body = "6:00 PM - 7:30 PM: Close the day strong!";
-        toast.info(title, { description: body, duration: 10000 });
-        if (canUseOSNotifs) new Notification(title, { body, icon: "/icon.png" });
+        const title = "⚡ Power Shot 3 Approaching!";
+        const body = "6:00 PM - 7:30 PM: Final push. Secure those leads.";
+        if (notificationPreference === "both" || notificationPreference === "toast") {
+          toast.info(title, { description: body, duration: 10000 });
+        }
+        if ((notificationPreference === "both" || notificationPreference === "os") && canUseOSNotifs) {
+          new Notification(title, { body, icon: "/icon.png" });
+        }
         notifiedPowerShots.current.add("ps3");
       }
 

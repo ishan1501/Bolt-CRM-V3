@@ -1,32 +1,19 @@
 import { create } from "zustand";
-import { persist, createJSONStorage } from "zustand/middleware";
-import { get, set, del } from "idb-keyval";
-
-const idbStorage = {
-  getItem: async (name: string) => (await get(name)) || null,
-  setItem: async (name: string, value: string) => await set(name, value),
-  removeItem: async (name: string) => await del(name),
-};
+import { persist } from "zustand/middleware";
 
 interface SettingsState {
-  autoStageEnabled: boolean;
-  autoStageTargetStage: any;
-  setAutoStage: (enabled: boolean, stage?: any) => void;
+  notificationPreference: "both" | "toast" | "os";
+  setNotificationPreference: (pref: "both" | "toast" | "os") => void;
 }
 
 export const useSettingsStore = create<SettingsState>()(
   persist(
     (set) => ({
-      autoStageEnabled: false,
-      autoStageTargetStage: null,
-      setAutoStage: (enabled, stage) => set((state) => ({
-        autoStageEnabled: enabled,
-        autoStageTargetStage: stage !== undefined ? stage : state.autoStageTargetStage
-      }))
+      notificationPreference: "both",
+      setNotificationPreference: (pref) => set({ notificationPreference: pref }),
     }),
     {
       name: "bolt-crm-settings",
-      storage: createJSONStorage(() => idbStorage),
     }
   )
 );
