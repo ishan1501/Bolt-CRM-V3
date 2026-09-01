@@ -72,6 +72,23 @@ export async function GET(req: Request) {
       await supabaseAdmin.from('call_logs').delete().in('id', chunk);
     }
 
+    // 5. Clean up stale reminders
+    const oneDayAgo = new Date();
+    oneDayAgo.setDate(oneDayAgo.getDate() - 1);
+
+    // Delete completed reminders older than 1 day
+    await supabaseAdmin
+      .from('reminders')
+      .delete()
+      .eq('completed', true)
+      .lt('date', oneDayAgo.toISOString());
+
+    // Delete overdue reminders older than 7 days
+    await supabaseAdmin
+      .from('reminders')
+      .delete()
+      .lt('date', cutoff);
+
     return NextResponse.json({ 
       message: 'Cleanup successful', 
       deletedCount: idsToDelete.length 
