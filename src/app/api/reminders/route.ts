@@ -41,8 +41,7 @@ export async function POST(req: NextRequest) {
         lead_name: reminder.leadName,
         title: reminder.title,
         date: reminder.date,
-        completed: reminder.completed,
-        updated_at: new Date().toISOString()
+        completed: reminder.completed
       }, { onConflict: "id" });
       
       if (error) throw error;
