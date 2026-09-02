@@ -253,12 +253,12 @@ export function TopBar() {
             className="inline-flex items-center gap-1.5 md:gap-2 px-2.5 md:px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[10px] md:text-xs font-bold animate-in fade-in shrink-0 shadow-[0_0_10px_rgba(244,63,94,0.2)]"
             title={`${activePowerShot} is active! Make those calls!`}
           >
-            <span className="relative flex h-2 w-2 shrink-0">
+            <span className="relative flex h-1.5 w-1.5 md:h-2 md:w-2 shrink-0">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-75"></span>
-              <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+              <span className="relative inline-flex rounded-full h-1.5 w-1.5 md:h-2 md:w-2 bg-rose-500"></span>
             </span>
-            <span className="hidden sm:inline">{activePowerShot} Active</span>
-            <span className="sm:hidden text-[9px] uppercase tracking-wider">Power Shot</span>
+            <span className="hidden sm:inline">{activePowerShot}</span>
+            <span className="sm:hidden text-[10px] uppercase tracking-wider">{activePowerShot.replace("Power Shot ", "PS ")}</span>
           </div>
         )}
       </div>
