@@ -84,9 +84,9 @@ export function BulkActionBar({ stages, allLeads = [] }: BulkActionBarProps) {
         <div className="flex flex-col md:flex-row items-stretch md:items-center gap-3">
           
           {/* Dropdowns Row (Mobile) / In-line (Desktop) */}
-          <div className="flex flex-row gap-2">
+          <div className="flex flex-col md:flex-row gap-2 w-full">
             <select 
-              className="surface-input rounded-lg px-3 py-1.5 text-xs md:text-sm flex-1 md:w-48 text-[var(--bolt-text-primary)] cursor-pointer"
+              className="surface-input rounded-lg px-3 py-2 md:py-1.5 text-sm w-full md:w-48 text-[var(--bolt-text-primary)] cursor-pointer"
               value={selectedStageId}
               onChange={(e) => {
                 setSelectedStageId(e.target.value);
@@ -101,7 +101,7 @@ export function BulkActionBar({ stages, allLeads = [] }: BulkActionBarProps) {
             
             {subStages.length > 0 && (
               <select
-                className="surface-input rounded-lg px-3 py-1.5 text-xs md:text-sm flex-1 md:w-40 text-[var(--bolt-text-primary)] animate-in zoom-in-95 duration-200 cursor-pointer"
+                className="surface-input rounded-lg px-3 py-2 md:py-1.5 text-sm w-full md:w-40 text-[var(--bolt-text-primary)] animate-in zoom-in-95 duration-200 cursor-pointer"
                 value={selectedSubStageId}
                 onChange={(e) => setSelectedSubStageId(e.target.value)}
               >

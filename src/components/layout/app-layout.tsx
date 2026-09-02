@@ -4,6 +4,7 @@ import { Sidebar } from "./sidebar";
 import { TopBar } from "./top-bar";
 import { BottomNav } from "./bottom-nav";
 import { SubscriptionBanner } from "./subscription-banner";
+import { PullToRefresh } from "./pull-to-refresh";
 import { motion, AnimatePresence } from "framer-motion";
 
 import { usePathname } from "next/navigation";
@@ -39,7 +40,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
         <TopBar />
         {/* Renewal reminder — only visible when ≤5 days remain on subscription */}
         <SubscriptionBanner />
-        <div className="flex-1 overflow-x-hidden overflow-y-auto pb-32 md:pb-0">
+        <PullToRefresh>
           <main className="p-4 md:p-6 min-h-full relative flex flex-col">
             <AnimatePresence mode="wait">
               <motion.div
@@ -54,7 +55,7 @@ export function AppLayout({ children }: { children: React.ReactNode }) {
               </motion.div>
             </AnimatePresence>
           </main>
-        </div>
+        </PullToRefresh>
       </div>
       <BottomNav />
     </div>
