@@ -16,6 +16,30 @@ import { toast } from "sonner";
 export function TopBar() {
   const { reminders, pruneOldReminders, fetchRemindersFromBackend } = useReminderStore();
   const { searchQuery, setSearchQuery } = useUIStore();
+  const [activePowerShot, setActivePowerShot] = useState<string | null>(null);
+
+  // Check Power Shot windows
+  useEffect(() => {
+    const checkPowerShot = () => {
+      const now = new Date();
+      const hours = now.getHours();
+      const minutes = now.getMinutes();
+      const totalMinutes = hours * 60 + minutes;
+
+      if (totalMinutes >= 11 * 60 && totalMinutes < 12 * 60 + 30) {
+        setActivePowerShot("Power Shot 1");
+      } else if (totalMinutes >= 15 * 60 && totalMinutes < 17 * 60) {
+        setActivePowerShot("Power Shot 2");
+      } else if (totalMinutes >= 18 * 60 && totalMinutes < 19 * 60 + 30) {
+        setActivePowerShot("Power Shot 3");
+      } else {
+        setActivePowerShot(null);
+      }
+    };
+    checkPowerShot();
+    const interval = setInterval(checkPowerShot, 60000);
+    return () => clearInterval(interval);
+  }, []);
   const { jobs, pauseJob, startJob, removeJob } = useJobStore();
   const { notificationPreference } = useSettingsStore();
   const pathname = usePathname();
@@ -222,8 +246,22 @@ export function TopBar() {
   return (
     <header className="h-16 bg-[var(--bolt-bg-depth-2)]/80 backdrop-blur-md sticky top-0 z-30 flex items-center justify-between px-4 md:px-6 border-b border-[var(--bolt-border-color)] shadow-sm gap-2 md:gap-4 shrink-0">
       
-      {/* Left spacer for perfect centering */}
-      <div className="flex-1 hidden md:block"></div>
+      {/* Left Area (Power Shot Indicator or Spacer) */}
+      <div className="flex-1 flex items-center justify-start">
+        {activePowerShot && (
+          <div 
+            className="inline-flex items-center gap-1.5 md:gap-2 px-2.5 md:px-3 py-1 rounded-full bg-rose-500/10 border border-rose-500/20 text-rose-500 text-[10px] md:text-xs font-bold animate-in fade-in shrink-0 shadow-[0_0_10px_rgba(244,63,94,0.2)]"
+            title={`${activePowerShot} is active! Make those calls!`}
+          >
+            <span className="relative flex h-2 w-2 shrink-0">
+              <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-500 opacity-75"></span>
+              <span className="relative inline-flex rounded-full h-2 w-2 bg-rose-500"></span>
+            </span>
+            <span className="hidden sm:inline">{activePowerShot} Active</span>
+            <span className="sm:hidden text-[9px] uppercase tracking-wider">Power Shot</span>
+          </div>
+        )}
+      </div>
 
       {/* Center Search — only on /leads */}
       {isLeadsPage ? (
