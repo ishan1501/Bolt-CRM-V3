@@ -58,7 +58,7 @@ export default function PlannerPage() {
 
         {/* Navigator */}
         <div className="flex items-center justify-between w-full md:w-auto bg-[var(--bolt-bg-depth-2)] p-1.5 rounded-xl border border-[var(--bolt-border-color)] shadow-sm">
-          <button onClick={handlePrevDay} className="p-2 hover:bg-white/10 rounded-lg text-[var(--bolt-text-secondary)] hover:text-white transition-colors shrink-0">
+          <button onClick={handlePrevDay} className="p-2 hover:bg-[var(--bolt-hover-overlay-md)] rounded-lg text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] transition-colors shrink-0">
             <ChevronLeft size={18} />
           </button>
           <div className="flex-1 text-center flex flex-col items-center justify-center">
@@ -68,7 +68,7 @@ export default function PlannerPage() {
             {isToday && <span className="text-[10px] text-[var(--bolt-accent)] font-bold uppercase tracking-wider">Today</span>}
           </div>
           <div className="flex items-center gap-1 shrink-0">
-            <button onClick={handleNextDay} className="p-2 hover:bg-white/10 rounded-lg text-[var(--bolt-text-secondary)] hover:text-white transition-colors">
+            <button onClick={handleNextDay} className="p-2 hover:bg-[var(--bolt-hover-overlay-md)] rounded-lg text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] transition-colors">
               <ChevronRight size={18} />
             </button>
             {!isToday && (

@@ -37,7 +37,7 @@ export function SingleSelect({ value, options, onChange, placeholder = "Select..
     <div className="relative" ref={containerRef}>
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between gap-2 bg-transparent text-sm font-medium outline-none cursor-pointer text-[var(--bolt-text-primary)] surface-3 border border-[var(--bolt-border-color)] rounded-lg px-3 py-1.5 min-w-[160px] max-w-[200px] hover:bg-white/5 transition-colors"
+        className="flex items-center justify-between gap-2 bg-transparent text-sm font-medium outline-none cursor-pointer text-[var(--bolt-text-primary)] surface-3 border border-[var(--bolt-border-color)] rounded-lg px-3 py-1.5 min-w-[160px] max-w-[200px] hover:bg-[var(--bolt-hover-overlay)] transition-colors"
       >
         <span className="truncate">
           {displayLabel}

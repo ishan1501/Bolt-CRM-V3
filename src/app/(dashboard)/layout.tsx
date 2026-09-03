@@ -66,7 +66,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   // Show a loading screen while auth + subscription check is running
   if (!isReady) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--bolt-bg-depth-1)] flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-[var(--bolt-accent)] animate-spin" />
       </div>
     );

@@ -83,7 +83,7 @@ export function TableToolbar({ totalRecords, uniquePrograms = [], stages = [], r
       <div className="hidden md:flex items-center gap-2 shrink-0 self-end sm:self-auto">
         <button 
           onClick={() => setCustomizeColumnsOpen(true)}
-          className="w-9 h-9 flex items-center justify-center rounded-lg surface-3 hover:bg-white/5 transition-colors"
+          className="w-9 h-9 flex items-center justify-center rounded-lg surface-3 hover:bg-[var(--bolt-hover-overlay)] transition-colors"
           title="Customize Columns"
         >
           <Columns size={16} className="text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)]" />

@@ -112,7 +112,7 @@ export default function BillingPage() {
 
   // ── Shared page shell ─────────────────────────────────────────────────
   const Shell = ({ children }: { children: React.ReactNode }) => (
-    <div className="min-h-screen w-full flex items-center justify-center bg-[#000000] text-white relative overflow-hidden p-6">
+    <div className="min-h-screen w-full flex items-center justify-center bg-[var(--bolt-bg-depth-1)] text-[var(--bolt-text-primary)] relative overflow-hidden p-6">
       {/* Subtle grid */}
       <div
         className="absolute inset-0 pointer-events-none opacity-[0.15]"
@@ -138,13 +138,13 @@ export default function BillingPage() {
   if (status === "paused") {
     return (
       <Shell>
-        <div className="bg-[#111111] rounded-2xl p-10 border border-[#222] shadow-2xl text-center">
+        <div className="bg-[var(--bolt-bg-depth-2)] rounded-2xl p-10 border border-[var(--bolt-border-color)] shadow-2xl text-center">
           <div className="flex justify-center mb-6">
             <div className="w-16 h-16 rounded-full bg-orange-500/10 border border-orange-500/20 flex items-center justify-center">
               <AlertCircle className="w-8 h-8 text-orange-400" />
             </div>
           </div>
-          <h2 className="text-2xl font-bold mb-2 text-white">Access Paused</h2>
+          <h2 className="text-2xl font-bold mb-2 text-[var(--bolt-text-primary)]">Access Paused</h2>
           <p className="text-[#888] text-sm mb-7">
             Your access to Bolt CRM has been temporarily paused by an administrator. Please contact your admin for more information.
           </p>
@@ -163,7 +163,7 @@ export default function BillingPage() {
   if (status === "pending") {
     return (
       <Shell>
-        <div className="bg-[#111111] rounded-2xl p-10 border border-[#222] shadow-2xl text-center">
+        <div className="bg-[var(--bolt-bg-depth-2)] rounded-2xl p-10 border border-[var(--bolt-border-color)] shadow-2xl text-center">
           <div className="flex justify-center mb-6">
             <div className="w-16 h-16 rounded-full bg-blue-500/10 border border-blue-500/20 flex items-center justify-center">
               <Loader2 className="w-8 h-8 text-blue-400 animate-spin" />
@@ -187,7 +187,7 @@ export default function BillingPage() {
   // ── Payment wall ──────────────────────────────────────────────────────
   return (
     <Shell>
-      <div className="bg-[#111111] rounded-2xl border border-[#222] shadow-2xl overflow-hidden">
+      <div className="bg-[var(--bolt-bg-depth-2)] rounded-2xl border border-[var(--bolt-border-color)] shadow-2xl overflow-hidden">
         {status === "expired" && (
           <div className="bg-red-500/10 border-b border-red-500/20 px-6 py-4 flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
@@ -217,7 +217,7 @@ export default function BillingPage() {
 
         {/* Manual Payment Section */}
         <div className="px-10 py-7 border-b border-[#1a1a1a]">
-          <h3 className="font-semibold text-white mb-4 text-center">Scan & Pay via any UPI app</h3>
+          <h3 className="font-semibold text-[var(--bolt-text-primary)] mb-4 text-center">Scan & Pay via any UPI app</h3>
           <div className="flex justify-center mb-4">
             <div className="bg-white p-2 rounded-xl">
               <img 
@@ -251,7 +251,7 @@ export default function BillingPage() {
                 value={utr}
                 onChange={(e) => setUtr(e.target.value)}
                 placeholder="e.g. 312345678901"
-                className="w-full bg-[#000] border border-[#333] rounded-xl px-4 py-3 text-white outline-none focus:border-[#EAB308] transition-colors"
+                className="w-full bg-[var(--bolt-bg-depth-3)] border border-[var(--bolt-border-color)] rounded-xl px-4 py-3 text-[var(--bolt-text-primary)] outline-none focus:border-[#EAB308] transition-colors"
               />
             </div>
 

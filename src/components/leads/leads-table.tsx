@@ -138,7 +138,7 @@ export function LeadsTable({ leads }: LeadsTableProps) {
                           "shrink-0 transition-opacity p-0.5 rounded flex items-center justify-center",
                           locked 
                             ? "opacity-100 text-[var(--bolt-accent)]" 
-                            : "opacity-0 group-hover/header:opacity-100 text-[var(--bolt-text-tertiary)] hover:text-[var(--bolt-text-primary)] hover:bg-white/5"
+                            : "opacity-0 group-hover/header:opacity-100 text-[var(--bolt-text-tertiary)] hover:text-[var(--bolt-text-primary)] hover:bg-[var(--bolt-hover-overlay)]"
                         )}
                         title={locked ? "Unfreeze up to here" : "Freeze up to here"}
                       >

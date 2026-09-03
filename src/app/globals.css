@@ -3,32 +3,65 @@
 @tailwind utilities;
 
 @layer base {
+  /* ─── LIGHT MODE (default) ─────────────────────────────────────────── */
   :root {
-    /* Masters Union LMS Dark Mode Tokens */
-    --bolt-bg-depth-1: #060606;       /* Main canvas, slightly softer than black */
-    --bolt-bg-depth-2: #111111;       /* Cards, Sidebar, Elevated surfaces */
-    --bolt-bg-depth-3: #181818;       /* Inputs, Search bars, highly elevated surfaces */
-    --bolt-bg-depth-4: #1f1f1f;
+    /* Background Depths — warm whites */
+    --bolt-bg-depth-1: #f8f8f8;       /* Main canvas */
+    --bolt-bg-depth-2: #ffffff;       /* Cards, Sidebar, Elevated surfaces */
+    --bolt-bg-depth-3: #f1f1f1;       /* Inputs, Search bars */
+    --bolt-bg-depth-4: #e5e5e5;       /* Deeply elevated / active states */
 
     /* Text */
-    --bolt-text-primary: #f4f4f5;     /* Zinc-100, less harsh than pure white */
-    --bolt-text-secondary: #a1a1aa;   /* Zinc-400 */
-    --bolt-text-tertiary: #52525b;    /* Zinc-600 */
+    --bolt-text-primary:   #111111;   /* Near-black */
+    --bolt-text-secondary: #6b7280;   /* Gray-500 */
+    --bolt-text-tertiary:  #9ca3af;   /* Gray-400, placeholder */
 
-    /* Border */
-    --bolt-border-color: rgba(255, 255, 255, 0.10); /* Visible enough to define surface separation */
+    /* Borders */
+    --bolt-border-color: rgba(0, 0, 0, 0.09);
+    --bolt-border-hover: rgba(0, 0, 0, 0.18);
+
+    /* Semantic status */
+    --bolt-untouched-bg:       rgba(239, 68, 68, 0.07);
+    --bolt-untouched-bg-hover: rgba(239, 68, 68, 0.13);
+
+    /* Brand Accent — Masters Union Gold (unchanged across themes) */
+    --bolt-accent:       #f9c851;
+    --bolt-accent-hover: #e6b84a;
+    --bolt-accent-glow:  rgba(249, 200, 81, 0.35);
+
+    /* Surface hover helpers */
+    --bolt-hover-overlay: rgba(0, 0, 0, 0.04);
+    --bolt-hover-overlay-md: rgba(0, 0, 0, 0.08);
+
+    /* Standard backward compat */
+    --background: var(--bolt-bg-depth-1);
+    --foreground: var(--bolt-text-primary);
+  }
+
+  /* ─── DARK MODE ─────────────────────────────────────────────────────── */
+  .dark {
+    --bolt-bg-depth-1: #060606;
+    --bolt-bg-depth-2: #111111;
+    --bolt-bg-depth-3: #181818;
+    --bolt-bg-depth-4: #1f1f1f;
+
+    --bolt-text-primary:   #f4f4f5;
+    --bolt-text-secondary: #a1a1aa;
+    --bolt-text-tertiary:  #52525b;
+
+    --bolt-border-color: rgba(255, 255, 255, 0.10);
     --bolt-border-hover: rgba(255, 255, 255, 0.18);
 
-    /* Semantic status colors */
-    --bolt-untouched-bg: rgba(239, 68, 68, 0.10);   /* Red tint for untouched/cold leads */
+    --bolt-untouched-bg:       rgba(239, 68, 68, 0.10);
     --bolt-untouched-bg-hover: rgba(239, 68, 68, 0.18);
 
-    /* Brand Accent - Masters Union Gold */
-    --bolt-accent: #f9c851;
+    --bolt-accent:       #f9c851;
     --bolt-accent-hover: #e6b84a;
-    --bolt-accent-glow: rgba(249, 200, 81, 0.25);
+    --bolt-accent-glow:  rgba(249, 200, 81, 0.25);
 
-    /* Standard variables for backward compatibility */
+    --bolt-hover-overlay:    rgba(255, 255, 255, 0.05);
+    --bolt-hover-overlay-md: rgba(255, 255, 255, 0.10);
+
     --background: var(--bolt-bg-depth-1);
     --foreground: var(--bolt-text-primary);
   }
@@ -41,80 +74,56 @@
   *, ::before, ::after {
     transition-property: color, background-color, border-color, text-decoration-color, fill, stroke, box-shadow;
     transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
-    transition-duration: 300ms;
+    transition-duration: 250ms;
   }
 }
 
 @layer utilities {
-  .surface-1 {
-    background-color: var(--bolt-bg-depth-1);
-  }
-  .surface-2 {
-    background-color: var(--bolt-bg-depth-2);
-  }
-  .surface-3 {
-    background-color: var(--bolt-bg-depth-3);
-  }
-  .surface-4 {
-    background-color: var(--bolt-bg-depth-4);
-  }
+  .surface-1 { background-color: var(--bolt-bg-depth-1); }
+  .surface-2 { background-color: var(--bolt-bg-depth-2); }
+  .surface-3 { background-color: var(--bolt-bg-depth-3); }
+  .surface-4 { background-color: var(--bolt-bg-depth-4); }
 
   .surface-input {
-    background-color: var(--bolt-bg-depth-2);
-    border: 1px solid transparent;
+    background-color: var(--bolt-bg-depth-3);
+    border: 1px solid var(--bolt-border-color);
     outline: none;
     color: var(--bolt-text-primary);
   }
-  .surface-input:focus-within, .surface-input:focus {
+  .surface-input:focus-within,
+  .surface-input:focus {
     border-color: var(--bolt-accent);
     box-shadow: 0 0 0 1px var(--bolt-accent);
   }
-}
 
-/* Custom Scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background-color: rgba(148, 163, 184, 0.3);
-  border-radius: 9999px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background-color: rgba(148, 163, 184, 0.6);
-}
-
-@keyframes shimmer {
-  100% {
-    transform: translateX(100%);
+  /* Theme-aware hover utility — replaces bg-white/5 and bg-black/5 */
+  .hover-surface:hover {
+    background-color: var(--bolt-hover-overlay);
   }
 }
 
-/* Hide scrollbar visually but keep it functional */
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
+/* ─── Scrollbar ─────────────────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 6px; height: 6px; }
+::-webkit-scrollbar-track  { background: transparent; }
+::-webkit-scrollbar-thumb  {
+  background-color: rgba(128, 128, 128, 0.3);
+  border-radius: 9999px;
 }
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-
-/* iOS safe area bottom padding (for notch phones) */
-.pb-safe {
-  padding-bottom: env(safe-area-inset-bottom, 0px);
+::-webkit-scrollbar-thumb:hover {
+  background-color: rgba(128, 128, 128, 0.55);
 }
 
-/* Slim scrollbar for sidebar & content areas */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 4px;
+@keyframes shimmer {
+  100% { transform: translateX(100%); }
 }
+
+.hide-scrollbar           { -ms-overflow-style: none; scrollbar-width: none; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+
+.pb-safe { padding-bottom: env(safe-area-inset-bottom, 0px); }
+
+.custom-scrollbar::-webkit-scrollbar       { width: 4px; }
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(148, 163, 184, 0.2);
+  background-color: rgba(128, 128, 128, 0.25);
   border-radius: 9999px;
 }

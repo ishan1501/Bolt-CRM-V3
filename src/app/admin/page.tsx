@@ -6,6 +6,7 @@ import { format, parseISO, startOfDay, endOfDay, startOfWeek, endOfWeek, startOf
 import { CheckCircle, XCircle, Users, PhoneCall, TrendingUp, BarChart2, Calendar, Clock, LogOut, Lock } from "lucide-react";
 import { GlassCard } from "@/components/ui/glass-card";
 import { BrandLogo } from "@/components/ui/brand-logo";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function AdminDashboard() {
@@ -250,12 +251,12 @@ export default function AdminDashboard() {
   const maxCallsHour = Math.max(...hourlyData.map(h => h.calls), 10); // set minimum scale to 10 so 1 call doesn't fill 100%
 
   if (isAdminAuthenticated === null) {
-    return <div className="min-h-screen bg-black" />;
+    return <div className="min-h-screen bg-[var(--bolt-bg-depth-1)]" />;
   }
 
   if (!isAdminAuthenticated) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center p-4">
+      <div className="min-h-screen bg-[var(--bolt-bg-depth-1)] flex items-center justify-center p-4">
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
           <div className="absolute -top-[30%] -left-[10%] w-[70%] h-[70%] rounded-full bg-[#eab308]/5 blur-[150px]" />
           <div className="absolute top-[20%] -right-[20%] w-[60%] h-[60%] rounded-full bg-blue-500/5 blur-[150px]" />
@@ -264,52 +265,52 @@ export default function AdminDashboard() {
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="w-full max-w-md bg-white/5 border border-white/10 rounded-3xl p-8 backdrop-blur-xl relative z-10"
+          className="w-full max-w-md bg-[var(--bolt-bg-depth-3)] border border-[var(--bolt-border-color)] rounded-3xl p-8 backdrop-blur-xl relative z-10"
         >
           <div className="flex justify-center mb-8">
             <BrandLogo className="scale-125" />
           </div>
           
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-white mb-2">Admin Portal</h1>
-            <p className="text-white/50 text-sm">Enter your credentials or passcode to continue</p>
+            <h1 className="text-2xl font-bold text-[var(--bolt-text-primary)] mb-2">Admin Portal</h1>
+            <p className="text-[var(--bolt-text-secondary)] text-sm">Enter your credentials or passcode to continue</p>
           </div>
 
           <form onSubmit={handleAdminLogin} className="space-y-4">
             {loginMode === "passcode" ? (
               <div className="space-y-2">
-                <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Passcode</label>
+                <label className="text-xs font-semibold text-[var(--bolt-text-secondary)] uppercase tracking-wider">Passcode</label>
                 <input
                   type="password"
                   value={loginPasscode}
                   onChange={(e) => setLoginPasscode(e.target.value)}
                   placeholder="••••••"
-                  className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#eab308]/50 focus:ring-1 focus:ring-[#eab308]/50 transition-all text-center tracking-[0.5em] text-lg"
+                  className="w-full bg-[var(--bolt-bg-depth-1)]/50 border border-[var(--bolt-border-color)] rounded-xl px-4 py-3 text-[var(--bolt-text-primary)] placeholder:text-[var(--bolt-text-tertiary)] focus:outline-none focus:border-[#eab308]/50 focus:ring-1 focus:ring-[#eab308]/50 transition-all text-center tracking-[0.5em] text-lg"
                   autoFocus
                 />
               </div>
             ) : (
               <>
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Email</label>
+                  <label className="text-xs font-semibold text-[var(--bolt-text-secondary)] uppercase tracking-wider">Email</label>
                   <input
                     type="email"
                     value={loginEmail}
                     onChange={(e) => setLoginEmail(e.target.value)}
                     placeholder="admin@bolt.app"
-                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#eab308]/50 focus:ring-1 focus:ring-[#eab308]/50 transition-all"
+                    className="w-full bg-[var(--bolt-bg-depth-1)]/50 border border-[var(--bolt-border-color)] rounded-xl px-4 py-3 text-[var(--bolt-text-primary)] placeholder:text-[var(--bolt-text-tertiary)] focus:outline-none focus:border-[#eab308]/50 focus:ring-1 focus:ring-[#eab308]/50 transition-all"
                     autoFocus
                   />
                 </div>
                 
                 <div className="space-y-2">
-                  <label className="text-xs font-semibold text-white/50 uppercase tracking-wider">Password</label>
+                  <label className="text-xs font-semibold text-[var(--bolt-text-secondary)] uppercase tracking-wider">Password</label>
                   <input
                     type="password"
                     value={loginPassword}
                     onChange={(e) => setLoginPassword(e.target.value)}
                     placeholder="••••••••"
-                    className="w-full bg-black/50 border border-white/10 rounded-xl px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-[#eab308]/50 focus:ring-1 focus:ring-[#eab308]/50 transition-all"
+                    className="w-full bg-[var(--bolt-bg-depth-1)]/50 border border-[var(--bolt-border-color)] rounded-xl px-4 py-3 text-[var(--bolt-text-primary)] placeholder:text-[var(--bolt-text-tertiary)] focus:outline-none focus:border-[#eab308]/50 focus:ring-1 focus:ring-[#eab308]/50 transition-all"
                   />
                 </div>
               </>
@@ -335,7 +336,7 @@ export default function AdminDashboard() {
                 setLoginMode(loginMode === "passcode" ? "email" : "passcode");
                 setLoginError("");
               }}
-              className="w-full text-white/40 hover:text-white/80 text-sm font-medium mt-2 transition-colors"
+              className="w-full text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)]/80 text-sm font-medium mt-2 transition-colors"
             >
               {loginMode === "passcode" ? "Login with Email instead" : "Use Passcode instead"}
             </button>
@@ -346,20 +347,23 @@ export default function AdminDashboard() {
   }
 
   return (
-    <div className="min-h-screen bg-[#000000] text-white p-6 md:p-8 flex flex-col w-full">
+    <div className="min-h-screen bg-[var(--bolt-bg-depth-1)] text-[var(--bolt-text-primary)] p-6 md:p-8 flex flex-col w-full">
       <div className="w-full flex-1 flex flex-col">
         <header className="flex flex-col md:flex-row items-center justify-between mb-8 pb-4 border-b border-[var(--bolt-border-color)] gap-4 shrink-0">
           <div className="flex items-center gap-4 w-full md:w-auto">
             <BrandLogo className="scale-125 origin-left shrink-0" />
             <h1 className="text-xl font-bold text-[var(--bolt-text-primary)] ml-4 border-l border-[var(--bolt-border-color)] pl-4 shrink-0">Admin Portal</h1>
             
-            <button
-              onClick={handleAdminLogout}
-              className="ml-auto md:hidden p-2 text-white/50 hover:text-white bg-white/5 rounded-lg border border-white/10 transition-colors"
-              title="Log out of Admin"
-            >
-              <LogOut size={18} />
-            </button>
+            <div className="ml-auto flex items-center gap-2 md:ml-0 md:hidden">
+              <ThemeToggle />
+              <button
+                onClick={handleAdminLogout}
+                className="p-2 text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] bg-[var(--bolt-bg-depth-3)] rounded-lg border border-[var(--bolt-border-color)] transition-colors"
+                title="Log out of Admin"
+              >
+                <LogOut size={18} />
+              </button>
+            </div>
           </div>
           
           <div className="flex items-center gap-6 overflow-x-auto w-full md:w-auto px-1 hide-scrollbar">
@@ -401,13 +405,16 @@ export default function AdminDashboard() {
                 <div className="absolute bottom-0 left-0 w-full h-[2px] bg-[var(--bolt-accent)] rounded-t-full" />
               )}
             </button>
-            <button
-              onClick={handleAdminLogout}
-              className="ml-4 p-2 text-white/50 hover:text-white bg-white/5 rounded-lg border border-white/10 transition-colors hidden md:flex"
-              title="Log out of Admin"
-            >
-              <LogOut size={18} />
-            </button>
+            <div className="hidden md:flex items-center gap-4 ml-4 pl-4 border-l border-[var(--bolt-border-color)]">
+              <ThemeToggle />
+              <button
+                onClick={handleAdminLogout}
+                className="p-2 text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] bg-[var(--bolt-bg-depth-3)] rounded-lg border border-[var(--bolt-border-color)] transition-colors"
+                title="Log out of Admin"
+              >
+                <LogOut size={18} />
+              </button>
+            </div>
           </div>
         </header>
 
@@ -571,10 +578,10 @@ export default function AdminDashboard() {
           <div className="space-y-8">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
               <h2 className="text-xl font-semibold">Call Tracker</h2>
-              <div className="flex bg-[#111] p-1 rounded-lg border border-[#333]">
+              <div className="flex bg-[var(--bolt-bg-depth-2)] p-1 rounded-lg border border-[var(--bolt-border-color)]">
                 <button
                   className={`px-4 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                    period === "daily" ? "bg-[#EAB308] text-black" : "text-gray-400 hover:text-white"
+                    period === "daily" ? "bg-[#EAB308] text-black" : "text-gray-400 hover:text-[var(--bolt-text-primary)]"
                   }`}
                   onClick={() => setPeriod("daily")}
                 >
@@ -582,7 +589,7 @@ export default function AdminDashboard() {
                 </button>
                 <button
                   className={`px-4 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                    period === "weekly" ? "bg-[#EAB308] text-black" : "text-gray-400 hover:text-white"
+                    period === "weekly" ? "bg-[#EAB308] text-black" : "text-gray-400 hover:text-[var(--bolt-text-primary)]"
                   }`}
                   onClick={() => setPeriod("weekly")}
                 >
@@ -590,7 +597,7 @@ export default function AdminDashboard() {
                 </button>
                 <button
                   className={`px-4 py-1.5 rounded-md text-xs font-medium transition-colors ${
-                    period === "monthly" ? "bg-[#EAB308] text-black" : "text-gray-400 hover:text-white"
+                    period === "monthly" ? "bg-[#EAB308] text-black" : "text-gray-400 hover:text-[var(--bolt-text-primary)]"
                   }`}
                   onClick={() => setPeriod("monthly")}
                 >
@@ -634,24 +641,24 @@ export default function AdminDashboard() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               {/* Leaderboard */}
               <GlassCard className="p-0 overflow-hidden flex flex-col">
-                <div className="p-5 border-b border-[#333] flex items-center gap-2">
+                <div className="p-5 border-b border-[var(--bolt-border-color)] flex items-center gap-2">
                   <BarChart2 size={18} className="text-[#EAB308]" />
                   <h3 className="font-semibold">Top 10 Callers</h3>
                 </div>
                 <div className="flex-1 overflow-auto max-h-[400px]">
                   <table className="w-full text-sm text-left">
-                    <thead className="bg-[#1a1a1a] text-gray-400 sticky top-0">
+                    <thead className="bg-[var(--bolt-bg-depth-3)] text-gray-400 sticky top-0">
                       <tr>
                         <th className="px-5 py-3">Rank</th>
                         <th className="px-5 py-3">User</th>
                         <th className="px-5 py-3 text-right">Calls</th>
                       </tr>
                     </thead>
-                    <tbody className="divide-y divide-[#222]">
+                    <tbody className="divide-y divide-[var(--bolt-border-color)]">
                       {topCallers.map((c, i) => (
-                        <tr key={c.name} className="hover:bg-white/5 transition-colors">
+                        <tr key={c.name} className="hover:bg-[var(--bolt-bg-depth-3)] transition-colors">
                           <td className="px-5 py-3 font-medium text-gray-500">#{i + 1}</td>
-                          <td className="px-5 py-3 font-medium text-white">{c.name}</td>
+                          <td className="px-5 py-3 font-medium text-[var(--bolt-text-primary)]">{c.name}</td>
                           <td className="px-5 py-3 text-right font-bold text-[#EAB308]">{c.calls}</td>
                         </tr>
                       ))}
@@ -674,10 +681,10 @@ export default function AdminDashboard() {
                 <div className="flex items-end justify-between h-56 md:h-64 gap-1 md:gap-2 pb-6">
                   {trendDays.map((d, i) => (
                     <div key={i} className="flex-1 flex flex-col items-center gap-2 group relative h-full">
-                      <div className="absolute -top-8 bg-[#222] text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap pointer-events-none">
+                      <div className="absolute -top-8 bg-[var(--bolt-bg-depth-4)] text-[var(--bolt-text-primary)] text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity z-10 whitespace-nowrap pointer-events-none">
                         {d.calls} calls
                       </div>
-                      <div className="w-full bg-[#1a1a1a] rounded-t-sm flex items-end justify-center overflow-hidden h-full">
+                      <div className="w-full bg-[var(--bolt-bg-depth-3)] rounded-t-sm flex items-end justify-center overflow-hidden h-full">
                         <div 
                           className="w-full bg-[var(--bolt-accent)] transition-all duration-500 rounded-t-sm hover:opacity-80"
                           style={{ height: `${d.calls === 0 ? 0 : Math.max(2, (d.calls / maxCallsDay) * 100)}%` }}
@@ -703,10 +710,10 @@ export default function AdminDashboard() {
                 <div className="flex items-end justify-between h-48 gap-1 md:gap-2 pb-6">
                   {hourlyData.map((d, i) => (
                     <div key={i} className="flex-1 flex flex-col items-center gap-2 group relative h-full">
-                      <div className="absolute -top-8 bg-[#222] text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
+                      <div className="absolute -top-8 bg-[var(--bolt-bg-depth-4)] text-[var(--bolt-text-primary)] text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
                         {d.calls} calls
                       </div>
-                      <div className="w-full bg-[#1a1a1a] rounded-t-sm flex items-end justify-center overflow-hidden h-full">
+                      <div className="w-full bg-[var(--bolt-bg-depth-3)] rounded-t-sm flex items-end justify-center overflow-hidden h-full">
                         <div 
                           className="w-full bg-[var(--bolt-accent)] transition-all duration-500 rounded-t-sm hover:opacity-80"
                           style={{ 
@@ -749,9 +756,9 @@ export default function AdminDashboard() {
             {isLoadingUsers ? (
               <div className="text-center py-20 text-gray-500">Loading users...</div>
             ) : (
-              <div className="bg-[#111] rounded-xl border border-[#333] overflow-hidden">
+              <div className="bg-[var(--bolt-bg-depth-2)] rounded-xl border border-[var(--bolt-border-color)] overflow-hidden">
                 <table className="w-full text-left text-sm">
-                  <thead className="bg-[#1a1a1a] text-gray-400 border-b border-[#333]">
+                  <thead className="bg-[var(--bolt-bg-depth-3)] text-gray-400 border-b border-[var(--bolt-border-color)]">
                     <tr>
                       <th className="px-6 py-4 font-medium">Name</th>
                       <th className="px-6 py-4 font-medium">Email</th>
@@ -761,7 +768,7 @@ export default function AdminDashboard() {
                       <th className="px-6 py-4 font-medium text-right">Actions</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#222]">
+                  <tbody className="divide-y divide-[var(--bolt-border-color)]">
                     {allUsers.map((user: any) => {
                       const sub = user.subscription;
                       
@@ -783,10 +790,10 @@ export default function AdminDashboard() {
                       }
                       
                       return (
-                        <tr key={user.email || user.id} className="hover:bg-white/5 transition-colors">
+                        <tr key={user.email || user.id} className="hover:bg-[var(--bolt-bg-depth-3)] transition-colors">
                           <td className="px-6 py-4 font-medium">{user.name || "-"}</td>
                           <td className="px-6 py-4 text-gray-400">{user.email}</td>
-                          <td className="px-6 py-4 text-right font-bold text-white">{user.total_calls_made || 0}</td>
+                          <td className="px-6 py-4 text-right font-bold text-[var(--bolt-text-primary)]">{user.total_calls_made || 0}</td>
                           <td className="px-6 py-4">
                             <span className={`capitalize font-medium ${statusColor}`}>
                               {subStatus}
@@ -794,7 +801,7 @@ export default function AdminDashboard() {
                           </td>
                           <td className="px-6 py-4">
                             {daysLeft > 0 ? (
-                              <span className="font-bold text-white">{daysLeft} days</span>
+                              <span className="font-bold text-[var(--bolt-text-primary)]">{daysLeft} days</span>
                             ) : (
                               <span className="text-gray-600">-</span>
                             )}

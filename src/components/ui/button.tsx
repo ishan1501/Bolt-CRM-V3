@@ -12,16 +12,21 @@ export interface ButtonProps
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = "default", size = "default", asChild = false, ...props }, ref) => {
     const Comp = asChild ? Slot : "button"
-    
+
     return (
       <Comp
         className={cn(
           "inline-flex items-center justify-center whitespace-nowrap rounded-xl text-sm font-medium transition-all focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-offset-0 disabled:pointer-events-none disabled:opacity-50",
           {
+            // Primary / accent
             "bg-[var(--bolt-accent)] text-black font-semibold hover:bg-[var(--bolt-accent-hover)] focus-visible:ring-[var(--bolt-accent-glow)] shadow-sm": variant === "default",
-            "bg-white/5 border border-white/10 hover:bg-white/10 text-[var(--bolt-text-primary)]": variant === "secondary",
-            "border border-[var(--bolt-border-color)] bg-transparent hover:bg-white/5 text-[var(--bolt-text-primary)]": variant === "outline",
-            "hover:bg-white/5 text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)]": variant === "ghost",
+            // Secondary — theme-safe surface
+            "bg-[var(--bolt-bg-depth-3)] border border-[var(--bolt-border-color)] hover:bg-[var(--bolt-bg-depth-4)] text-[var(--bolt-text-primary)]": variant === "secondary",
+            // Outline
+            "border border-[var(--bolt-border-color)] bg-transparent hover:bg-[var(--bolt-hover-overlay)] text-[var(--bolt-text-primary)]": variant === "outline",
+            // Ghost
+            "hover:bg-[var(--bolt-hover-overlay)] text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)]": variant === "ghost",
+            // Danger
             "bg-rose-500/10 text-rose-500 hover:bg-rose-500/20 border border-rose-500/20 focus-visible:ring-rose-500/30": variant === "danger",
           },
           {

@@ -57,7 +57,7 @@ export default function SavedLeadsPage() {
                   e.preventDefault();
                   removeLead(lead.uuid, lead.dbId);
                 }}
-                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-white/5 flex items-center justify-center text-[var(--bolt-text-secondary)] opacity-0 group-hover:opacity-100 hover:text-rose-400 hover:bg-rose-500/10 transition-all"
+                className="absolute top-4 right-4 w-8 h-8 rounded-full bg-[var(--bolt-bg-depth-3)] flex items-center justify-center text-[var(--bolt-text-secondary)] opacity-0 group-hover:opacity-100 hover:text-rose-400 hover:bg-rose-500/10 transition-all"
                 title="Remove saved lead"
               >
                 <Bookmark size={14} className="fill-current text-[var(--bolt-accent)] hover:text-rose-400" />
@@ -104,7 +104,7 @@ export default function SavedLeadsPage() {
               </div>
 
               <div className="mt-5 pt-4 border-t border-[var(--bolt-border-color)] flex items-center justify-between">
-                <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md bg-white/5 text-[var(--bolt-text-secondary)]">
+                <span className="px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider rounded-md bg-[var(--bolt-bg-depth-3)] text-[var(--bolt-text-secondary)]">
                   {lead.stageName || "Unknown"}
                 </span>
                 <button
@@ -112,7 +112,7 @@ export default function SavedLeadsPage() {
                     window.history.pushState(null, '', `/leads/${lead.uuid}`);
                     openDrawer(lead.uuid);
                   }}
-                  className="text-xs font-semibold text-[var(--bolt-accent)] hover:text-white transition-colors"
+                  className="text-xs font-semibold text-[var(--bolt-accent)] hover:opacity-70 transition-opacity"
                 >
                   View Profile →
                 </button>

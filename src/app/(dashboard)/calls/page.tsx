@@ -94,7 +94,7 @@ export default function CallsPage() {
                   </div>
                 </div>
                 {r.leadUuid && (
-                  <Link href={`/leads?uuid=${r.leadUuid}`} className="w-8 h-8 rounded-full bg-[var(--bolt-bg-depth-3)] flex items-center justify-center text-[var(--bolt-text-secondary)] hover:text-white hover:bg-[var(--bolt-accent)] transition-all">
+                  <Link href={`/leads?uuid=${r.leadUuid}`} className="w-8 h-8 rounded-full bg-[var(--bolt-bg-depth-3)] flex items-center justify-center text-[var(--bolt-text-secondary)] hover:text-black hover:bg-[var(--bolt-accent)] transition-all">
                     <PhoneCall size={14} />
                   </Link>
                 )}
@@ -201,7 +201,7 @@ export default function CallsPage() {
                     {log.lead_uuid && (
                       <button 
                         onClick={() => openDrawer(log.lead_uuid!)}
-                        className="text-xs font-semibold text-[var(--bolt-accent)] hover:text-white px-3 py-1.5 rounded-lg bg-[var(--bolt-bg-depth-3)] hover:bg-[var(--bolt-accent)] transition-colors"
+                        className="text-xs font-semibold text-[var(--bolt-accent)] hover:text-black px-3 py-1.5 rounded-lg bg-[var(--bolt-bg-depth-3)] hover:bg-[var(--bolt-accent)] transition-colors"
                       >
                         View Profile
                       </button>

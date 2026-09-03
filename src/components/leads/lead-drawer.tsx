@@ -166,16 +166,17 @@ export function LeadDrawer({ leads: propLeads = [] }: { leads?: Lead[] }) {
             }
           }}
           className={cn(
-            "w-9 h-9 rounded-xl flex items-center justify-center transition-colors border border-[var(--bolt-border-color)] shadow-sm backdrop-blur-sm md:bg-[var(--bolt-bg-depth-2)] md:backdrop-blur-none",
-            isSaved ? "bg-[var(--bolt-accent)] text-black" : "bg-[var(--bolt-bg-depth-3)]/50 text-[var(--bolt-text-secondary)] hover:text-white"
+            "w-9 h-9 rounded-xl flex items-center justify-center transition-colors border shadow-sm backdrop-blur-sm md:bg-[var(--bolt-bg-depth-2)] md:backdrop-blur-none",
+            isSaved ? "bg-[var(--bolt-accent)] border-[var(--bolt-accent)] text-black" : "bg-[var(--bolt-bg-depth-3)]/50 border-[var(--bolt-border-color)] text-[var(--bolt-text-secondary)] hover:text-black hover:bg-[var(--bolt-accent)]"
           )}
+          title={isSaved ? "Remove from saved leads" : "Save this lead"}
         >
           <Bookmark size={16} className={isSaved ? "fill-black" : ""} />
         </button>
       )}
       <button 
         onClick={handleClose}
-        className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-white/10 transition-colors text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] bg-[var(--bolt-bg-depth-3)]/50 backdrop-blur-sm border border-[var(--bolt-border-color)] shadow-sm md:bg-[var(--bolt-bg-depth-2)] md:backdrop-blur-none"
+        className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-[var(--bolt-hover-overlay-md)] transition-colors text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] bg-[var(--bolt-bg-depth-3)]/50 backdrop-blur-sm border border-[var(--bolt-border-color)] shadow-sm md:bg-[var(--bolt-bg-depth-2)] md:backdrop-blur-none"
       >
         <X size={18} />
       </button>
@@ -397,8 +398,8 @@ export function LeadDrawer({ leads: propLeads = [] }: { leads?: Lead[] }) {
                         className={cn(
                           "px-4 py-1.5 text-sm font-medium transition-all rounded-lg shrink-0",
                           drawerTab === tab.id 
-                            ? "bg-[var(--bolt-bg-depth-4)] text-[var(--bolt-text-primary)] shadow-sm border border-white/5" 
-                            : "text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] hover:bg-white/5 border border-transparent"
+                            ? "bg-[var(--bolt-bg-depth-4)] text-[var(--bolt-text-primary)] shadow-sm border border-[var(--bolt-border-color)]" 
+                            : "text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] hover:bg-[var(--bolt-hover-overlay)] border border-transparent"
                         )}
                       >
                         {tab.label}

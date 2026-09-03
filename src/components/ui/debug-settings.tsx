@@ -95,7 +95,7 @@ export function DebugSettings() {
                   </div>
                 </div>
                 {log.details && (
-                  <pre className="mt-2 bg-black/50 p-3 rounded overflow-x-auto text-xs opacity-90">
+                  <pre className="mt-2 bg-[var(--bolt-bg-depth-4)] p-3 rounded overflow-x-auto text-xs opacity-90 text-[var(--bolt-text-primary)] font-mono">
                     {JSON.stringify(log.details, null, 2)}
                   </pre>
                 )}

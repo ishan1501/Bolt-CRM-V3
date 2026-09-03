@@ -65,7 +65,7 @@ export function CustomizeColumnsDrawer() {
           <h2 className="text-lg font-bold text-[var(--bolt-text-primary)]">Customize Columns</h2>
           <button 
             onClick={() => setCustomizeColumnsOpen(false)}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[var(--bolt-hover-overlay-md)] transition-colors"
           >
             <X size={18} className="text-[var(--bolt-text-secondary)]" />
           </button>
@@ -127,8 +127,8 @@ export function CustomizeColumnsDrawer() {
                       className={cn(
                         "w-7 h-7 flex items-center justify-center rounded-md transition-all duration-150 shrink-0",
                         isColLocked
-                          ? "text-[var(--bolt-text-primary)] hover:bg-white/10"
-                          : "text-[var(--bolt-text-tertiary)] hover:text-[var(--bolt-accent)] hover:bg-white/5"
+                          ? "text-[var(--bolt-text-primary)] hover:bg-[var(--bolt-hover-overlay-md)]"
+                          : "text-[var(--bolt-text-tertiary)] hover:text-[var(--bolt-accent)] hover:bg-[var(--bolt-hover-overlay)]"
                       )}
                       title={isColLocked ? "Unpin column" : "Pin column (sticky while scrolling)"}
                     >

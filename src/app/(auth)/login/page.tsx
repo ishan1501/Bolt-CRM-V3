@@ -7,6 +7,7 @@ import { crmApi } from "@/lib/api";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { BrandLogo } from "@/components/ui/brand-logo";
+import { ThemeToggle } from "@/components/layout/theme-toggle";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -26,7 +27,7 @@ export default function LoginPage() {
 
   if (isChecking) {
     return (
-      <div className="min-h-screen bg-black flex items-center justify-center">
+      <div className="min-h-screen bg-[var(--bolt-bg-depth-1)] flex items-center justify-center">
         <Loader2 className="w-8 h-8 text-[var(--bolt-accent)] animate-spin" />
       </div>
     );
@@ -65,12 +66,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen w-full flex bg-[#000000] text-white relative overflow-hidden font-sans">
+    <div className="min-h-screen w-full flex bg-[var(--bolt-bg-depth-1)] text-[var(--bolt-text-primary)] relative overflow-hidden font-sans">
       {/* Subtle Grid Background */}
       <div 
-        className="absolute inset-0 pointer-events-none opacity-20"
+        className="absolute inset-0 pointer-events-none opacity-20 dark:opacity-20 opacity-5"
         style={{
-          backgroundImage: `linear-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.1) 1px, transparent 1px)`,
+          backgroundImage: `linear-gradient(var(--bolt-border-color) 1px, transparent 1px), linear-gradient(90deg, var(--bolt-border-color) 1px, transparent 1px)`,
           backgroundSize: '40px 40px'
         }}
       />
@@ -80,12 +81,17 @@ export default function LoginPage() {
         <BrandLogo className="h-8 w-auto" />
       </div>
 
+      {/* Top Right Theme Toggle */}
+      <div className="absolute top-8 right-10 flex items-center z-20">
+        <ThemeToggle />
+      </div>
+
       {/* Left Content */}
       <div className="hidden lg:flex w-[55%] flex-col justify-center px-24 relative z-10">
-        <h1 className="text-[52px] leading-[1.1] font-extrabold tracking-tight mb-4 text-white">
+        <h1 className="text-[52px] leading-[1.1] font-extrabold tracking-tight mb-4 text-[var(--bolt-text-primary)]">
           Capture. Connect.<br />Convert.
         </h1>
-        <p className="text-[#a1a1aa] text-xl font-medium tracking-wide">
+        <p className="text-[var(--bolt-text-secondary)] text-xl font-medium tracking-wide">
           Revolutionizing Admissions & Enrollment
         </p>
 
@@ -95,16 +101,16 @@ export default function LoginPage() {
 
       {/* Right Content - Login Box */}
       <div className="w-full lg:w-[45%] flex items-center justify-center lg:justify-start p-6 z-10">
-        <div className="w-full max-w-[440px] bg-[#111111] rounded-2xl p-10 border border-[#222] shadow-2xl relative">
+        <div className="w-full max-w-[440px] bg-[var(--bolt-bg-depth-2)] rounded-2xl p-10 border border-[var(--bolt-border-color)] shadow-2xl relative">
           
           <div className="mb-8">
-            <h2 className="text-2xl font-bold text-white mb-2">Log in</h2>
-            <p className="text-[#888] text-sm">Welcome to Bolt CRM Dashboard</p>
+            <h2 className="text-2xl font-bold text-[var(--bolt-text-primary)] mb-2">Log in</h2>
+            <p className="text-[var(--bolt-text-secondary)] text-sm">Welcome to Bolt CRM Dashboard</p>
           </div>
 
           <form onSubmit={handleLogin} className="space-y-5">
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-white">
+              <label className="text-sm font-medium text-[var(--bolt-text-primary)]">
                 Email ID
               </label>
               <input
@@ -112,7 +118,7 @@ export default function LoginPage() {
                 required
                 autoFocus
                 autoComplete="email"
-                className="w-full bg-[#0a0a0a] border-none rounded-lg px-4 py-3.5 text-[15px] transition-all focus:ring-1 focus:ring-[var(--bolt-accent)] outline-none text-white placeholder:text-[#555]"
+                className="w-full bg-[var(--bolt-bg-depth-3)] border border-[var(--bolt-border-color)] rounded-lg px-4 py-3.5 text-[15px] transition-all focus:ring-1 focus:ring-[var(--bolt-accent)] outline-none text-[var(--bolt-text-primary)] placeholder:text-[var(--bolt-text-tertiary)]"
                 placeholder="Enter Your Email ID"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
@@ -120,7 +126,7 @@ export default function LoginPage() {
             </div>
 
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-white">
+              <label className="text-sm font-medium text-[var(--bolt-text-primary)]">
                 Password
               </label>
               <div className="relative group">
@@ -128,7 +134,7 @@ export default function LoginPage() {
                   type={showPassword ? "text" : "password"}
                   required
                   autoComplete="current-password"
-                  className="w-full bg-[#0a0a0a] border-none rounded-lg px-4 py-3.5 pr-10 text-[15px] transition-all focus:ring-1 focus:ring-[var(--bolt-accent)] outline-none text-white placeholder:text-[#555]"
+                  className="w-full bg-[var(--bolt-bg-depth-3)] border border-[var(--bolt-border-color)] rounded-lg px-4 py-3.5 pr-10 text-[15px] transition-all focus:ring-1 focus:ring-[var(--bolt-accent)] outline-none text-[var(--bolt-text-primary)] placeholder:text-[var(--bolt-text-tertiary)]"
                   placeholder="Enter Your Password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
@@ -136,7 +142,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[#666] group-hover:text-[#aaa] transition-colors p-1"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--bolt-text-tertiary)] group-hover:text-[var(--bolt-text-primary)] transition-colors p-1"
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>

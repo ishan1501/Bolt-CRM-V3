@@ -110,7 +110,7 @@ export function FilterLeadsDrawer() {
           </div>
           <button 
             onClick={() => setFilterDrawerOpen(false)}
-            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors"
+            className="w-8 h-8 flex items-center justify-center rounded-full hover:bg-[var(--bolt-hover-overlay-md)] transition-colors"
           >
             <X size={18} className="text-[var(--bolt-text-secondary)]" />
           </button>
@@ -273,7 +273,7 @@ export function FilterLeadsDrawer() {
           <div className="flex items-center gap-3">
             <button 
               onClick={() => setLocalFilters([])}
-              className="px-4 py-2 text-[13px] font-semibold text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] transition-colors border border-[var(--bolt-border-color)] rounded-lg bg-transparent hover:bg-white/5"
+              className="px-4 py-2 text-[13px] font-semibold text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] transition-colors border border-[var(--bolt-border-color)] rounded-lg bg-transparent hover:bg-[var(--bolt-hover-overlay)]"
             >
               Reset
             </button>

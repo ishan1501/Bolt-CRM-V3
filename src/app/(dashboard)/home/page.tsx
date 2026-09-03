@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 function ProgressBar({ value, max, colorClass }: { value: number; max: number; colorClass: string }) {
   const percentage = max > 0 ? Math.min(100, (value / max) * 100) : 0;
   return (
-    <div className="w-full bg-slate-100 dark:bg-[#222] h-1.5 rounded-full mt-1 overflow-hidden">
+    <div className="w-full bg-[var(--bolt-bg-depth-3)] h-1.5 rounded-full mt-1 overflow-hidden">
       <div className={`h-full rounded-full transition-all duration-700 ${colorClass}`} style={{ width: `${percentage}%` }} />
     </div>
   );
@@ -307,7 +307,7 @@ export default function HomePage() {
                   className="bg-[var(--bolt-bg-depth-3)] border border-[var(--bolt-border-color)] rounded-lg pl-8 pr-3 py-1.5 text-xs text-[var(--bolt-text-primary)] outline-none w-40 focus:border-[var(--bolt-accent)] transition-colors"
                 />
               </div>
-              <button onClick={() => refetchChannels()} className="text-slate-400 hover:text-white transition-colors">
+              <button onClick={() => refetchChannels()} className="text-slate-400 hover:text-[var(--bolt-text-primary)] transition-colors">
                 <RefreshCw size={14} className={channelsLoading ? "animate-spin" : ""} />
               </button>
             </div>
@@ -328,7 +328,7 @@ export default function HomePage() {
                 </thead>
                 <tbody className="divide-y divide-[var(--bolt-border-color)]">
                   {filteredChannels.map((ch: any, i: number) => (
-                    <tr key={i} className="hover:bg-white/5 transition-colors">
+                    <tr key={i} className="hover:bg-[var(--bolt-hover-overlay)] transition-colors">
                       <td className="px-5 py-3 text-[var(--bolt-text-primary)]">{ch.name || ch.source || "—"}</td>
                       <td className="px-5 py-3 text-[var(--bolt-text-secondary)]">{getNum(ch.totalLeads ?? ch.leads, "—")}</td>
                       <td className="px-5 py-3 text-[var(--bolt-text-secondary)]">{getNum(ch.totalApplications ?? ch.applications, "—")}</td>

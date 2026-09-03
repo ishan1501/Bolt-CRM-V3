@@ -9,13 +9,13 @@ import { BrandLogo } from "@/components/ui/brand-logo";
 import { supabase } from "@/lib/supabase";
 
 export const NAV_ITEMS = [
-  { icon: Users, label: "Leads", href: "/leads" },
-  { icon: FileText, label: "Applications", href: "/applications" },
-  { icon: Bookmark, label: "Saved Leads", href: "/saved-leads" },
-  { icon: Home, label: "Home", href: "/home" },
-  { icon: CheckSquare, label: "To Do", href: "/planner" },
-  { icon: PhoneCall, label: "All Calls", href: "/calls" },
-  { icon: Wrench, label: "Tools", href: "/tools" },
+  { icon: Users,       label: "Leads",       href: "/leads" },
+  { icon: FileText,    label: "Applications", href: "/applications" },
+  { icon: Bookmark,    label: "Saved Leads",  href: "/saved-leads" },
+  { icon: Home,        label: "Home",         href: "/home" },
+  { icon: CheckSquare, label: "To Do",        href: "/planner" },
+  { icon: PhoneCall,   label: "All Calls",    href: "/calls" },
+  { icon: Wrench,      label: "Tools",        href: "/tools" },
 ];
 
 export function Sidebar() {
@@ -26,11 +26,9 @@ export function Sidebar() {
   const router = useRouter();
 
   const handleLogout = async () => {
-    // Clear all CRM local state
     localStorage.removeItem("bolt_auth_token");
     localStorage.removeItem("bolt_user");
     localStorage.removeItem("bolt-jobs");
-    // End the Supabase session so the backend token is also invalidated
     await supabase.auth.signOut();
     router.push("/login");
   };
@@ -43,10 +41,10 @@ export function Sidebar() {
 
   return (
     <>
-      {/* Mobile Backdrop */}
+      {/* Mobile Backdrop — intentionally dark semi-transparent overlay in both themes */}
       {mobileDrawerOpen && (
-        <div 
-          className="fixed inset-0 bg-black/60 z-[105] md:hidden backdrop-blur-sm"
+        <div
+          className="fixed inset-0 bg-black/50 z-[105] md:hidden backdrop-blur-sm"
           onClick={() => setMobileDrawerOpen(false)}
         />
       )}
@@ -59,7 +57,7 @@ export function Sidebar() {
         onMouseEnter={() => setSidebarExpanded(true)}
         onMouseLeave={() => setSidebarExpanded(false)}
         className={cn(
-          "fixed left-0 top-0 h-screen bg-[var(--bolt-bg-depth-2)]/95 backdrop-blur-xl border-r border-[var(--bolt-border-color)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] flex flex-col shadow-2xl z-[110]",
+          "fixed left-0 top-0 h-screen bg-[var(--bolt-bg-depth-2)] backdrop-blur-xl border-r border-[var(--bolt-border-color)] transition-all duration-300 ease-[cubic-bezier(0.4,0,0.2,1)] flex flex-col shadow-lg z-[110]",
           mobileDrawerOpen ? "translate-x-0 w-[260px]" : "-translate-x-full md:translate-x-0",
           sidebarCollapsed ? "md:w-[80px]" : "md:w-[260px]"
         )}
@@ -68,11 +66,14 @@ export function Sidebar() {
         <div className="h-16 flex flex-col justify-center px-4 border-b border-[var(--bolt-border-color)] overflow-hidden shrink-0">
           <div className="flex items-center justify-between w-full h-full">
             <div className="flex items-center h-full">
-              <BrandLogo iconOnly={sidebarCollapsed && !mobileDrawerOpen} className={cn("transition-all duration-300", sidebarCollapsed && !mobileDrawerOpen ? "ml-3" : "ml-2")} />
+              <BrandLogo
+                iconOnly={sidebarCollapsed && !mobileDrawerOpen}
+                className={cn("transition-all duration-300", sidebarCollapsed && !mobileDrawerOpen ? "ml-3" : "ml-2")}
+              />
             </div>
             {/* Mobile close button */}
-            <button 
-              className="md:hidden p-1 text-[var(--bolt-text-secondary)] hover:text-white mr-2"
+            <button
+              className="md:hidden p-1 text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] mr-2 transition-colors"
               onClick={() => setMobileDrawerOpen(false)}
             >
               <X size={20} />
@@ -93,17 +94,23 @@ export function Sidebar() {
                   "flex items-center h-12 rounded-xl transition-all group/nav relative",
                   isActive
                     ? "bg-[var(--bolt-accent)]/10 text-[var(--bolt-accent)]"
-                    : "text-[var(--bolt-text-secondary)] hover:bg-white/5 hover:text-[var(--bolt-text-primary)]"
+                    : "text-[var(--bolt-text-secondary)] hover:bg-[var(--bolt-hover-overlay)] hover:text-[var(--bolt-text-primary)]"
                 )}
               >
                 <div className="w-[56px] h-full flex items-center justify-center shrink-0">
-                  <item.icon size={20} className={cn("transition-colors", isActive ? "text-[var(--bolt-accent)]" : "group-hover/nav:text-[var(--bolt-text-primary)]")} />
+                  <item.icon
+                    size={20}
+                    className={cn(
+                      "transition-colors",
+                      isActive ? "text-[var(--bolt-accent)]" : "group-hover/nav:text-[var(--bolt-text-primary)]"
+                    )}
+                  />
                 </div>
-                <span 
+                <span
                   className={cn(
-                    "font-medium whitespace-nowrap transition-opacity duration-300", 
+                    "font-medium whitespace-nowrap transition-opacity duration-300",
                     isActive && "text-[var(--bolt-accent)]",
-                    (sidebarCollapsed && !mobileDrawerOpen) ? "md:opacity-0" : "opacity-100"
+                    sidebarCollapsed && !mobileDrawerOpen ? "md:opacity-0" : "opacity-100"
                   )}
                 >
                   {item.label}
@@ -125,17 +132,23 @@ export function Sidebar() {
               "flex items-center h-12 rounded-xl transition-all group/nav relative",
               pathname === "/settings"
                 ? "bg-[var(--bolt-accent)]/10 text-[var(--bolt-accent)]"
-                : "text-[var(--bolt-text-secondary)] hover:bg-white/5 hover:text-[var(--bolt-text-primary)]"
+                : "text-[var(--bolt-text-secondary)] hover:bg-[var(--bolt-hover-overlay)] hover:text-[var(--bolt-text-primary)]"
             )}
           >
             <div className="w-[56px] h-full flex items-center justify-center shrink-0">
-              <Settings size={20} className={cn("transition-colors", pathname === "/settings" ? "text-[var(--bolt-accent)]" : "group-hover/nav:text-[var(--bolt-text-primary)]")} />
+              <Settings
+                size={20}
+                className={cn(
+                  "transition-colors",
+                  pathname === "/settings" ? "text-[var(--bolt-accent)]" : "group-hover/nav:text-[var(--bolt-text-primary)]"
+                )}
+              />
             </div>
-            <span 
+            <span
               className={cn(
                 "font-medium whitespace-nowrap transition-opacity duration-300",
                 pathname === "/settings" && "text-[var(--bolt-accent)]",
-                (sidebarCollapsed && !mobileDrawerOpen) ? "md:opacity-0" : "opacity-100"
+                sidebarCollapsed && !mobileDrawerOpen ? "md:opacity-0" : "opacity-100"
               )}
             >
               Settings

@@ -58,7 +58,7 @@ export function PromptModal({ isOpen, title, description, placeholder, onConfirm
                 onCancel();
                 setValue("");
               }}
-              className="px-4 py-2 text-sm font-medium rounded-lg hover:bg-white/5 text-[var(--bolt-text-secondary)] transition-colors"
+              className="px-4 py-2 text-sm font-medium rounded-lg hover:bg-[var(--bolt-hover-overlay)] text-[var(--bolt-text-secondary)] transition-colors"
             >
               Cancel
             </button>

@@ -53,7 +53,7 @@ export function EmailTab({ uuid }: { uuid: string }) {
           </div>
           <button 
             onClick={() => router.push("/settings")}
-            className="text-[11px] font-semibold text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] flex items-center gap-1 bg-black/10 px-2 py-1 rounded"
+            className="text-[11px] font-semibold text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] flex items-center gap-1 bg-[var(--bolt-bg-depth-3)] px-2 py-1 rounded"
           >
             <Settings size={12} />
             Manage Templates

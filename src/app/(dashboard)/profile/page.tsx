@@ -91,7 +91,7 @@ export default function ProfilePage() {
         <div className="flex items-center gap-4 mb-6">
           <button 
             onClick={() => router.back()}
-            className="w-10 h-10 rounded-full flex items-center justify-center bg-[var(--bolt-bg-depth-3)] hover:bg-[var(--bolt-accent)] text-[var(--bolt-text-secondary)] hover:text-white transition-colors"
+            className="w-10 h-10 rounded-full flex items-center justify-center bg-[var(--bolt-bg-depth-3)] hover:bg-[var(--bolt-accent)] text-[var(--bolt-text-secondary)] hover:text-black transition-colors"
           >
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6"/></svg>
           </button>
@@ -103,10 +103,10 @@ export default function ProfilePage() {
           
           <div className="p-8 md:p-12 flex flex-col md:flex-row gap-8 md:gap-12 items-center md:items-start relative z-10">
             <div className="flex flex-col items-center gap-4 shrink-0">
-              <div className="w-40 h-40 rounded-[2rem] bg-gradient-to-tr from-[#1a1a1a] to-[#222] border-2 border-[var(--bolt-border-color)] flex items-center justify-center text-5xl font-bold text-[var(--bolt-accent)] shadow-[0_0_40px_rgba(249,200,81,0.05)]">
+              <div className="w-140 h-140 rounded-[2rem] bg-[var(--bolt-bg-depth-3)] border-2 border-[var(--bolt-border-color)] flex items-center justify-center text-5xl font-bold text-[var(--bolt-accent)] shadow-sm">
                 {userInitials}
               </div>
-              <button className="flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-full bg-[var(--bolt-bg-depth-3)] hover:bg-white/5 border border-[var(--bolt-border-color)] transition-colors">
+              <button className="flex items-center gap-2 text-sm font-semibold px-4 py-2 rounded-full bg-[var(--bolt-bg-depth-3)] hover:bg-[var(--bolt-bg-depth-4)] border border-[var(--bolt-border-color)] transition-colors">
                 <Upload size={16} />
                 Update photo
               </button>
@@ -149,7 +149,7 @@ export default function ProfilePage() {
             className={`px-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 transition-all ${
               activeTab === "profile" 
                 ? "bg-[var(--bolt-accent)]/10 text-[var(--bolt-accent)] border border-[var(--bolt-accent)]/30" 
-                : "bg-transparent text-[var(--bolt-text-secondary)] hover:bg-white/5 border border-transparent"
+                : "bg-transparent text-[var(--bolt-text-secondary)] hover:bg-[var(--bolt-hover-overlay)] border border-transparent"
             }`}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
@@ -160,7 +160,7 @@ export default function ProfilePage() {
             className={`px-5 py-2.5 rounded-full text-sm font-bold flex items-center gap-2 transition-all ${
               activeTab === "password" 
                 ? "bg-[var(--bolt-accent)]/10 text-[var(--bolt-accent)] border border-[var(--bolt-accent)]/30" 
-                : "bg-transparent text-[var(--bolt-text-secondary)] hover:bg-white/5 border border-[var(--bolt-border-color)]"
+                : "bg-transparent text-[var(--bolt-text-secondary)] hover:bg-[var(--bolt-hover-overlay)] border border-[var(--bolt-border-color)]"
             }`}
           >
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -222,10 +222,10 @@ export default function ProfilePage() {
                 <div className="flex flex-col gap-2">
                   <label className="text-xs font-bold tracking-wider text-[var(--bolt-text-secondary)] uppercase">Roles Assigned</label>
                   <input 
-                    type="text" 
+                    type="text"
                     value={roles.map((r: any) => r.name || r).join(', ') || "No roles assigned"}
                     readOnly
-                    className="surface-input w-full px-4 py-3 rounded-xl text-sm font-medium text-[var(--bolt-text-tertiary)] bg-white/5 cursor-not-allowed"
+                    className="surface-input w-full px-4 py-3 rounded-xl text-sm font-medium text-[var(--bolt-text-tertiary)] cursor-not-allowed"
                   />
                 </div>
               </div>
@@ -236,7 +236,7 @@ export default function ProfilePage() {
 
                 <div className="border border-[var(--bolt-border-color)] bg-[var(--bolt-bg-depth-1)] rounded-2xl mb-4 overflow-hidden">
                   <div 
-                    className="flex items-center justify-between p-5 cursor-pointer hover:bg-white/5 transition-colors"
+                    className="flex items-center justify-between p-5 cursor-pointer hover:bg-[var(--bolt-hover-overlay)] transition-colors"
                     onClick={() => setOpenSchools(!openSchools)}
                   >
                     <span className="font-bold tracking-wider text-sm uppercase">Schools</span>
@@ -249,12 +249,12 @@ export default function ProfilePage() {
                     <div className="px-5 pb-5 pt-0">
                       {schools.length > 0 ? (
                         schools.map((school: any, idx: number) => (
-                          <span key={idx} className="inline-block bg-[#1a1a1a] text-blue-400 border border-blue-500/30 text-sm px-3 py-1.5 rounded-lg font-medium mr-2 mb-2">
+                          <span key={idx} className="inline-block bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700/40 text-sm px-3 py-1.5 rounded-lg font-medium mr-2 mb-2">
                             {school.name || school}
                           </span>
                         ))
                       ) : (
-                        <span className="inline-block bg-[#1a1a1a] text-blue-400 border border-blue-500/30 text-sm px-3 py-1.5 rounded-lg font-medium">
+                        <span className="inline-block bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-700/40 text-sm px-3 py-1.5 rounded-lg font-medium">
                           Executive Education
                         </span>
                       )}
@@ -264,7 +264,7 @@ export default function ProfilePage() {
 
                 <div className="border border-[var(--bolt-border-color)] bg-[var(--bolt-bg-depth-1)] rounded-2xl mb-4 overflow-hidden">
                   <div 
-                    className="flex items-center justify-between p-5 cursor-pointer hover:bg-white/5 transition-colors"
+                    className="flex items-center justify-between p-5 cursor-pointer hover:bg-[var(--bolt-hover-overlay)] transition-colors"
                     onClick={() => setOpenPrograms(!openPrograms)}
                   >
                     <span className="font-bold tracking-wider text-sm uppercase">Programs</span>
@@ -277,7 +277,7 @@ export default function ProfilePage() {
                     <div className="px-5 pb-5 pt-0 flex flex-wrap gap-2 max-h-[300px] overflow-y-auto custom-scrollbar">
                       {programs.length > 0 ? (
                         programs.map((program: any, idx: number) => (
-                          <span key={idx} className="inline-block bg-[#1a1a1a] text-emerald-400 border border-emerald-500/30 text-xs px-3 py-1.5 rounded-lg font-medium cursor-pointer hover:border-emerald-400 transition-colors">
+                          <span key={idx} className="inline-block bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-700/40 text-xs px-3 py-1.5 rounded-lg font-medium cursor-pointer hover:border-emerald-400 transition-colors">
                             {program.name || program}
                           </span>
                         ))
@@ -290,7 +290,7 @@ export default function ProfilePage() {
 
                 <div className="border border-[var(--bolt-border-color)] bg-[var(--bolt-bg-depth-1)] rounded-2xl overflow-hidden">
                   <div 
-                    className="flex items-center justify-between p-5 cursor-pointer hover:bg-white/5 transition-colors"
+                    className="flex items-center justify-between p-5 cursor-pointer hover:bg-[var(--bolt-hover-overlay)] transition-colors"
                     onClick={() => setOpenForms(!openForms)}
                   >
                     <span className="font-bold tracking-wider text-sm uppercase">Application Forms</span>
@@ -303,7 +303,7 @@ export default function ProfilePage() {
                     <div className="px-5 pb-5 pt-0 flex flex-wrap gap-2 max-h-[300px] overflow-y-auto custom-scrollbar">
                       {forms.length > 0 ? (
                         forms.map((form: any, idx: number) => (
-                          <span key={idx} className="inline-block bg-[#1a1a1a] text-indigo-400 border border-indigo-500/30 text-xs px-3 py-1.5 rounded-lg font-medium cursor-pointer hover:border-indigo-400 transition-colors">
+                          <span key={idx} className="inline-block bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-700/40 text-xs px-3 py-1.5 rounded-lg font-medium cursor-pointer hover:border-indigo-400 transition-colors">
                             {form.name || form}
                           </span>
                         ))
@@ -321,7 +321,7 @@ export default function ProfilePage() {
               <h3 className="text-2xl font-bold text-[var(--bolt-text-primary)] mb-8">Your reporting line</h3>
               
               <div className="border border-[var(--bolt-border-color)] bg-[var(--bolt-bg-depth-1)] rounded-2xl mb-4 overflow-hidden">
-                <div className="p-5 flex items-center justify-between cursor-pointer hover:bg-white/5 transition-colors">
+                <div className="p-5 flex items-center justify-between cursor-pointer hover:bg-[var(--bolt-hover-overlay)] transition-colors">
                   <span className="font-bold tracking-wider text-sm uppercase">Reports To</span>
                   <div className="flex items-center gap-4">
                     <span className="bg-[var(--bolt-accent)]/10 text-[var(--bolt-accent)] text-xs font-bold px-2 py-0.5 rounded-full">1</span>
@@ -329,16 +329,16 @@ export default function ProfilePage() {
                   </div>
                 </div>
                 <div className="px-5 pb-5 pt-0">
-                  <span className="inline-block bg-[#1a1a1a] text-blue-400 border border-blue-500/30 text-sm px-3 py-1.5 rounded-lg font-medium">
+                  <span className="inline-block bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-300 border border-blue-200 dark:border-blue-800/50 text-sm px-3 py-1.5 rounded-lg font-medium">
                     Arshiya Batool (arshiya.batool@mastersunion.org)
                   </span>
                 </div>
               </div>
 
-              <div className="border border-[var(--bolt-border-color)] bg-[var(--bolt-bg-depth-1)] rounded-2xl p-5 flex items-center justify-between cursor-pointer hover:bg-white/5 transition-colors">
+              <div className="border border-[var(--bolt-border-color)] bg-[var(--bolt-bg-depth-1)] rounded-2xl p-5 flex items-center justify-between cursor-pointer hover:bg-[var(--bolt-hover-overlay)] transition-colors">
                 <span className="font-bold tracking-wider text-sm uppercase">Reports To You</span>
                 <div className="flex items-center gap-4">
-                  <span className="bg-white/5 text-[var(--bolt-text-secondary)] text-xs font-bold px-2 py-0.5 rounded-full">0</span>
+                  <span className="bg-[var(--bolt-bg-depth-3)] text-[var(--bolt-text-secondary)] text-xs font-bold px-2 py-0.5 rounded-full">0</span>
                   <ChevronDown size={16} className="text-[var(--bolt-text-secondary)]" />
                 </div>
               </div>
@@ -414,7 +414,7 @@ export default function ProfilePage() {
 
       <div className="fixed bottom-24 md:bottom-6 left-0 md:left-1/2 md:-translate-x-1/2 w-full md:w-[800px] z-50 px-4 md:px-0 pointer-events-none">
         <div className="bg-[var(--bolt-bg-depth-3)]/90 backdrop-blur-md border border-[var(--bolt-border-color)] rounded-2xl shadow-2xl p-3 md:p-4 flex items-center justify-between pointer-events-auto">
-          <button className="px-4 md:px-5 py-2 md:py-2.5 rounded-xl border border-[var(--bolt-border-color)] text-xs md:text-sm font-bold hover:bg-white/5 transition-colors shrink-0">
+          <button className="px-4 md:px-5 py-2 md:py-2.5 rounded-xl border border-[var(--bolt-border-color)] text-xs md:text-sm font-bold hover:bg-[var(--bolt-hover-overlay)] transition-colors shrink-0">
             {activeTab === "profile" ? "Back" : "Discard"}
           </button>
           <div className="flex items-center gap-2 md:gap-3">
@@ -424,7 +424,7 @@ export default function ProfilePage() {
                   setFormName(user?.name || user?.email || "User");
                   setFormPhone(user?.phone || "9355349184");
                 }}
-                className="px-3 md:px-5 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] hover:bg-white/5 transition-colors shrink-0"
+                className="px-3 md:px-5 py-2 md:py-2.5 rounded-xl text-xs md:text-sm font-bold text-[var(--bolt-text-secondary)] hover:text-[var(--bolt-text-primary)] hover:bg-[var(--bolt-hover-overlay)] transition-colors shrink-0"
               >
                 Discard
               </button>
