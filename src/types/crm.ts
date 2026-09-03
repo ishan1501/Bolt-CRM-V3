@@ -35,6 +35,7 @@ export interface Lead {
   reassigned_by?: string;
   school_name?: string;
   tags?: any[];
+  [key: string]: any;
 }
 
 export interface LeadSubStage {

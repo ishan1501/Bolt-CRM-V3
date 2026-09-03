@@ -38,9 +38,12 @@ export default function LeadsPage() {
   const activeView = views.find(v => v.id === activeViewId);
 
   const { data: rawData, isLoading, error } = useQuery({
-    queryKey: ["allLeads", activeView?.backendFilterPayload],
-    queryFn: () => crmApi.fetchAllLeads(activeView?.backendFilterPayload),
-    staleTime: 1000 * 60 * 2, // Cache for 2 minutes to save backend load
+    queryKey: ["allLeads", activeView?.backendFilterPayload, activeView?.columns],
+    queryFn: () => {
+      const payload = activeView?.backendFilterPayload || {};
+      return crmApi.fetchAllLeads({ ...payload, columns: activeView?.columns, viewUuid: "ef0f1127-dd36-4b85-afde-30bbf2b9079f" });
+    },
+    staleTime: 1000 * 60 * 2,
   });
 
   const { data: stages = [] } = useQuery({

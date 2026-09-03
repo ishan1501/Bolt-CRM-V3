@@ -44,7 +44,7 @@ async function proxyRequest(
   });
 
   const data = await backendRes.text();
-
+  
   return new NextResponse(data, {
     status: backendRes.status,
     headers: {
