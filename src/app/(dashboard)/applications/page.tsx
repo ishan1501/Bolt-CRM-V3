@@ -26,7 +26,7 @@ export default function ApplicationsPage() {
     queryKey: ["allApplications", activeView?.backendFilterPayload, activeView?.columns],
     queryFn: () => {
       const payload = activeView?.backendFilterPayload || {};
-      return crmApi.fetchAllApplications({ ...payload, columns: activeView?.columns, viewUuid: "ef0f1127-dd36-4b85-afde-30bbf2b9079f" });
+      return crmApi.fetchAllApplications({ ...payload, columns: activeView?.columns, viewUuid: "88292dcd-5813-4163-9683-fcc0efe783e7" });
     },
     staleTime: 1000 * 60 * 2, // 2 minutes cache to avoid over-querying on window focus
   });
