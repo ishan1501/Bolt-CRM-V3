@@ -252,7 +252,7 @@ export function TopBar() {
           </div>
 
           {showNotifications && (
-            <GlassCard depth={2} className="absolute top-full mt-2 right-0 w-80 max-h-[400px] overflow-y-auto z-50 flex flex-col p-0 border border-[var(--bolt-border-color)] shadow-2xl rounded-xl">
+            <GlassCard depth={2} className="fixed top-[72px] left-4 right-4 w-auto sm:absolute sm:top-full sm:inset-x-auto sm:right-0 sm:mt-2 sm:w-80 max-h-[400px] sm:max-h-[80vh] overflow-y-auto z-50 flex flex-col p-0 border border-[var(--bolt-border-color)] shadow-2xl rounded-xl">
               <div className="p-3 border-b border-[var(--bolt-border-color)] font-medium text-[var(--bolt-text-primary)] text-sm">
                 Notifications
               </div>
