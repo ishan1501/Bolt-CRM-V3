@@ -92,14 +92,6 @@ export function ProfileTab({ uuid }: { uuid: string }) {
         <Field label="Interviewee Declaration Accepted" value={profile.intervieweeDeclarationAccepted} fullWidth />
       </Section>
 
-      <details className="group mt-8">
-        <summary className="text-[11px] font-semibold text-[var(--bolt-text-secondary)] uppercase tracking-wider cursor-pointer hover:text-[var(--bolt-text-primary)] py-2 select-none">
-          View Raw Developer Data ▸
-        </summary>
-        <div className="surface-2 shadow-sm border border-[var(--bolt-border-color)] p-6 rounded-xl overflow-auto mt-2 text-xs font-mono text-[var(--bolt-text-secondary)]">
-          <pre>{JSON.stringify(profile.raw, null, 2)}</pre>
-        </div>
-      </details>
     </div>
   );
 }
